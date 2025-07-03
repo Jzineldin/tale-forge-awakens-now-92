@@ -17,6 +17,7 @@ import Discover from "./pages/Discover";
 import StoryViewer from "./pages/StoryViewer";
 import StoryCreation from "./pages/StoryCreation";
 import CreateGenre from "./pages/CreateGenre";
+import CreateStartingPoint from "./pages/CreateStartingPoint";
 import CreateCustomize from "./pages/CreateCustomize";
 import StoryDisplay from "./pages/StoryDisplay";
 import Beta from "./pages/Beta";
@@ -49,6 +50,7 @@ function App() {
                     
                     {/* Story Creation Flow */}
                     <Route path="/create/genre" element={<CreateGenre />} />
+                    <Route path="/create/starting-point" element={<CreateStartingPoint />} />
                     <Route path="/create/customize" element={<CreateCustomize />} />
                     <Route path="/story/:id" element={<StoryDisplay />} />
                     

@@ -34,16 +34,8 @@ const HomePage: React.FC = () => {
       storyMode 
     });
     
-    // Navigate to the story creation page with prompt and mode as URL params
-    const params = new URLSearchParams({
-      prompt: prompt.trim(),
-      mode: storyMode
-    });
-    
-    const targetUrl = `/create-story?${params.toString()}`;
-    console.log('HomePage: Navigating to:', targetUrl);
-    
-    navigate(targetUrl);
+    // Navigate to the new step-by-step story creation flow
+    navigate('/create/genre');
   };
 
   const handlePromptSelect = (selectedPrompt: string) => {

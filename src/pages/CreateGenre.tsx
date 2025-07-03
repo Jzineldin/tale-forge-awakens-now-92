@@ -93,7 +93,7 @@ const CreateGenre: React.FC = () => {
 
   const handleContinue = () => {
     if (selectedGenre) {
-      navigate(`/create/customize?genre=${selectedGenre}`);
+      navigate(`/create/starting-point?genre=${selectedGenre}`);
     }
   };
 
@@ -166,7 +166,7 @@ const CreateGenre: React.FC = () => {
             disabled={!selectedGenre}
             className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-8 py-3 text-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Continue to Customization
+            Choose Starting Point
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </div>

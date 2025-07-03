@@ -13,20 +13,25 @@ import { ArrowLeft, Sparkles, User } from 'lucide-react';
 const CreateCustomize: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [prompt, setPrompt] = useState('');
+  
+  const selectedGenre = searchParams.get('genre');
+  const initialPrompt = searchParams.get('prompt') || '';
+  
+  const [prompt, setPrompt] = useState(initialPrompt);
   const [characterName, setCharacterName] = useState('');
   const [storyLength, setStoryLength] = useState('standard');
   const [narrativeStyle, setNarrativeStyle] = useState('third');
   const [contentRating, setContentRating] = useState('family');
   const [visualStyle, setVisualStyle] = useState('realistic');
 
-  const selectedGenre = searchParams.get('genre');
-
   useEffect(() => {
     if (!selectedGenre) {
       navigate('/create/genre');
     }
-  }, [selectedGenre, navigate]);
+    if (initialPrompt) {
+      setPrompt(initialPrompt);
+    }
+  }, [selectedGenre, initialPrompt, navigate]);
 
   const handleStartJourney = () => {
     if (prompt.trim()) {
@@ -75,11 +80,11 @@ const CreateCustomize: React.FC = () => {
         <div className="text-center mb-12">
           <Button
             variant="ghost"
-            onClick={() => navigate('/create/genre')}
+            onClick={() => navigate('/create/starting-point?genre=' + selectedGenre)}
             className="absolute top-8 left-8 text-white hover:text-amber-400"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Genres
+            Back to Starting Point
           </Button>
           
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 font-serif">
