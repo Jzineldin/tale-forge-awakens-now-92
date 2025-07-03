@@ -71,16 +71,10 @@ const Footer: React.FC = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-white/10 pt-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex flex-wrap gap-4 text-sm text-gray-400">
-              <a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a>
-              <a href="/terms" className="hover:text-white transition-colors">Terms of Service</a>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-gray-400">
-              <span>© {currentYear} Tale Forge. Made with</span>
-              <Heart className="h-4 w-4 text-red-400 fill-red-400" />
-              <span>by storytellers, for storytellers.</span>
-            </div>
+          <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
+            <span>© {currentYear} Tale Forge. Made with</span>
+            <Heart className="h-4 w-4 text-red-400 fill-red-400" />
+            <span>by storytellers, for storytellers.</span>
           </div>
         </div>
       </div>
