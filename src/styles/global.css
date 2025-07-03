@@ -83,3 +83,37 @@ h1, h2, h3, h4, h5, h6 {
     rgba(0, 0, 0, 0.95) 100%
   );
 }
+
+/* Footer Styling */
+.redesign-footer {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 3rem 0 2rem 0;
+  margin-top: 4rem;
+}
+
+.redesign-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 768px) {
+  .redesign-container {
+    padding: 0 2rem;
+  }
+}
+
+/* Ensure text is always visible */
+.text-white {
+  color: white !important;
+}
+
+.text-gray-400 {
+  color: rgb(156, 163, 175) !important;
+}
+
+.text-amber-400 {
+  color: rgb(251, 191, 36) !important;
+}

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BookOpen, Linkedin, Heart } from 'lucide-react';
+import { BookOpen, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Footer: React.FC = () => {
@@ -20,15 +20,6 @@ const Footer: React.FC = () => {
             <p className="text-gray-400 leading-relaxed max-w-md">
               Where every word weaves worlds, every choice crafts destiny, and every story becomes legend.
             </p>
-            <div className="flex gap-4">
-              <a href="https://www.linkedin.com/in/kevin-el-zarka-92bb5b260/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-amber-400 transition-colors">
-                <Linkedin className="h-5 w-5" />
-                <span className="redesign-sr-only">LinkedIn</span>
-              </a>
-            </div>
-            <div className="mt-4">
-              <p className="text-gray-400 text-sm">Support us: <span className="text-amber-400">@zinfinityhs</span></p>
-            </div>
           </div>
 
           {/* Support Section - Right Side */}
@@ -40,7 +31,7 @@ const Footer: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-3">
               <Button
                 asChild
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-amber-500 hover:bg-amber-600 text-white"
               >
                 <a 
                   href="https://www.linkedin.com/in/kevin-el-zarka-92bb5b260/" 
@@ -48,8 +39,7 @@ const Footer: React.FC = () => {
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2"
                 >
-                  <Linkedin className="h-4 w-4" />
-                  Connect on LinkedIn
+                  Connect with Creator
                 </a>
               </Button>
               <Button
