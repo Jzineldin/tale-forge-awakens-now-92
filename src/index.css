@@ -1,6 +1,7 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap");
 
 /* Import modular design system files */
 @import "./styles/design-tokens.css";
@@ -45,9 +46,9 @@
     background: transparent !important;
   }
   
-  /* Typography enforcement - Standardized to 2 families */
+  /* Typography enforcement - BUT not for hero section title */
   h1:not(.tale-forge-title), h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif !important;
+    font-family: 'Cormorant Garamond', serif !important;
     font-weight: 600;
     color: white !important;
     line-height: 1.2;

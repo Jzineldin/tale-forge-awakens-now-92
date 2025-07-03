@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthProvider";
 import { StoryCreationProvider } from "@/context/StoryCreationContext";
-import { ThemeProvider } from "@/components/ThemeProvider";
 import Layout from "@/components/Layout";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -32,11 +31,10 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <TooltipProvider>
-          <AuthProvider>
-            <StoryCreationProvider>
-              <BrowserRouter>
+      <TooltipProvider>
+        <AuthProvider>
+          <StoryCreationProvider>
+            <BrowserRouter>
               <div className="min-h-screen relative">
                 {/* Apply the astronaut background */}
                 <div className="scene-bg"></div>
@@ -80,12 +78,11 @@ function App() {
                   </Routes>
                 </Layout>
               </div>
-                <Toaster />
-              </BrowserRouter>
-            </StoryCreationProvider>
-          </AuthProvider>
-        </TooltipProvider>
-      </ThemeProvider>
+              <Toaster />
+            </BrowserRouter>
+          </StoryCreationProvider>
+        </AuthProvider>
+      </TooltipProvider>
     </QueryClientProvider>
   );
 }

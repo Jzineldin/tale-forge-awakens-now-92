@@ -1,28 +1,27 @@
 
-/* Design System Variables - Light Professional Theme */
+/* Design System Variables */
 :root {
-  /* Brand Colors - Warm Professional Palette */
+  /* Brand Colors - Updated Palette */
   --brand-gold: #D4AF37;
   --brand-gold-dark: #B8860B;
   --brand-gold-light: #F5E6A3;
   
   /* Text Colors */
-  --text-light: #FFFFFF;
-  --text-dark: #1E293B;
-  --text-muted: #64748B;
-  --text-slate: #334155;
+  --text-light: #F8F9FA;
+  --text-muted: #9CA3AF;
+  --text-dark: #1F2937;
   
-  /* Background Colors - Light Theme */
-  --bg-primary: #FEFEFE;
-  --bg-secondary: #F8FAFC;
-  --bg-overlay: rgba(248,250,252,0.95);
-  --bg-card: rgba(255,255,255,0.9);
-  --bg-card-hover: rgba(255,255,255,1);
+  /* Background Colors */
+  --bg-primary: transparent;
+  --bg-secondary: #1E293B;
+  --bg-overlay: rgba(30,41,59,0.85);
+  --bg-card: rgba(248,249,250,0.05);
+  --bg-card-hover: rgba(248,249,250,0.1);
   
-  /* Accent Colors - Professional */
+  /* Accent Colors */
+  --accent-purple: #8B5CF6;
   --accent-emerald: #10B981;
-  --accent-teal: #14B8A6;
-  --accent-orange: #F97316;
+  --accent-rose: #F43F5E;
   
   /* Borders */
   --border-light: rgba(248,249,250,0.2);
@@ -47,26 +46,26 @@
   --radius-lg: 16px;
   --radius-xl: 24px;
   
-  /* shadcn variables - Light Professional Theme */
-  --background: 0 0% 99%; /* Light background */
-  --foreground: 220 13% 18%; /* Dark text */
-  --card: 0 0% 100%; /* White cards */
-  --card-foreground: 220 13% 18%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 220 13% 18%;
-  --primary: 45 84% 60%; /* Brand gold */
-  --primary-foreground: 0 0% 100%;
-  --secondary: 200 6% 90%; /* Light gray */
-  --secondary-foreground: 220 13% 18%;
-  --muted: 200 6% 95%; /* Very light gray */
-  --muted-foreground: 200 6% 45%;
-  --accent: 156 73% 55%; /* Emerald accent */
-  --accent-foreground: 0 0% 100%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 100%;
-  --border: 200 6% 85%; /* Light borders */
-  --input: 200 6% 85%;
-  --ring: 45 84% 60%;
+  /* shadcn variables - Override with our dark theme by default */
+  --background: 0 0% 0% / 0; /* Transparent background */
+  --foreground: 210 20% 98%; /* Updated foreground */
+  --card: 222 84% 5%; /* Dark card background */
+  --card-foreground: 210 20% 98%;
+  --popover: 222 84% 5%;
+  --popover-foreground: 210 20% 98%;
+  --primary: 45 93% 47%; /* Brand gold */
+  --primary-foreground: 220 9% 46%;
+  --secondary: 217 19% 27%;
+  --secondary-foreground: 210 20% 98%;
+  --muted: 217 19% 27%;
+  --muted-foreground: 215 20% 65%;
+  --accent: 217 19% 27%;
+  --accent-foreground: 210 20% 98%;
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 210 20% 98%;
+  --border: 217 19% 27%;
+  --input: 217 19% 27%;
+  --ring: 45 93% 47%;
   --chart-1: 12 76% 61%;
   --chart-2: 173 58% 39%;
   --chart-3: 197 37% 24%;
@@ -75,31 +74,9 @@
   --radius: 0.5rem;
 }
 
-/* Light mode - default professional theme */
+/* Force dark mode consistently */
 .light {
-  --background: 0 0% 99%;
-  --foreground: 220 13% 18%;
-  --card: 0 0% 100%;
-  --card-foreground: 220 13% 18%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 220 13% 18%;
-  --primary: 45 84% 60%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 200 6% 90%;
-  --secondary-foreground: 220 13% 18%;
-  --muted: 200 6% 95%;
-  --muted-foreground: 200 6% 45%;
-  --accent: 156 73% 55%;
-  --accent-foreground: 0 0% 100%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 100%;
-  --border: 200 6% 85%;
-  --input: 200 6% 85%;
-  --ring: 45 84% 60%;
-}
-
-.dark {
-  --background: 222 84% 4%;
+  --background: 0 0% 0% / 0;
   --foreground: 210 20% 98%;
   --card: 222 84% 5%;
   --card-foreground: 210 20% 98%;
@@ -111,7 +88,29 @@
   --secondary-foreground: 210 20% 98%;
   --muted: 217 19% 27%;
   --muted-foreground: 215 20% 65%;
-  --accent: 156 73% 55%;
+  --accent: 217 19% 27%;
+  --accent-foreground: 210 20% 98%;
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 210 20% 98%;
+  --border: 217 19% 27%;
+  --input: 217 19% 27%;
+  --ring: 45 93% 47%;
+}
+
+.dark {
+  --background: 0 0% 0% / 0;
+  --foreground: 210 20% 98%;
+  --card: 222 84% 5%;
+  --card-foreground: 210 20% 98%;
+  --popover: 222 84% 5%;
+  --popover-foreground: 210 20% 98%;
+  --primary: 45 93% 47%;
+  --primary-foreground: 220 9% 46%;
+  --secondary: 217 19% 27%;
+  --secondary-foreground: 210 20% 98%;
+  --muted: 217 19% 27%;
+  --muted-foreground: 215 20% 65%;
+  --accent: 217 19% 27%;
   --accent-foreground: 210 20% 98%;
   --destructive: 0 62% 30%;
   --destructive-foreground: 210 20% 98%;
@@ -121,6 +120,6 @@
   --chart-1: 220 70% 50%;
   --chart-2: 160 60% 45%;
   --chart-3: 30 80% 55%;
-  --chart-4: 156 73% 55%;
-  --chart-5: 45 93% 47%;
+  --chart-4: 280 65% 60%;
+  --chart-5: 340 75% 55%;
 }

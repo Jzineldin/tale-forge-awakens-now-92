@@ -6,7 +6,6 @@ import { Home, Clock, PenTool } from 'lucide-react';
 import UserMenu from '@/components/auth/UserMenu';
 import AuthButtons from '@/components/auth/AuthButtons';
 import ChangelogModal from './ChangelogModal';
-import { ThemeToggle } from './ThemeToggle';
 
 const Header = () => {
   const { user } = useAuth();
@@ -28,16 +27,13 @@ const Header = () => {
           {/* Logo/Brand */}
           <Link 
             to="/" 
-            className="text-2xl font-bold text-white hover:text-amber-400 transition-colors cursor-pointer"
+            className="text-2xl font-bold text-white hover:text-purple-400 transition-colors cursor-pointer"
           >
             TaleForge
           </Link>
 
           {/* Navigation & Actions */}
           <div className="flex items-center gap-4">
-            {/* Theme Toggle */}
-            <ThemeToggle />
-            
             {/* What's New Button */}
             <ChangelogModal />
             
@@ -49,7 +45,7 @@ const Header = () => {
                     to="/" 
                     className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
                       isActive('/') 
-                        ? 'bg-amber-600 text-white'
+                        ? 'bg-purple-600 text-white' 
                         : 'text-slate-300 hover:text-white hover:bg-slate-800'
                     }`}
                   >
@@ -57,7 +53,7 @@ const Header = () => {
                     Home
                   </Link>
                   {isCreateStoryActive() && (
-                    <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-amber-600 text-white">
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-purple-600 text-white">
                       <PenTool className="h-4 w-4" />
                       Creating Story
                     </div>
@@ -66,7 +62,7 @@ const Header = () => {
                     to="/my-stories" 
                     className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
                       isActive('/my-stories') 
-                        ? 'bg-amber-600 text-white'
+                        ? 'bg-purple-600 text-white' 
                         : 'text-slate-300 hover:text-white hover:bg-slate-800'
                     }`}
                   >
@@ -86,7 +82,7 @@ const Header = () => {
                     to="/" 
                     className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
                       isActive('/') 
-                        ? 'bg-amber-600 text-white'
+                        ? 'bg-purple-600 text-white' 
                         : 'text-slate-300 hover:text-white hover:bg-slate-800'
                     }`}
                   >
@@ -94,7 +90,7 @@ const Header = () => {
                     Home
                   </Link>
                   {isCreateStoryActive() && (
-                    <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-amber-600 text-white">
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-purple-600 text-white">
                       <PenTool className="h-4 w-4" />
                       Creating Story
                     </div>
@@ -103,7 +99,7 @@ const Header = () => {
                     to="/my-stories" 
                     className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
                       isActive('/my-stories') 
-                        ? 'bg-amber-600 text-white' 
+                        ? 'bg-purple-600 text-white' 
                         : 'text-slate-300 hover:text-white hover:bg-slate-800'
                     }`}
                     title="View your temporary stories (saved locally)"
