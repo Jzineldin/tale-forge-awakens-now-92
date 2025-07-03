@@ -24,10 +24,10 @@ const SplitScreenOverlay: React.FC<SplitScreenOverlayProps> = ({
       </div>
 
       {/* Split Screen Container */}
-      <div className="flex h-screen">
+      <div className="flex flex-col md:flex-row h-screen">
         {/* Creative Studio - Left Side */}
         <div 
-          className="flex-1 relative cursor-pointer group transition-all duration-500 hover:flex-[1.1]"
+          className="flex-1 relative cursor-pointer group transition-all duration-500 hover:flex-[1.1] min-h-[50vh] md:min-h-full"
           onClick={() => navigate('/adventure')}
           style={{
             backgroundImage: creativeStudioImage ? `url(${creativeStudioImage})` : undefined,
@@ -79,7 +79,7 @@ const SplitScreenOverlay: React.FC<SplitScreenOverlayProps> = ({
 
         {/* Learning Lab - Right Side */}
         <div 
-          className="flex-1 relative cursor-pointer group transition-all duration-500 hover:flex-[1.1]"
+          className="flex-1 relative cursor-pointer group transition-all duration-500 hover:flex-[1.1] min-h-[50vh] md:min-h-full"
           onClick={() => navigate('/learning')}
           style={{
             backgroundImage: learningLabImage ? `url(${learningLabImage})` : undefined,
@@ -124,18 +124,6 @@ const SplitScreenOverlay: React.FC<SplitScreenOverlayProps> = ({
           </div>
         </div>
       </div>
-
-      {/* Mobile Responsive: Stack vertically on small screens */}
-      <style jsx>{`
-        @media (max-width: 768px) {
-          .flex {
-            flex-direction: column;
-          }
-          .flex-1 {
-            min-height: 50vh;
-          }
-        }
-      `}</style>
     </div>
   );
 };
