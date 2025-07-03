@@ -9,6 +9,8 @@ import StoryPrompts from './home/StoryPrompts';
 import AboutSection from './home/AboutSection';
 import HowItWorks from './home/HowItWorks';
 import GenreShowcase from './home/GenreShowcase';
+import ExampleStories from './home/ExampleStories';
+import SafetyInfo from './home/SafetyInfo';
 import ComingSoon from './home/ComingSoon';
 import Footer from './home/Footer';
 
@@ -59,8 +61,11 @@ const HomePage: React.FC = () => {
       {/* How It Works */}
       <HowItWorks />
 
+      {/* Example Stories - NEW */}
+      <ExampleStories />
+
       {/* Genre Selection - Reduced top padding */}
-      <section className="py-8 px-4">
+      <section className="py-8 px-4" id="genres">
         <GenreShowcase
           selectedMode={storyMode}
           onSelectMode={setStoryMode}
@@ -86,6 +91,9 @@ const HomePage: React.FC = () => {
           />
         </div>
       </section>
+
+      {/* Safety & Educational Info - NEW */}
+      <SafetyInfo />
 
       {/* Coming Soon - Reduced top padding */}
       <section className="py-8">

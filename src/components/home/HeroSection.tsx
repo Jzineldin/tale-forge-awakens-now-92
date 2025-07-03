@@ -36,23 +36,34 @@ export const HeroSection: React.FC = () => {
             </div>
           </div>
 
-          {/* Subtitle - Fixed styling */}
+          {/* Improved subtitle messaging */}
           <div className="space-y-8">
-            <p className="text-2xl md:text-3xl lg:text-4xl text-white/90 max-w-4xl mx-auto leading-relaxed">
-              What if your next adventure began with just{' '}
-              <span className="font-cursive font-bold text-amber-300 whitespace-nowrap" style={{fontStyle: 'italic'}}>
-                one sentence
-              </span>?
-            </p>
+            <div className="space-y-4">
+              <p className="text-2xl md:text-3xl lg:text-4xl text-white/90 max-w-4xl mx-auto leading-relaxed">
+                Turn any idea into an{' '}
+                <span className="font-cursive font-bold text-amber-300 whitespace-nowrap" style={{fontStyle: 'italic'}}>
+                  interactive story
+                </span>
+              </p>
+              <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-sans">
+                Write a simple prompt and watch it become a branching adventure where 
+                <strong className="text-amber-200"> every choice matters</strong>
+              </p>
+            </div>
             
-            {/* Primary CTA - Focused on waitlist and immediate story creation */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <a href="#create-story" className="cta-btn px-8 py-3 text-white font-semibold rounded-lg">
-                Start Your Story Now
-              </a>
-              <a href="#genres" className="px-8 py-3 border-2 border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-all duration-200">
-                Explore Genres
-              </a>
+            {/* Enhanced CTA section */}
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="#create-story" className="cta-btn px-8 py-3 text-white font-semibold rounded-lg">
+                  Create Your Story Now
+                </a>
+                <a href="#examples" className="px-8 py-3 border-2 border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-all duration-200">
+                  See Examples
+                </a>
+              </div>
+              <p className="text-sm text-gray-400 font-sans">
+                ✨ No account required to start • Safe for all ages • 100% interactive
+              </p>
             </div>
           </div>
           
@@ -61,16 +72,16 @@ export const HeroSection: React.FC = () => {
             <AuthPrompt />
           </div>
           
-          {/* Quote glass card - properly centered */}
+          {/* Enhanced quote with better messaging */}
           <div className="w-full flex justify-center mt-16">
             <div className="quote-box max-w-4xl mx-auto">
               <div className="quote-content bg-black/30 backdrop-blur-sm rounded-xl border border-amber-200/30 p-8">
                 <p className="quote-text text-amber-100/95 font-cursive text-xl md:text-2xl lg:text-3xl leading-relaxed text-center">
-                  "Where every word weaves worlds, every choice crafts destiny, 
-                  and every story becomes legend..."
+                  "Every great story begins with a single sentence. 
+                  What will yours become?"
                 </p>
                 <div className="quote-attribution text-amber-200/80 text-center mt-6 text-lg">
-                  — The Tale Forge Chronicles
+                  — Start your adventure today
                 </div>
               </div>
             </div>
