@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -123,7 +124,7 @@ const CreatePrompt: React.FC = () => {
           <Button
             variant="ghost"
             onClick={() => navigate('/')}
-            className="absolute top-8 left-24 text-white hover:text-amber-400 flex items-center gap-2"
+            className="absolute top-8 left-32 text-white hover:text-amber-400 flex items-center gap-2"
           >
             <Home className="h-4 w-4" />
             Home
