@@ -2,11 +2,11 @@
 import React from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { HeroSection } from './home/HeroSection';
-import { CurrentFeatures } from './home/CurrentFeatures';
-import { ComingSoon } from './home/ComingSoon';
-import { HowItWorks } from './home/HowItWorks';
-import { SafetyInfo } from './home/SafetyInfo';
-import { SocialProof } from './home/SocialProof';
+import CurrentFeatures from './home/CurrentFeatures';
+import ComingSoon from './home/ComingSoon';
+import HowItWorks from './home/HowItWorks';
+import SafetyInfo from './home/SafetyInfo';
+import SocialProof from './home/SocialProof';
 import Footer from './home/Footer';
 import { Zap, Image, Headphones } from 'lucide-react';
 
