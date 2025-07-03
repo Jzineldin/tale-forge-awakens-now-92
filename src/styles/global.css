@@ -23,13 +23,22 @@ body, #root {
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&display=swap');
 
-/* Font utility classes */
-.font-heading {
-  font-family: 'Playfair Display', serif;
+/* Font utility classes - STRICTLY ENFORCE APPROVED FONTS */
+.font-heading, .font-serif {
+  font-family: 'Playfair Display', serif !important;
 }
 
-.font-body {
-  font-family: 'Inter', sans-serif;
+.font-body, .font-sans {
+  font-family: 'Inter', sans-serif !important;
+}
+
+/* Remove all other font families */
+* {
+  font-family: 'Inter', sans-serif !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif !important;
 }
 
 /* Magical effects - using amber instead of purple */

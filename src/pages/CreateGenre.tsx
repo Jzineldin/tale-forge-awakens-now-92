@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
 import { 
   Baby, 
   Ghost, 
@@ -158,7 +158,6 @@ const CreateGenre: React.FC = () => {
                 alt={genre.title}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                 onError={(e) => {
-                  // Fallback to gradient if image fails to load
                   e.currentTarget.style.display = 'none';
                 }}
               />
@@ -169,11 +168,6 @@ const CreateGenre: React.FC = () => {
               {/* Dark overlay for text readability */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
 
-              {/* Icon badge */}
-              <div className="absolute top-4 right-4 p-3 bg-black/70 backdrop-blur-md rounded-full border border-white/20 z-10">
-                <genre.icon className="h-5 w-5 text-amber-400" />
-              </div>
-              
               {/* Content */}
               <div className="absolute bottom-0 left-0 right-0 p-6 text-left z-10">
                 <CardTitle className="text-white text-lg font-serif mb-2 drop-shadow-lg">

@@ -3,6 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import WaitlistSignup from '@/components/WaitlistSignup';
 
 export const HeroSection: React.FC = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ export const HeroSection: React.FC = () => {
         <div className="text-center mb-8 space-y-12 min-h-[85vh] flex flex-col justify-center">
           {/* Tale Forge title */}
           <div className="relative">
-            <h1 className="tale-forge-title text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold font-serif text-white mb-8 leading-tight relative">
+            <h1 className="tale-forge-title text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold font-serif text-white mb-8 leading-normal relative">
               Tale Forge
               <div className="tale-forge-glow absolute inset-0 tale-forge-title -z-10">
                 Tale Forge
@@ -35,7 +36,7 @@ export const HeroSection: React.FC = () => {
             </p>
             
             {/* Single Primary CTA */}
-            <div className="space-y-4">
+            <div className="space-y-6">
               <Button
                 onClick={handleCreateStory}
                 className="cta-btn px-12 py-4 text-xl text-white font-semibold rounded-lg bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 transition-all duration-200"
@@ -43,6 +44,11 @@ export const HeroSection: React.FC = () => {
                 <Sparkles className="mr-2 h-5 w-5" />
                 Create Your Story Now
               </Button>
+              
+              {/* Waitlist signup */}
+              <div className="max-w-md mx-auto">
+                <WaitlistSignup />
+              </div>
             </div>
           </div>
         </div>

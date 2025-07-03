@@ -5,7 +5,7 @@ h1.tale-forge-title {
   font-family: 'Playfair Display', serif !important;
   font-weight: 700 !important;
   letter-spacing: -0.02em !important;
-  line-height: 0.85 !important;
+  line-height: 1.1 !important; /* Increased from 0.85 to prevent clipping */
   text-rendering: optimizeLegibility !important;
   -webkit-font-smoothing: antialiased !important;
   background: linear-gradient(135deg, 
@@ -22,6 +22,7 @@ h1.tale-forge-title {
   color: transparent !important;
   animation: gentle-breathe 4s ease-in-out infinite !important;
   filter: drop-shadow(0 2px 4px rgba(255, 215, 0, 0.15)) !important;
+  padding-bottom: 0.1em !important; /* Add padding to prevent descender clipping */
 }
 
 .tale-forge-glow {
@@ -52,35 +53,39 @@ h1.tale-forge-title {
 @media (max-width: 640px) {
   .hero-section .tale-forge-title,
   h1.tale-forge-title {
-    font-size: 3rem !important; /* Increased from 2rem */
-    line-height: 0.9 !important;
+    font-size: 3rem !important;
+    line-height: 1.2 !important;
   }
 }
 
 @media (min-width: 641px) and (max-width: 768px) {
   .hero-section .tale-forge-title,
   h1.tale-forge-title {
-    font-size: 4rem !important; /* Increased from 2.5rem */
+    font-size: 4rem !important;
+    line-height: 1.15 !important;
   }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
   .hero-section .tale-forge-title,
   h1.tale-forge-title {
-    font-size: 5rem !important; /* Increased from 3rem */
+    font-size: 5rem !important;
+    line-height: 1.1 !important;
   }
 }
 
 @media (min-width: 1025px) and (max-width: 1280px) {
   .hero-section .tale-forge-title,
   h1.tale-forge-title {
-    font-size: 6rem !important; /* Increased from 3.5rem */
+    font-size: 6rem !important;
+    line-height: 1.1 !important;
   }
 }
 
 @media (min-width: 1281px) {
   .hero-section .tale-forge-title,
   h1.tale-forge-title {
-    font-size: 7rem !important; /* Increased from 4rem */
+    font-size: 7rem !important;
+    line-height: 1.1 !important;
   }
 }
