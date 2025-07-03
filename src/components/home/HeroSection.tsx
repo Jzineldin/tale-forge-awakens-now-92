@@ -1,9 +1,17 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Stars, Feather, BookOpen, Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import AuthPrompt from './AuthPrompt';
 
 export const HeroSection: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleCreateStory = () => {
+    navigate('/create/genre');
+  };
+
   return (
     <div className="relative min-h-[90vh] hero-section">
       <div className="relative z-10 container mx-auto px-4 py-8 max-w-7xl">
@@ -51,28 +59,27 @@ export const HeroSection: React.FC = () => {
               </p>
             </div>
             
-            {/* Enhanced CTA section */}
+            {/* Main CTA - Single focused button */}
             <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <a href="#create-story" className="cta-btn px-8 py-3 text-white font-semibold rounded-lg">
-                  Create Your Story Now
-                </a>
-                <a href="#examples" className="px-8 py-3 border-2 border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-all duration-200">
-                  See Examples
-                </a>
-              </div>
+              <Button
+                onClick={handleCreateStory}
+                className="cta-btn px-12 py-4 text-xl text-white font-semibold rounded-lg bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 transition-all duration-200"
+              >
+                <Sparkles className="mr-2 h-5 w-5" />
+                Create Your Story Now
+              </Button>
               <p className="text-sm text-gray-400 font-sans">
                 ✨ No account required to start • Safe for all ages • 100% interactive
               </p>
             </div>
           </div>
           
-          {/* Auth/Waitlist cards - now focused on waitlist */}
+          {/* Auth/Waitlist cards */}
           <div className="w-full max-w-6xl mx-auto">
             <AuthPrompt />
           </div>
           
-          {/* Enhanced quote with better messaging */}
+          {/* Enhanced quote */}
           <div className="w-full flex justify-center mt-16">
             <div className="quote-box max-w-4xl mx-auto">
               <div className="quote-content bg-black/30 backdrop-blur-sm rounded-xl border border-amber-200/30 p-8">
@@ -87,7 +94,7 @@ export const HeroSection: React.FC = () => {
             </div>
           </div>
           
-          {/* Decorative three-dot row - centered below quote */}
+          {/* Decorative three-dot row */}
           <div className="flex justify-center space-x-12 mt-12">
             <div className="flex flex-col items-center space-y-2">
               <div className="w-2 h-2 bg-gradient-to-r from-amber-300/70 to-yellow-300/70 rounded-full animate-pulse drop-shadow-lg" />

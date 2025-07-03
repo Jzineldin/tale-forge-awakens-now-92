@@ -1,49 +1,15 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
 import { HeroSection } from './home/HeroSection';
-import SimpleStoryInput from './home/SimpleStoryInput';
-import StoryPrompts from './home/StoryPrompts';
 import AboutSection from './home/AboutSection';
-import HowItWorks from './home/HowItWorks';
-import GenreShowcase from './home/GenreShowcase';
-import ExampleStories from './home/ExampleStories';
 import SafetyInfo from './home/SafetyInfo';
-import ComingSoon from './home/ComingSoon';
 import Footer from './home/Footer';
 
 const HomePage: React.FC = () => {
-  const [prompt, setPrompt] = useState('');
-  const [storyMode, setStoryMode] = useState('Epic Fantasy');
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
   const navigate = useNavigate();
-
-  const handleStart = async () => {
-    if (!prompt.trim()) {
-      toast.error("Please enter a story prompt");
-      return;
-    }
-    
-    if (!storyMode) {
-      toast.error("Please select a story mode");
-      return;
-    }
-    
-    console.log('HomePage: Starting story creation with:', { 
-      prompt: prompt.trim(), 
-      storyMode 
-    });
-    
-    // Navigate to the new step-by-step story creation flow
-    navigate('/create/genre');
-  };
-
-  const handlePromptSelect = (selectedPrompt: string) => {
-    console.log('HomePage: Prompt selected:', selectedPrompt);
-    setPrompt(selectedPrompt);
-  };
 
   if (loading) {
     return (
@@ -55,50 +21,51 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen w-full relative">
-      {/* Hero Section - Now includes auth cards and quote */}
+      {/* Hero Section - Now includes main CTA */}
       <HeroSection />
 
-      {/* How It Works */}
-      <HowItWorks />
+      {/* Consolidated Features Section - Replaces How It Works and Coming Soon */}
+      <section className="py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 font-serif">
+              Features
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Experience interactive storytelling like never before
+            </p>
+          </div>
 
-      {/* Example Stories - NEW */}
-      <ExampleStories />
-
-      {/* Genre Selection - Reduced top padding */}
-      <section className="py-8 px-4" id="genres">
-        <GenreShowcase
-          selectedMode={storyMode}
-          onSelectMode={setStoryMode}
-          disabled={false}
-        />
-      </section>
-
-      {/* Story Creation - Reduced spacing */}
-      <section className="py-6 px-4" id="create-story">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <SimpleStoryInput
-            prompt={prompt}
-            onPromptChange={setPrompt}
-            onStart={handleStart}
-            isLoading={false}
-            storyMode={storyMode}
-          />
-          
-          <StoryPrompts
-            storyMode={storyMode}
-            onPromptSelect={handlePromptSelect}
-            isLoading={false}
-          />
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 mx-auto bg-gradient-to-r from-amber-500 to-orange-400 rounded-full flex items-center justify-center">
+                <span className="text-2xl">🎯</span>
+              </div>
+              <h3 className="text-xl font-bold text-white font-serif">Choose Your Path</h3>
+              <p className="text-gray-300">Every choice you make shapes your unique story adventure</p>
+            </div>
+            
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 mx-auto bg-gradient-to-r from-amber-500 to-orange-400 rounded-full flex items-center justify-center">
+                <span className="text-2xl">🎨</span>
+              </div>
+              <h3 className="text-xl font-bold text-white font-serif">AI-Generated Content</h3>
+              <p className="text-gray-300">Stories, images, and audio created just for you</p>
+            </div>
+            
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 mx-auto bg-gradient-to-r from-amber-500 to-orange-400 rounded-full flex items-center justify-center">
+                <span className="text-2xl">📱</span>
+              </div>
+              <h3 className="text-xl font-bold text-white font-serif">Mobile Friendly</h3>
+              <p className="text-gray-300">Enjoy your adventures anywhere, anytime</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Safety & Educational Info - NEW */}
+      {/* Safety & Educational Info */}
       <SafetyInfo />
-
-      {/* Coming Soon - Reduced top padding */}
-      <section className="py-8">
-        <ComingSoon />
-      </section>
 
       {/* About */}
       <AboutSection />
