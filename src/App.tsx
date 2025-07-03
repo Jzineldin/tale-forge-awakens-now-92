@@ -6,6 +6,8 @@ import { AuthProvider } from "@/context/AuthProvider";
 import { StoryCreationProvider } from "@/context/StoryCreationContext";
 import Layout from "@/components/Layout";
 import Index from "./pages/Index";
+import Adventure from "./pages/Adventure";
+import Learning from "./pages/Learning";
 import Auth from "./pages/Auth";
 import SignIn from "./pages/auth/SignIn";
 import SignUp from "./pages/auth/SignUp";
@@ -41,6 +43,8 @@ function App() {
                 <Layout>
                   <Routes>
                     <Route path="/" element={<Index />} />
+                    <Route path="/adventure" element={<Adventure />} />
+                    <Route path="/learning" element={<Learning />} />
                     
                     {/* Authentication Routes */}
                     <Route path="/auth" element={<Auth />} />

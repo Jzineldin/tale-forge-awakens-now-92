@@ -1,13 +1,13 @@
 
 import React from 'react';
-import HomePage from '@/components/HomePage';
+import RouteSelector from '@/components/home/RouteSelector';
 
 const Index = () => {
-  console.log('Index component: Rendering landing page only');
+  console.log('Index component: Rendering route selector overlay');
 
   return (
     <div className="relative h-screen w-full bg-transparent">
-      <HomePage />
+      <RouteSelector />
     </div>
   );
 };
