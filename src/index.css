@@ -16,6 +16,9 @@
 /* Import new responsive genre styles */
 @import "./styles/genre-responsive.css";
 
+/* Import split landing page styles */
+@import "./styles/split-landing.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

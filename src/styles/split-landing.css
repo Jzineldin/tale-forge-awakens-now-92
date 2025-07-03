@@ -1,0 +1,62 @@
+
+/* Split Landing Page Styles */
+.split-landing-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.split-section {
+  flex: 1;
+  position: relative;
+  transition: all 0.5s ease;
+  cursor: pointer;
+}
+
+.split-section:hover {
+  flex: 1.1;
+}
+
+.split-section:not(:hover) ~ .split-section {
+  flex: 0.9;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .split-landing-container {
+    flex-direction: column;
+  }
+  
+  .split-section {
+    min-height: 50vh;
+    flex: none;
+  }
+  
+  .split-section:hover {
+    flex: none;
+    transform: scale(1.02);
+  }
+  
+  .tale-forge-title {
+    font-size: 3rem !important;
+  }
+  
+  .split-section h2 {
+    font-size: 1.5rem !important;
+  }
+  
+  .split-section p {
+    font-size: 1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .split-section {
+    min-height: 60vh;
+    padding: 1rem;
+  }
+  
+  .tale-forge-title {
+    font-size: 2.5rem !important;
+  }
+}

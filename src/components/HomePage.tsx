@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useAuth } from '@/context/AuthProvider';
-import { HeroSection } from './home/HeroSection';
+import { SplitLandingPage } from './home/SplitLandingPage';
 import Footer from './home/Footer';
 import { Zap, Image, Headphones } from 'lucide-react';
 
@@ -18,11 +18,11 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen w-full relative">
-      {/* Hero Section - Single focused CTA with waitlist */}
-      <HeroSection />
+      {/* Split Landing Page */}
+      <SplitLandingPage />
 
       {/* Features Section - "A Universe of Possibilities" */}
-      <section className="py-16 px-4">
+      <section className="py-16 px-4 bg-slate-900/90">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 font-serif magical-text">
@@ -58,8 +58,8 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* About Section - "Our Quest" - Clean without dark overlay */}
-      <section className="py-16 px-4">
+      {/* About Section - "Our Quest" */}
+      <section className="py-16 px-4 bg-slate-900/90">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-8 font-serif magical-text">
             Our Quest
