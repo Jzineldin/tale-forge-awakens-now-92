@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardDescription, CardTitle } from '@/components/ui/card';
 
 interface Genre {
@@ -18,6 +18,18 @@ interface GenreCardProps {
 }
 
 const GenreCard: React.FC<GenreCardProps> = ({ genre, isSelected, onSelect }) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+    setImageLoaded(true);
+  };
+
   return (
     <Card
       className={`
@@ -32,17 +44,31 @@ const GenreCard: React.FC<GenreCardProps> = ({ genre, isSelected, onSelect }) =>
       onClick={() => onSelect(genre.id)}
     >
       {/* Background Image */}
-      <img
-        src={genre.image}
-        alt={genre.title}
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-        onError={(e) => {
-          e.currentTarget.style.display = 'none';
-        }}
-      />
+      {!imageError && (
+        <img
+          src={genre.image}
+          alt={genre.title}
+          className={`
+            absolute inset-0 w-full h-full object-cover transition-all duration-700
+            ${imageLoaded ? 'opacity-100' : 'opacity-0'}
+            group-hover:scale-110
+          `}
+          onLoad={handleImageLoad}
+          onError={handleImageError}
+        />
+      )}
+      
+      {/* Loading state */}
+      {!imageLoaded && !imageError && (
+        <div className="absolute inset-0 bg-gray-800 animate-pulse flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
       
       {/* Fallback gradient background */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${genre.gradient}`} />
+      {imageError && (
+        <div className={`absolute inset-0 bg-gradient-to-br ${genre.gradient}`} />
+      )}
       
       {/* Dark overlay for text readability */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/20 to-black/90" />

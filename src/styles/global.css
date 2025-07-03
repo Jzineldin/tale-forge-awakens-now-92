@@ -105,15 +105,39 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Ensure text is always visible */
+/* Ensure text is always visible with proper contrast */
 .text-white {
   color: white !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
 .text-gray-400 {
   color: rgb(156, 163, 175) !important;
 }
 
+.text-gray-300 {
+  color: rgb(209, 213, 219) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
 .text-amber-400 {
   color: rgb(251, 191, 36) !important;
+}
+
+.text-amber-300 {
+  color: rgb(252, 211, 77) !important;
+}
+
+/* Remove any conflicting dark overlays that cause readability issues */
+section {
+  position: relative;
+}
+
+/* Ensure proper spacing and typography hierarchy */
+p {
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.2;
 }
