@@ -7,14 +7,11 @@ import { HeroSection } from './home/HeroSection';
 import SimpleStoryInput from './home/SimpleStoryInput';
 import StoryPrompts from './home/StoryPrompts';
 import AboutSection from './home/AboutSection';
-import HowItWorks from './home/HowItWorks';
-import GenreShowcase from './home/GenreShowcase';
-import ComingSoon from './home/ComingSoon';
+import FeatureShowcase from './home/FeatureShowcase';
 import Footer from './home/Footer';
 
 const HomePage: React.FC = () => {
   const [prompt, setPrompt] = useState('');
-  const [storyMode, setStoryMode] = useState('Epic Fantasy');
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -24,14 +21,8 @@ const HomePage: React.FC = () => {
       return;
     }
     
-    if (!storyMode) {
-      toast.error("Please select a story mode");
-      return;
-    }
-    
     console.log('HomePage: Starting story creation with:', { 
-      prompt: prompt.trim(), 
-      storyMode 
+      prompt: prompt.trim()
     });
     
     // Navigate to the new step-by-step story creation flow
@@ -56,40 +47,35 @@ const HomePage: React.FC = () => {
       {/* Hero Section - Now includes auth cards and quote */}
       <HeroSection />
 
-      {/* How It Works */}
-      <HowItWorks />
+      {/* Feature Showcase & How It Works */}
+      <FeatureShowcase />
 
-      {/* Genre Selection - Reduced top padding */}
-      <section className="py-8 px-4">
-        <GenreShowcase
-          selectedMode={storyMode}
-          onSelectMode={setStoryMode}
-          disabled={false}
-        />
-      </section>
-
-      {/* Story Creation - Reduced spacing */}
-      <section className="py-6 px-4" id="create-story">
+      {/* Story Creation - Simplified */}
+      <section className="py-12 px-4" id="create-story">
         <div className="max-w-4xl mx-auto space-y-8">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-slate-800 mb-4">
+              Start Your Story Adventure
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Begin with a simple idea and watch it transform into an interactive narrative
+            </p>
+          </div>
+          
           <SimpleStoryInput
             prompt={prompt}
             onPromptChange={setPrompt}
             onStart={handleStart}
             isLoading={false}
-            storyMode={storyMode}
+            storyMode="Epic Fantasy"
           />
           
           <StoryPrompts
-            storyMode={storyMode}
+            storyMode="Epic Fantasy"
             onPromptSelect={handlePromptSelect}
             isLoading={false}
           />
         </div>
-      </section>
-
-      {/* Coming Soon - Reduced top padding */}
-      <section className="py-8">
-        <ComingSoon />
       </section>
 
       {/* About */}
