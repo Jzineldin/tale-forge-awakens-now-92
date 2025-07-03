@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthProvider";
 import { StoryCreationProvider } from "@/context/StoryCreationContext";
+import { RouteSelector } from "@/components/home/RouteSelector";
 import Layout from "@/components/Layout";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -40,7 +41,13 @@ function App() {
                 <div className="scene-bg"></div>
                 <Layout>
                   <Routes>
-                    <Route path="/" element={<Index />} />
+                    <Route path="/" element={
+                      <div className="min-h-screen w-full relative">
+                        <div className="scene-bg"></div>
+                        <RouteSelector />
+                      </div>
+                    } />
+                    <Route path="/adventure" element={<Index />} />
                     
                     {/* Authentication Routes */}
                     <Route path="/auth" element={<Auth />} />

@@ -1,7 +1,12 @@
 
 import React from 'react';
 import { useAuth } from '@/context/AuthProvider';
-import { SplitLandingPage } from './home/SplitLandingPage';
+import { HeroSection } from './home/HeroSection';
+import { CurrentFeatures } from './home/CurrentFeatures';
+import { ComingSoon } from './home/ComingSoon';
+import { HowItWorks } from './home/HowItWorks';
+import { SafetyInfo } from './home/SafetyInfo';
+import { SocialProof } from './home/SocialProof';
 import Footer from './home/Footer';
 import { Zap, Image, Headphones } from 'lucide-react';
 
@@ -18,8 +23,8 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen w-full relative">
-      {/* Split Landing Page */}
-      <SplitLandingPage />
+      {/* Hero Section */}
+      <HeroSection />
 
       {/* Features Section - "A Universe of Possibilities" */}
       <section className="py-16 px-4 bg-slate-900/90">
@@ -58,18 +63,20 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* About Section - "Our Quest" */}
-      <section className="py-16 px-4 bg-slate-900/90">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-8 font-serif magical-text">
-            Our Quest
-          </h2>
-          <p className="text-xl text-gray-300 leading-relaxed font-sans">
-            We empower creativity and education through interactive storytelling, 
-            making every choice an opportunity for discovery and growth.
-          </p>
-        </div>
-      </section>
+      {/* Current Features */}
+      <CurrentFeatures />
+
+      {/* How It Works */}
+      <HowItWorks />
+
+      {/* Coming Soon */}
+      <ComingSoon />
+
+      {/* Social Proof */}
+      <SocialProof />
+
+      {/* Safety Info */}
+      <SafetyInfo />
 
       {/* Footer */}
       <Footer />
