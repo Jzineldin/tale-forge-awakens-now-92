@@ -5,7 +5,7 @@ h1.tale-forge-title {
   font-family: 'Playfair Display', serif !important;
   font-weight: 700 !important;
   letter-spacing: -0.02em !important;
-  line-height: 1.1 !important;
+  line-height: 1.1 !important; /* Increased from 0.85 to prevent clipping */
   text-rendering: optimizeLegibility !important;
   -webkit-font-smoothing: antialiased !important;
   background: linear-gradient(135deg, 
@@ -20,62 +20,36 @@ h1.tale-forge-title {
   background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   color: transparent !important;
-  animation: gentle-breathe 4s ease-in-out infinite, magical-shimmer 6s ease-in-out infinite !important;
-  filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.4)) drop-shadow(0 2px 4px rgba(255, 215, 0, 0.6)) !important;
-  padding-bottom: 0.1em !important;
-  position: relative !important;
+  animation: gentle-breathe 4s ease-in-out infinite !important;
+  filter: drop-shadow(0 2px 4px rgba(255, 215, 0, 0.15)) !important;
+  padding-bottom: 0.1em !important; /* Add padding to prevent descender clipping */
 }
 
 .tale-forge-glow {
   animation: breathe-glow 6s ease-in-out infinite;
-  background: linear-gradient(135deg, 
-    #FFE55C 0%, 
-    #FFD700 20%, 
-    #FFA500 40%, 
-    #FFD700 60%, 
-    #FFED4E 80%, 
-    #FFE55C 100%) !important;
-  background-size: 200% 200% !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  filter: blur(4px) !important;
 }
 
 @keyframes breathe-glow {
   0%, 100% { 
     opacity: 0.03;
     transform: scale(1.05);
-    background-position: 0% 50%;
   }
   50% { 
     opacity: 0.08;
     transform: scale(1.1);
-    background-position: 100% 50%;
   }
 }
 
 @keyframes gentle-breathe {
   0%, 100% { 
     opacity: 0.95;
-    background-position: 0% 50%;
   }
   50% { 
     opacity: 1;
-    background-position: 100% 50%;
   }
 }
 
-@keyframes magical-shimmer {
-  0%, 100% { 
-    background-position: 0% 50%;
-  }
-  50% { 
-    background-position: 100% 50%;
-  }
-}
-
-/* Responsive title sizing */
+/* Responsive title sizing - INCREASED SIZES */
 @media (max-width: 640px) {
   .hero-section .tale-forge-title,
   h1.tale-forge-title {
@@ -114,21 +88,4 @@ h1.tale-forge-title {
     font-size: 7rem !important;
     line-height: 1.1 !important;
   }
-}
-
-/* Magical text effects for other elements */
-.magical-text {
-  background: linear-gradient(135deg, #FFD700, #FFA500, #FFE55C);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 4px rgba(255, 215, 0, 0.3));
-}
-
-.magical-glow-text {
-  color: #FFD700;
-  text-shadow: 
-    0 0 10px rgba(255, 215, 0, 0.5),
-    0 0 20px rgba(255, 215, 0, 0.3),
-    0 2px 4px rgba(0, 0, 0, 0.8);
 }
