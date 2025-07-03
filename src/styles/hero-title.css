@@ -21,11 +21,8 @@ h1.tale-forge-title {
   -webkit-text-fill-color: transparent !important;
   color: transparent !important;
   animation: gentle-breathe 4s ease-in-out infinite, shimmer 3s ease-in-out infinite !important;
-  /* Enhanced magical glow with multiple layered shadows */
-  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8))
-          drop-shadow(0 0 16px rgba(255, 215, 0, 0.6))
-          drop-shadow(0 0 24px rgba(255, 215, 0, 0.4))
-          drop-shadow(0 2px 4px rgba(255, 215, 0, 0.3)) !important;
+  /* Subtle magical glow - much more refined */
+  filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.4)) !important;
   padding-bottom: 0.1em !important;
 }
 
