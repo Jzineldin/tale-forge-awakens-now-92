@@ -12,7 +12,7 @@
 
 /* Ensure consistent background transparency */
 * {
-  color-scheme: dark;
+  color-scheme: light dark;
 }
 
 body, #root {
@@ -20,20 +20,21 @@ body, #root {
 }
 
 /* Import fonts */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&display=swap');
 
 /* Font utility classes */
 .font-heading {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Playfair Display', serif;
 }
 
 .font-body {
   font-family: 'Inter', sans-serif;
 }
 
-/* Magical effects */
+/* Magical effects - using amber instead of purple */
 .magical-glow {
-  box-shadow: 0 0 20px rgba(255, 200, 87, 0.15);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
 }
 
 /* Enhanced spacing and typography */

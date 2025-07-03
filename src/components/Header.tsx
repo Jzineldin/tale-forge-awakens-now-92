@@ -27,7 +27,7 @@ const Header = () => {
           {/* Logo/Brand */}
           <Link 
             to="/" 
-            className="text-2xl font-bold text-white hover:text-purple-400 transition-colors cursor-pointer"
+            className="text-2xl font-bold text-white hover:text-primary transition-colors cursor-pointer font-heading"
           >
             TaleForge
           </Link>
@@ -45,7 +45,7 @@ const Header = () => {
                     to="/" 
                     className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
                       isActive('/') 
-                        ? 'bg-purple-600 text-white' 
+                        ? 'bg-primary text-primary-foreground' 
                         : 'text-slate-300 hover:text-white hover:bg-slate-800'
                     }`}
                   >
@@ -53,7 +53,7 @@ const Header = () => {
                     Home
                   </Link>
                   {isCreateStoryActive() && (
-                    <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-purple-600 text-white">
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-primary text-primary-foreground">
                       <PenTool className="h-4 w-4" />
                       Creating Story
                     </div>
@@ -62,7 +62,7 @@ const Header = () => {
                     to="/my-stories" 
                     className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
                       isActive('/my-stories') 
-                        ? 'bg-purple-600 text-white' 
+                        ? 'bg-primary text-primary-foreground' 
                         : 'text-slate-300 hover:text-white hover:bg-slate-800'
                     }`}
                   >
@@ -82,7 +82,7 @@ const Header = () => {
                     to="/" 
                     className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
                       isActive('/') 
-                        ? 'bg-purple-600 text-white' 
+                        ? 'bg-primary text-primary-foreground' 
                         : 'text-slate-300 hover:text-white hover:bg-slate-800'
                     }`}
                   >
@@ -90,7 +90,7 @@ const Header = () => {
                     Home
                   </Link>
                   {isCreateStoryActive() && (
-                    <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-purple-600 text-white">
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-primary text-primary-foreground">
                       <PenTool className="h-4 w-4" />
                       Creating Story
                     </div>
@@ -99,7 +99,7 @@ const Header = () => {
                     to="/my-stories" 
                     className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
                       isActive('/my-stories') 
-                        ? 'bg-purple-600 text-white' 
+                        ? 'bg-primary text-primary-foreground' 
                         : 'text-slate-300 hover:text-white hover:bg-slate-800'
                     }`}
                     title="View your temporary stories (saved locally)"
