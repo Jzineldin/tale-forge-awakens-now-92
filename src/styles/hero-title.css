@@ -1,0 +1,86 @@
+
+/* TALE FORGE TITLE STYLING */
+.hero-section .tale-forge-title,
+h1.tale-forge-title {
+  font-family: 'Playfair Display', serif !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 0.85 !important;
+  text-rendering: optimizeLegibility !important;
+  -webkit-font-smoothing: antialiased !important;
+  background: linear-gradient(135deg, 
+    #FFE55C 0%, 
+    #FFD700 20%, 
+    #FFA500 40%, 
+    #FFD700 60%, 
+    #FFED4E 80%, 
+    #FFE55C 100%) !important;
+  background-size: 200% 200% !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  animation: gentle-breathe 4s ease-in-out infinite !important;
+  filter: drop-shadow(0 2px 4px rgba(255, 215, 0, 0.15)) !important;
+}
+
+.tale-forge-glow {
+  animation: breathe-glow 6s ease-in-out infinite;
+}
+
+@keyframes breathe-glow {
+  0%, 100% { 
+    opacity: 0.03;
+    transform: scale(1.05);
+  }
+  50% { 
+    opacity: 0.08;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes gentle-breathe {
+  0%, 100% { 
+    opacity: 0.95;
+  }
+  50% { 
+    opacity: 1;
+  }
+}
+
+/* Responsive title sizing - INCREASED SIZES */
+@media (max-width: 640px) {
+  .hero-section .tale-forge-title,
+  h1.tale-forge-title {
+    font-size: 3rem !important; /* Increased from 2rem */
+    line-height: 0.9 !important;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .hero-section .tale-forge-title,
+  h1.tale-forge-title {
+    font-size: 4rem !important; /* Increased from 2.5rem */
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hero-section .tale-forge-title,
+  h1.tale-forge-title {
+    font-size: 5rem !important; /* Increased from 3rem */
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .hero-section .tale-forge-title,
+  h1.tale-forge-title {
+    font-size: 6rem !important; /* Increased from 3.5rem */
+  }
+}
+
+@media (min-width: 1281px) {
+  .hero-section .tale-forge-title,
+  h1.tale-forge-title {
+    font-size: 7rem !important; /* Increased from 4rem */
+  }
+}
