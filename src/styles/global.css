@@ -10,6 +10,13 @@
   pointer-events: none;
 }
 
+/* CSS Variables for brand colors */
+:root {
+  --brand-gold-light: #FFD700;
+  --brand-gold-primary: #D4AF37;
+  --brand-gold-dark: #B8860B;
+}
+
 /* Ensure consistent background transparency */
 * {
   color-scheme: light dark;
@@ -39,6 +46,12 @@ body, #root {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Playfair Display', serif !important;
+}
+
+/* Magical text utility class */
+.magical-text {
+  color: var(--brand-gold-light) !important;
+  text-shadow: 0 0 8px rgba(212, 175, 55, 0.3), 0 0 16px rgba(212, 175, 55, 0.2) !important;
 }
 
 /* Magical effects - using amber instead of purple */

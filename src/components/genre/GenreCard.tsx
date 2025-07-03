@@ -70,15 +70,22 @@ const GenreCard: React.FC<GenreCardProps> = ({ genre, isSelected, onSelect }) =>
         <div className={`absolute inset-0 bg-gradient-to-br ${genre.gradient}`} />
       )}
       
-      {/* Dark overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/20 to-black/90" />
+      {/* Enhanced dark overlay for better text contrast */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/95" />
 
-      {/* Content positioned at top */}
+      {/* Content positioned at top with enhanced text visibility */}
       <div className="absolute top-0 left-0 right-0 p-6 text-left z-10">
-        <CardTitle className="text-white text-lg font-serif mb-2 drop-shadow-lg">
+        <CardTitle className="text-white font-serif mb-2 text-lg" style={{
+          color: '#F8F9FA',
+          textShadow: '0 1px 3px rgba(0, 0, 0, 0.8), 0 2px 6px rgba(0, 0, 0, 0.6)'
+        }}>
           {genre.title}
         </CardTitle>
-        <CardDescription className="text-gray-200 text-sm leading-relaxed drop-shadow-md line-clamp-2 opacity-90">
+        <CardDescription className="text-sm leading-relaxed line-clamp-2" style={{
+          color: '#F8F9FA',
+          textShadow: '0 1px 3px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.4)',
+          opacity: '0.95'
+        }}>
           {genre.description}
         </CardDescription>
       </div>
