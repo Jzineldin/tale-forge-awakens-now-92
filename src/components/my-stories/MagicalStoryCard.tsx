@@ -11,7 +11,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { AlertDialogTrigger } from '@/components/ui/alert-dialog';
 
 interface MagicalStoryCardProps {
   story: Story;
@@ -148,17 +147,16 @@ export const MagicalStoryCard: React.FC<MagicalStoryCardProps> = ({ story, onSet
                   View Story
                 </Link>
               </DropdownMenuItem>
-              <AlertDialogTrigger asChild>
-                <DropdownMenuItem 
-                  onSelect={(e) => e.preventDefault()} 
-                  className="text-red-400 hover:text-red-300 hover:bg-red-900/40 cursor-pointer"
-                >
-                  <div onClick={() => onSetStoryToDelete(story.id)} className="flex items-center w-full">
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
-                  </div>
-                </DropdownMenuItem>
-              </AlertDialogTrigger>
+              <DropdownMenuItem 
+                onSelect={(e) => {
+                  e.preventDefault();
+                  onSetStoryToDelete(story.id);
+                }}
+                className="text-red-400 hover:text-red-300 hover:bg-red-900/40 cursor-pointer"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

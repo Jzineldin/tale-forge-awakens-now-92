@@ -1,6 +1,4 @@
-
 import React from 'react';
-import { Loader2 } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,37 +12,33 @@ import {
 
 interface DeleteStoryDialogProps {
   isOpen: boolean;
-  onClose: () => void;
   onConfirm: () => void;
-  isDeleting: boolean;
+  onCancel: () => void;
+  storyTitle?: string;
 }
 
 export const DeleteStoryDialog: React.FC<DeleteStoryDialogProps> = ({
   isOpen,
-  onClose,
   onConfirm,
-  isDeleting,
+  onCancel,
+  storyTitle = 'this story'
 }) => {
   return (
-    <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <AlertDialogContent className="bg-slate-900/95 border-amber-400/30 backdrop-blur-sm">
+    <AlertDialog open={isOpen}>
+      <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-amber-200">Are you absolutely sure?</AlertDialogTitle>
-          <AlertDialogDescription className="text-amber-300/80">
-            This will permanently delete the story and all its associated content. This action cannot be undone.
+          <AlertDialogTitle>Delete Story</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to delete "{storyTitle}"? This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="bg-slate-800 border-slate-600 text-slate-200 hover:bg-slate-700">
-            Cancel
-          </AlertDialogCancel>
-          <AlertDialogAction
+          <AlertDialogCancel onClick={onCancel}>Cancel</AlertDialogCancel>
+          <AlertDialogAction 
             onClick={onConfirm}
-            disabled={isDeleting}
-            className="bg-red-900 hover:bg-red-800 text-red-100 border-red-700"
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Delete Story
+            Delete
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
