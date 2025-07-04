@@ -16,17 +16,14 @@ const CinematicHero: React.FC = () => {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
-      {/* Full-screen Video Background */}
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-        style={{ filter: 'brightness(0.8) contrast(1.1) saturate(1.2)' }}
-      >
-        <source src="https://cdn.midjourney.com/video/a31f76ed-46d4-4720-b49c-9573bd6a3dff/3.mp4" type="video/mp4" />
-      </video>
+      {/* Full-screen Image Background */}
+      <div
+        className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
+        style={{ 
+          backgroundImage: 'url("https://cdn.midjourney.com/c608f36f-e4bc-42cf-bca2-6cc86734680a/0_0.png")',
+          filter: 'brightness(0.8) contrast(1.1) saturate(1.2)'
+        }}
+      />
 
       {/* Lighter Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/20"></div>
