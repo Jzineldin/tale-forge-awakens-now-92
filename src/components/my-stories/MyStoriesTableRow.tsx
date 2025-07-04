@@ -5,8 +5,8 @@ import { TableCell, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Eye, Trash2, Volume2 } from 'lucide-react';
 import { format } from 'date-fns';
-import StoryStatusBadge from './StoryStatusBadge';
-import DeleteStoryDialog from './DeleteStoryDialog';
+import { StoryStatusBadge } from './StoryStatusBadge';
+import { DeleteStoryDialog } from './DeleteStoryDialog';
 import GenerateVoiceButton from './GenerateVoiceButton';
 
 interface Story {
@@ -43,8 +43,7 @@ const MyStoriesTableRow: React.FC<MyStoriesTableRowProps> = ({
       </TableCell>
       <TableCell>
         <StoryStatusBadge 
-          isCompleted={story.is_completed} 
-          isPublic={story.is_public} 
+          story={story}
         />
       </TableCell>
       <TableCell>
@@ -72,11 +71,14 @@ const MyStoriesTableRow: React.FC<MyStoriesTableRowProps> = ({
               View
             </Button>
           </Link>
-          <DeleteStoryDialog storyId={story.id} onDelete={onDelete}>
-            <Button size="sm" variant="outline" className="border-red-500/40 text-red-400 hover:bg-red-500/20">
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </DeleteStoryDialog>
+          <Button 
+            size="sm" 
+            variant="outline" 
+            className="border-red-500/40 text-red-400 hover:bg-red-500/20"
+            onClick={() => onDelete(story.id)}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
         </div>
       </TableCell>
     </TableRow>
