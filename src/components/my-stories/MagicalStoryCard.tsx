@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { Story } from '@/types/stories';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
-import { CheckCircle, Clock, MoreHorizontal, Trash2, Eye, Bookmark } from 'lucide-react';
+import { CheckCircle, Clock, MoreHorizontal, Trash2, Eye, Bookmark, Share2, Volume2 } from 'lucide-react';
+import { usePublishStory } from '@/hooks/usePublishStory';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -19,6 +20,7 @@ interface MagicalStoryCardProps {
 
 export const MagicalStoryCard: React.FC<MagicalStoryCardProps> = ({ story, onSetStoryToDelete }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const { mutate: publishStory, isPending: isPublishing } = usePublishStory();
 
   const getStoryModeColor = (storyMode: string) => {
     const colorMap: { [key: string]: string } = {
@@ -126,13 +128,33 @@ export const MagicalStoryCard: React.FC<MagicalStoryCardProps> = ({ story, onSet
         </div>
         
         {/* Enhanced hover overlay with magical effects */}
-        <div className={`absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center space-x-4`}>
+        <div className={`absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center space-x-2`}>
           <Link to={`/story/${story.id}`}>
             <Button variant="outline" size="sm" className="bg-amber-900/90 border-amber-400/70 text-amber-100 hover:bg-amber-800/95 shadow-xl">
               <Eye className="h-4 w-4 mr-2" />
-              Read Tale
+              Read
             </Button>
           </Link>
+          
+          {story.is_completed && !story.full_story_audio_url && (
+            <Button variant="outline" size="sm" className="bg-emerald-900/90 border-emerald-400/70 text-emerald-100 hover:bg-emerald-800/95 shadow-xl">
+              <Volume2 className="h-4 w-4 mr-2" />
+              Voice
+            </Button>
+          )}
+          
+          {story.is_completed && !story.is_public && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => publishStory(story.id)}
+              disabled={isPublishing}
+              className="bg-blue-900/90 border-blue-400/70 text-blue-100 hover:bg-blue-800/95 shadow-xl"
+            >
+              <Share2 className="h-4 w-4 mr-2" />
+              Publish
+            </Button>
+          )}
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
