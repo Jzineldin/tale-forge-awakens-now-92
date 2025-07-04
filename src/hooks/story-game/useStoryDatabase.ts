@@ -1,10 +1,13 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useAuth } from '@/context/AuthProvider';
 
 export const useStoryDatabase = () => {
+  const { user } = useAuth();
+  
   const createStoryInDatabase = async (title: string, prompt: string, storyMode: string) => {
-    console.log('📝 Creating story in database:', { title, prompt, storyMode });
+    console.log('📝 Creating story in database:', { title, prompt, storyMode, userId: user?.id });
     
     const { data, error } = await supabase
       .from('stories')
@@ -12,7 +15,7 @@ export const useStoryDatabase = () => {
         title: title,
         description: prompt,
         story_mode: storyMode,
-        user_id: null // Allow anonymous stories
+        user_id: user?.id || null // Associate with user if authenticated, otherwise anonymous
       })
       .select()
       .single();
