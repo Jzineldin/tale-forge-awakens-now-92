@@ -24,11 +24,10 @@ const CreateGenre: React.FC = () => {
     <div 
       className="min-h-screen bg-slate-900"
       style={{
-        backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.7)), url('/images/Flux_Dev_Lonely_astronaut_sitting_on_a_pile_of_books_in_space__0.jpg')`,
+        backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('/images/Flux_Dev_Lonely_astronaut_sitting_on_a_pile_of_books_in_space__0.jpg')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        filter: 'brightness(0.8) contrast(1.1)'
+        backgroundRepeat: 'no-repeat'
       }}
     >
       <div className="container mx-auto px-4 py-16">
@@ -38,18 +37,16 @@ const CreateGenre: React.FC = () => {
           onGenreSelect={handleGenreSelect}
         />
         
-        {/* Next Button with glassmorphism */}
+        {/* Next Button */}
         <div className="text-center">
-          <div className="glass-overlay-light inline-block p-4 rounded-lg">
-            <Button
-              onClick={handleNext}
-              disabled={!selectedGenre}
-              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-8 py-3 text-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed text-shadow-strong"
-            >
-              Next
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </div>
+          <Button
+            onClick={handleNext}
+            disabled={!selectedGenre}
+            className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-8 py-3 text-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
         </div>
       </div>
     </div>
