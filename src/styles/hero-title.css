@@ -8,39 +8,78 @@ h1.tale-forge-title {
   line-height: 1.1 !important;
   text-rendering: optimizeLegibility !important;
   -webkit-font-smoothing: antialiased !important;
-  /* Enhanced bright yellow/gold color */
-  color: #FFD700 !important;
-  animation: gentle-breathe 4s ease-in-out infinite !important;
-  /* Enhanced magical glow with stronger shadow */
+  
+  /* Enhanced golden gradient text */
+  background: linear-gradient(45deg, #FFD700, #FFED4E, #FFA500) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  
+  /* Multi-layered golden glow effect */
   text-shadow: 
-    0 0 20px rgba(255, 215, 0, 0.6),
-    0 0 40px rgba(255, 215, 0, 0.4),
-    2px 2px 8px rgba(0, 0, 0, 0.9),
-    -1px -1px 4px rgba(0, 0, 0, 0.7) !important;
+    0 0 5px #FFED4E,
+    0 0 10px #FFA500,
+    0 0 20px #FFA500,
+    0 0 30px #FF8C00,
+    0 0 40px #FF6347,
+    2px 2px 4px rgba(0, 0, 0, 0.8),
+    -1px -1px 2px rgba(0, 0, 0, 0.6) !important;
+  
+  /* Subtle stroke for definition */
+  -webkit-text-stroke: 0.5px #B8860B !important;
+  
+  animation: enhanced-golden-breathe 4s ease-in-out infinite !important;
   padding-bottom: 0.1em !important;
 }
 
 .tale-forge-glow {
-  animation: breathe-glow 6s ease-in-out infinite;
+  animation: golden-glow-pulse 6s ease-in-out infinite;
 }
 
-@keyframes breathe-glow {
+@keyframes golden-glow-pulse {
   0%, 100% { 
-    opacity: 0.05;
+    opacity: 0.1;
     transform: scale(1.05);
+    text-shadow: 
+      0 0 8px #FFED4E,
+      0 0 15px #FFA500,
+      0 0 25px #FFA500,
+      0 0 35px #FF8C00;
   }
   50% { 
-    opacity: 0.15;
+    opacity: 0.2;
     transform: scale(1.1);
+    text-shadow: 
+      0 0 12px #FFED4E,
+      0 0 20px #FFA500,
+      0 0 30px #FFA500,
+      0 0 40px #FF8C00,
+      0 0 50px #FF6347;
   }
 }
 
-@keyframes gentle-breathe {
+@keyframes enhanced-golden-breathe {
   0%, 100% { 
     opacity: 0.95;
+    text-shadow: 
+      0 0 5px #FFED4E,
+      0 0 10px #FFA500,
+      0 0 20px #FFA500,
+      0 0 30px #FF8C00,
+      0 0 40px #FF6347,
+      2px 2px 4px rgba(0, 0, 0, 0.8),
+      -1px -1px 2px rgba(0, 0, 0, 0.6);
   }
   50% { 
     opacity: 1;
+    text-shadow: 
+      0 0 8px #FFED4E,
+      0 0 15px #FFA500,
+      0 0 25px #FFA500,
+      0 0 35px #FF8C00,
+      0 0 45px #FF6347,
+      2px 2px 4px rgba(0, 0, 0, 0.8),
+      -1px -1px 2px rgba(0, 0, 0, 0.6);
   }
 }
 
@@ -69,12 +108,19 @@ h1.tale-forge-title {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Responsive title sizing - INCREASED SIZES */
+/* Responsive title sizing with enhanced glow */
 @media (max-width: 640px) {
   .hero-section .tale-forge-title,
   h1.tale-forge-title {
     font-size: 3rem !important;
     line-height: 1.2 !important;
+    text-shadow: 
+      0 0 3px #FFED4E,
+      0 0 6px #FFA500,
+      0 0 12px #FFA500,
+      0 0 18px #FF8C00,
+      0 0 24px #FF6347,
+      1px 1px 2px rgba(0, 0, 0, 0.8) !important;
   }
 }
 
@@ -83,6 +129,13 @@ h1.tale-forge-title {
   h1.tale-forge-title {
     font-size: 4rem !important;
     line-height: 1.15 !important;
+    text-shadow: 
+      0 0 4px #FFED4E,
+      0 0 8px #FFA500,
+      0 0 16px #FFA500,
+      0 0 24px #FF8C00,
+      0 0 32px #FF6347,
+      1px 1px 3px rgba(0, 0, 0, 0.8) !important;
   }
 }
 
@@ -91,6 +144,13 @@ h1.tale-forge-title {
   h1.tale-forge-title {
     font-size: 5rem !important;
     line-height: 1.1 !important;
+    text-shadow: 
+      0 0 4px #FFED4E,
+      0 0 8px #FFA500,
+      0 0 16px #FFA500,
+      0 0 24px #FF8C00,
+      0 0 32px #FF6347,
+      2px 2px 3px rgba(0, 0, 0, 0.8) !important;
   }
 }
 
@@ -99,6 +159,13 @@ h1.tale-forge-title {
   h1.tale-forge-title {
     font-size: 6rem !important;
     line-height: 1.1 !important;
+    text-shadow: 
+      0 0 5px #FFED4E,
+      0 0 10px #FFA500,
+      0 0 20px #FFA500,
+      0 0 30px #FF8C00,
+      0 0 40px #FF6347,
+      2px 2px 4px rgba(0, 0, 0, 0.8) !important;
   }
 }
 
@@ -107,5 +174,12 @@ h1.tale-forge-title {
   h1.tale-forge-title {
     font-size: 7rem !important;
     line-height: 1.1 !important;
+    text-shadow: 
+      0 0 5px #FFED4E,
+      0 0 10px #FFA500,
+      0 0 20px #FFA500,
+      0 0 30px #FF8C00,
+      0 0 40px #FF6347,
+      2px 2px 4px rgba(0, 0, 0, 0.8) !important;
   }
 }
