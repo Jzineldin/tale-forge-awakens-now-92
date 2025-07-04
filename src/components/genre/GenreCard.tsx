@@ -70,21 +70,19 @@ const GenreCard: React.FC<GenreCardProps> = ({ genre, isSelected, onSelect }) =>
         <div className={`absolute inset-0 bg-gradient-to-br ${genre.gradient}`} />
       )}
 
-      {/* Content with blur effect and minimal background */}
+      {/* Content with strong text shadows - NO blur or background */}
       <div className="absolute top-0 left-0 right-0 p-6 text-left z-10">
-        <div className="backdrop-blur-md bg-black/10 rounded-lg p-3 border border-white/20">
-          <CardTitle className="font-serif mb-2 text-lg text-white" style={{
-            textShadow: '0 0 20px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 0, 0, 0.8), 4px 4px 10px rgba(0, 0, 0, 0.95), -2px -2px 8px rgba(0, 0, 0, 0.9)'
-          }}>
-            {genre.title}
-          </CardTitle>
-          <CardDescription className="text-sm leading-relaxed line-clamp-2 text-white" style={{
-            textShadow: '0 0 15px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 0, 0, 0.8), 3px 3px 8px rgba(0, 0, 0, 0.95), -1px -1px 6px rgba(0, 0, 0, 0.9)',
-            opacity: '0.95'
-          }}>
-            {genre.description}
-          </CardDescription>
-        </div>
+        <CardTitle className="font-serif mb-2 text-lg text-white" style={{
+          textShadow: '0 0 20px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 0, 0, 0.8), 4px 4px 10px rgba(0, 0, 0, 0.95), -2px -2px 8px rgba(0, 0, 0, 0.9)'
+        }}>
+          {genre.title}
+        </CardTitle>
+        <CardDescription className="text-sm leading-relaxed line-clamp-2 text-white" style={{
+          textShadow: '0 0 15px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 0, 0, 0.8), 3px 3px 8px rgba(0, 0, 0, 0.95), -1px -1px 6px rgba(0, 0, 0, 0.9)',
+          opacity: '0.95'
+        }}>
+          {genre.description}
+        </CardDescription>
       </div>
 
       {/* Selection indicator */}
