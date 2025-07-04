@@ -88,5 +88,9 @@ export const useInlineStoryGeneration = () => {
     showConfirmation: confirmation.showConfirmation,
     confirmGeneration,
     resetStory: storyState.resetStory,
+    
+    // URL parameters for redirection
+    prompt,
+    mode,
   };
 };

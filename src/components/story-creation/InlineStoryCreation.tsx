@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Sparkles } from 'lucide-react';
 import { CostConfirmationDialog } from '@/components/CostConfirmationDialog';
@@ -19,6 +20,7 @@ interface InlineStoryCreationProps {
 }
 
 const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => {
+  const navigate = useNavigate();
   const {
     currentSegment,
     storyHistory,
@@ -39,8 +41,17 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
     handleFinishStory,
     showConfirmation,
     confirmGeneration,
-    resetStory
+    resetStory,
+    prompt,
+    mode
   } = useInlineStoryGeneration();
+
+  const handleStoryFinish = () => {
+    handleFinishStory(false, (storyId: string) => {
+      console.log('🎯 Story completed, redirecting to story view:', storyId);
+      navigate(`/story/${storyId}`, { replace: true });
+    });
+  };
 
   // Show error state
   if (error && !isCurrentlyGenerating) {
@@ -127,7 +138,7 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
             <StoryEndSection
               isEnd={currentSegment.isEnd}
               isGenerating={isCurrentlyGenerating}
-              onFinishStory={handleFinishStory}
+              onFinishStory={handleStoryFinish}
               onExit={onExit}
             />
 

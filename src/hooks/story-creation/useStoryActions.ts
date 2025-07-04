@@ -3,6 +3,7 @@ import { useStoryGeneration } from '@/hooks/useStoryGeneration';
 import { useGenerateFullStoryAudio } from '@/hooks/useGenerateFullStoryAudio';
 import { useFinishStoryInline } from './useFinishStoryInline';
 import { StorySegment } from './useStoryState';
+import { supabase } from '@/integrations/supabase/client';
 
 interface UseStoryActionsProps {
   setError: (error: string | null) => void;
@@ -123,7 +124,7 @@ export const useStoryActions = ({
     }
   };
 
-  const handleFinishStory = async (skipEndingImage?: boolean) => {
+  const handleFinishStory = async (skipEndingImage?: boolean, onStoryCompleted?: (storyId: string) => void) => {
     if (!currentSegment?.storyId) {
       toast.error('Cannot finish story: No story ID found');
       return;
@@ -155,6 +156,12 @@ export const useStoryActions = ({
         setCurrentSegment(endingSegmentData);
         setStoryHistory(prev => [...prev, endingSegmentData]);
         console.log('✅ Story ending applied successfully');
+
+        // Mark story as completed in database and trigger callback
+        await markStoryAsCompleted(currentSegment.storyId);
+        if (onStoryCompleted) {
+          onStoryCompleted(currentSegment.storyId);
+        }
       }
       
       setIsGeneratingEnding(false);
@@ -162,6 +169,23 @@ export const useStoryActions = ({
       console.error('❌ Story finishing failed:', error);
       setError(error.message || 'Failed to generate story ending');
       setIsGeneratingEnding(false);
+    }
+  };
+
+  const markStoryAsCompleted = async (storyId: string) => {
+    try {
+      const { error } = await supabase
+        .from('stories')
+        .update({ is_completed: true })
+        .eq('id', storyId);
+
+      if (error) {
+        console.error('❌ Error marking story as completed:', error);
+      } else {
+        console.log('✅ Story marked as completed in database');
+      }
+    } catch (error) {
+      console.error('❌ Failed to mark story as completed:', error);
     }
   };
 
