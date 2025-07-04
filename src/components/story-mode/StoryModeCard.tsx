@@ -74,13 +74,13 @@ const StoryModeCard: React.FC<StoryModeCardProps> = ({
         imageError || !imageLoaded ? "opacity-100" : "opacity-0"
       )} />
 
-      {/* Badge (icon) */}
-      <div className="absolute top-3 right-3 p-2 bg-black/60 backdrop-blur-sm rounded-full border border-white/20">
+      {/* Badge (icon) with lighter background */}
+      <div className="absolute top-3 right-3 p-2 bg-black/40 backdrop-blur-sm rounded-full border border-white/20">
         <mode.icon className="h-4 w-4 text-white" />
       </div>
       
-      {/* Content with enhanced text shadows for readability */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 text-left">
+      {/* Content with enhanced text shadows for readability - lighter overlay */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 text-left bg-gradient-to-t from-black/50 via-black/20 to-transparent">
         <h3 className="text-base font-bold text-white mb-1 drop-shadow-[2px_2px_4px_rgba(0,0,0,0.8)]">
           {mode.name}
         </h3>

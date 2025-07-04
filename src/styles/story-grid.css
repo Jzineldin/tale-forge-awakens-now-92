@@ -78,7 +78,7 @@
   transform: scale(1.05);
 }
 
-/* Text content positioning with gradient overlay for readability */
+/* Text content positioning with lighter gradient overlay for better image visibility */
 .story-card-landscape .content {
   position: absolute;
   bottom: 0;
@@ -89,7 +89,7 @@
   flex-direction: column;
   gap: 4px;
   z-index: 2;
-  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+  background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 50%, transparent 100%);
 }
 
 .story-card-landscape h3 {
@@ -108,7 +108,7 @@
   -webkit-box-orient: vertical;
 }
 
-/* Badge positioning with better contrast */
+/* Badge positioning with lighter contrast */
 .story-card-landscape .badge {
   position: absolute;
   top: 12px;
@@ -121,5 +121,5 @@
   display: grid;
   place-items: center;
   z-index: 3;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.2);
 }
