@@ -14,7 +14,7 @@ const GenreHeader: React.FC = () => {
         <Button
           variant="ghost"
           onClick={() => navigate('/')}
-          className="text-white hover:text-amber-400 flex items-center gap-2"
+          className="text-white hover:text-amber-400 flex items-center gap-2 glass-overlay-light"
         >
           <Home className="h-4 w-4" />
           Home
@@ -22,14 +22,17 @@ const GenreHeader: React.FC = () => {
         <div className="flex-1" /> {/* Spacer */}
       </div>
       
-      {/* Title content with proper spacing */}
+      {/* Title content with glassmorphism container */}
       <div className="pt-16">
-        <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 font-serif magical-text">
-          Choose Your <span className="text-amber-400">Adventure</span>
-        </h1>
-        <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-          Select the perfect genre for your personalized story adventure
-        </p>
+        {/* Glassmorphism Container */}
+        <div className="glass-overlay mx-auto max-w-4xl p-8 md:p-12">
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 font-serif magical-text text-shadow-strong">
+            Choose Your <span className="text-amber-400">Adventure</span>
+          </h1>
+          <p className="text-xl text-gray-300 max-w-2xl mx-auto text-shadow-strong">
+            Select the perfect genre for your personalized story adventure
+          </p>
+        </div>
       </div>
     </div>
   );
