@@ -25,28 +25,41 @@ const SegmentContent: React.FC<SegmentContentProps> = ({
     isGoBackPending
 }) => {
     return (
-        <div className="col-span-2">
-            {index > 0 && canContinue && (
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={() => onGoBack(segmentId)}
-                    disabled={isGoBackPending}
-                    title="Go back to this point"
-                >
-                    <ArrowLeft className="h-5 w-5" />
-                    <span className="sr-only">Go back to this point</span>
-                </Button>
-            )}
+        <div className="col-span-2 space-y-4">
+            <div className="flex items-center justify-between">
+                <h3 className="text-xl font-bold text-amber-300">Chapter {index + 1}</h3>
+                {canContinue && index > 0 && (
+                    <Button
+                        onClick={() => onGoBack(segmentId)}
+                        disabled={isGoBackPending}
+                        variant="outline"
+                        size="sm"
+                        className="border-amber-500/40 text-amber-400 hover:bg-amber-500/20"
+                    >
+                        <ArrowLeft className="h-4 w-4 mr-2" />
+                        {isGoBackPending ? 'Going back...' : 'Go back to here'}
+                    </Button>
+                )}
+            </div>
+            
             {triggeringChoiceText && (
-                <p className="text-sm text-muted-foreground italic mb-2">
-                    You chose: "{triggeringChoiceText}"
-                </p>
+                <div className="p-3 bg-slate-800/60 border border-amber-500/20 rounded-lg">
+                    <p className="text-amber-200 text-sm font-medium">You chose:</p>
+                    <p className="text-gray-100 italic">"{triggeringChoiceText}"</p>
+                </div>
             )}
-            <p className="font-serif text-lg leading-relaxed">{segmentText}</p>
+            
+            <div className="prose prose-invert max-w-none">
+                <div className="text-gray-100 text-base leading-relaxed whitespace-pre-wrap font-serif bg-slate-800/40 p-4 rounded-lg border border-slate-700/50">
+                    {segmentText}
+                </div>
+            </div>
+            
             {isEnd && (
-                <p className="font-serif text-2xl text-foreground mt-6 text-center">The End.</p>
+                <div className="text-center py-4">
+                    <div className="text-amber-300 text-xl font-bold">🎉 The End 🎉</div>
+                    <p className="text-gray-300 mt-2">Your story has reached its conclusion!</p>
+                </div>
             )}
         </div>
     );
