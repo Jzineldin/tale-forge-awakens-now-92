@@ -1,5 +1,4 @@
 
-
 /* TALE FORGE TITLE STYLING */
 .hero-section .tale-forge-title,
 h1.tale-forge-title {
@@ -9,11 +8,15 @@ h1.tale-forge-title {
   line-height: 1.1 !important;
   text-rendering: optimizeLegibility !important;
   -webkit-font-smoothing: antialiased !important;
-  /* Simple bright yellow/gold color instead of complex gradient */
+  /* Enhanced bright yellow/gold color */
   color: #FFD700 !important;
   animation: gentle-breathe 4s ease-in-out infinite !important;
-  /* Subtle magical glow */
-  text-shadow: 0 0 12px rgba(255, 215, 0, 0.4) !important;
+  /* Enhanced magical glow with stronger shadow */
+  text-shadow: 
+    0 0 20px rgba(255, 215, 0, 0.6),
+    0 0 40px rgba(255, 215, 0, 0.4),
+    2px 2px 8px rgba(0, 0, 0, 0.9),
+    -1px -1px 4px rgba(0, 0, 0, 0.7) !important;
   padding-bottom: 0.1em !important;
 }
 
@@ -39,6 +42,31 @@ h1.tale-forge-title {
   50% { 
     opacity: 1;
   }
+}
+
+/* Enhanced text shadow utility for taglines and other text */
+.text-shadow-strong {
+  text-shadow: 
+    2px 2px 6px rgba(0, 0, 0, 0.9),
+    0 0 12px rgba(0, 0, 0, 0.7),
+    -1px -1px 3px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Glassmorphism utility classes */
+.glass-overlay {
+  background: rgba(0, 0, 0, 0.2) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+.glass-overlay-light {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(15px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Responsive title sizing - INCREASED SIZES */
@@ -81,4 +109,3 @@ h1.tale-forge-title {
     line-height: 1.1 !important;
   }
 }
-
