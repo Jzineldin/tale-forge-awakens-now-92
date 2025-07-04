@@ -8,16 +8,7 @@ import { format } from 'date-fns';
 import { StoryStatusBadge } from './StoryStatusBadge';
 import { DeleteStoryDialog } from './DeleteStoryDialog';
 import GenerateVoiceButton from './GenerateVoiceButton';
-
-interface Story {
-  id: string;
-  title: string;
-  created_at: string;
-  is_completed: boolean;
-  is_public: boolean;
-  full_story_audio_url?: string;
-  audio_generation_status?: string;
-}
+import { Story } from '@/types/stories';
 
 interface MyStoriesTableRowProps {
   story: Story;
