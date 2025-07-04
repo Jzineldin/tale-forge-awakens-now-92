@@ -3,9 +3,16 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useHeaderVisibility } from '@/context/HeaderVisibilityContext';
 
 const CinematicHero: React.FC = () => {
   const navigate = useNavigate();
+  const { showHeader } = useHeaderVisibility();
+
+  const handleCreateAdventure = () => {
+    showHeader();
+    navigate('/adventure');
+  };
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
@@ -16,13 +23,13 @@ const CinematicHero: React.FC = () => {
         loop
         playsInline
         className="absolute inset-0 w-full h-full object-cover"
-        style={{ filter: 'brightness(0.4) contrast(1.1) saturate(1.2)' }}
+        style={{ filter: 'brightness(0.7) contrast(1.1) saturate(1.2)' }}
       >
         <source src="https://cdn.midjourney.com/video/566c522d-e313-44be-a80b-06c61ca372ea/0.mp4" type="video/mp4" />
       </video>
 
-      {/* Subtle Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60"></div>
+      {/* Much Lighter Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/30"></div>
 
       {/* Main Content Overlay */}
       <div className="relative z-10 min-h-screen flex flex-col justify-center items-center px-4">
@@ -47,7 +54,7 @@ const CinematicHero: React.FC = () => {
         {/* Simple CTA */}
         <div className="flex flex-col sm:flex-row gap-6">
           <Button
-            onClick={() => navigate('/adventure')}
+            onClick={handleCreateAdventure}
             className="group px-8 py-4 text-lg bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105"
           >
             <Sparkles className="mr-2 h-5 w-5 group-hover:rotate-12 transition-transform" />
