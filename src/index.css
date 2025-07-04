@@ -12,6 +12,7 @@
 /* Import existing specialized stylesheets */
 @import "./styles/hero.css";
 @import "./styles/magical-library.css";
+@import "./styles/surreal-hero.css";
 
 /* Import new responsive genre styles */
 @import "./styles/genre-responsive.css";
