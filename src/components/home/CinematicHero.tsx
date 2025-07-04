@@ -25,7 +25,7 @@ const CinematicHero: React.FC = () => {
         className="absolute inset-0 w-full h-full object-cover"
         style={{ filter: 'brightness(0.8) contrast(1.1) saturate(1.2)' }}
       >
-        <source src="https://cdn.midjourney.com/video/566c522d-e313-44be-a80b-06c61ca372ea/0.mp4" type="video/mp4" />
+        <source src="https://cdn.midjourney.com/video/0dc9b96f-b761-47b5-b668-73d433c809e9/3.mp4" type="video/mp4" />
       </video>
 
       {/* Lighter Gradient Overlay */}
