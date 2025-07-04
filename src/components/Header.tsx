@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthProvider';
-import { Home, Clock, PenTool, BookOpen, Compass } from 'lucide-react';
+import { Home, Clock, PenTool } from 'lucide-react';
 import UserMenu from '@/components/auth/UserMenu';
 import AuthButtons from '@/components/auth/AuthButtons';
 import ChangelogModal from './ChangelogModal';
@@ -69,18 +69,6 @@ const Header = () => {
                     <Clock className="h-4 w-4" />
                     My Stories
                   </Link>
-                  <Link 
-                    to="/public-stories" 
-                    className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
-                      isActive('/public-stories') 
-                        ? 'bg-primary text-primary-foreground' 
-                        : 'text-slate-300 hover:text-white hover:bg-slate-800'
-                    }`}
-                  >
-                    <BookOpen className="h-4 w-4" />
-                    <span className="hidden lg:inline">Public Stories</span>
-                    <span className="lg:hidden">Library</span>
-                  </Link>
                 </nav>
 
                 {/* User Menu */}
@@ -120,18 +108,6 @@ const Header = () => {
                     <span className="hidden lg:inline">My Stories</span>
                     <span className="lg:hidden">Stories</span>
                     <span className="text-xs bg-orange-500 text-white px-1 rounded">Local</span>
-                  </Link>
-                  <Link 
-                    to="/public-stories" 
-                    className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
-                      isActive('/public-stories') 
-                        ? 'bg-primary text-primary-foreground' 
-                        : 'text-slate-300 hover:text-white hover:bg-slate-800'
-                    }`}
-                  >
-                    <Compass className="h-4 w-4" />
-                    <span className="hidden lg:inline">Discover</span>
-                    <span className="lg:hidden">Browse</span>
                   </Link>
                 </nav>
 

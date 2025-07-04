@@ -16,9 +16,6 @@
 /* Import new responsive genre styles */
 @import "./styles/genre-responsive.css";
 
-/* Import hero title styles */
-@import "./styles/hero-title.css";
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -34,7 +31,7 @@
   
   html,
   body {
-    background: linear-gradient(135deg, #0c0f18 0%, #1a1f2e 50%, #0f1419 100%) !important;
+    background: transparent !important;
     color: hsl(var(--foreground)) !important;
     font-family: 'Inter', sans-serif;
     line-height: 1.6;
@@ -46,13 +43,6 @@
   #root {
     min-height: 100vh;
     background: transparent !important;
-  }
-  
-  /* Add the scene background class */
-  .scene-bg {
-    background: linear-gradient(135deg, #0c0f18 0%, #1a1f2e 50%, #0f1419 100%) !important;
-    background-attachment: fixed;
-    min-height: 100vh;
   }
   
   /* Typography standardization */

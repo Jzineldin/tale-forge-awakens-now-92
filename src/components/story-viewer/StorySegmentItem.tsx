@@ -36,7 +36,7 @@ const StorySegmentItem: React.FC<StorySegmentItemProps> = ({
     });
 
     return (
-        <Card className="relative group bg-slate-900/95 border-amber-500/30 backdrop-blur-sm shadow-xl">
+        <Card className="relative group">
             <CardContent className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
                 <StoryImage
                     imageUrl={segment.image_url}
