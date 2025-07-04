@@ -20,7 +20,7 @@ const CinematicHero: React.FC = () => {
       <div
         className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
         style={{ 
-          backgroundImage: 'url("https://cdn.midjourney.com/c608f36f-e4bc-42cf-bca2-6cc86734680a/0_0.png")',
+          backgroundImage: 'url("https://cdn.midjourney.com/a9fbe789-f8fa-4ff8-acef-6a5910c6338e/0_1.png")',
           filter: 'brightness(0.8) contrast(1.1) saturate(1.2)'
         }}
       />
