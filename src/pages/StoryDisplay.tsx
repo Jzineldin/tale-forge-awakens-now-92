@@ -100,8 +100,8 @@ const StoryDisplay: React.FC = () => {
     ? allStorySegments[0].segment_text.substring(0, 50) + '...' 
     : prompt.substring(0, 50) + '...';
 
-  // Check if story is completed
-  const isStoryCompleted = currentStorySegment?.is_end || allStorySegments.some(segment => segment.is_end);
+  // Check if story is completed - prioritize database status as source of truth
+  const isStoryCompleted = storyData?.is_completed || currentStorySegment?.is_end || allStorySegments.some(segment => segment.is_end);
 
   // Show error state
   if (error && !storyGeneration.isGenerating) {
