@@ -9,7 +9,7 @@ const StoryCreation: React.FC = () => {
   const [showInlineCreation, setShowInlineCreation] = useState(true);
   
   const prompt = searchParams.get('prompt');
-  const mode = searchParams.get('mode');
+  const mode = searchParams.get('mode') || searchParams.get('genre'); // Accept both mode and genre
 
   const handleExit = () => {
     // Clear URL parameters when exiting to prevent auto-generation on return
@@ -22,7 +22,7 @@ const StoryCreation: React.FC = () => {
   useEffect(() => {
     const handlePopState = () => {
       // Clear parameters when user uses browser back button
-      if (searchParams.has('prompt') || searchParams.has('mode')) {
+      if (searchParams.has('prompt') || searchParams.has('mode') || searchParams.has('genre')) {
         setSearchParams({});
       }
     };
@@ -40,7 +40,9 @@ const StoryCreation: React.FC = () => {
 
   // Fallback - redirect to genre selection if no parameters
   if (!prompt || !mode) {
-    navigate('/create/genre', { replace: true });
+    useEffect(() => {
+      navigate('/create/genre', { replace: true });
+    }, [navigate]);
     return null;
   }
 
