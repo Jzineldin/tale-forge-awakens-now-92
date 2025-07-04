@@ -32,7 +32,7 @@ export const HeroSection: React.FC = () => {
             <div className="space-y-8">
               <p className="text-2xl md:text-3xl lg:text-4xl text-white max-w-4xl mx-auto leading-relaxed text-shadow-strong">
                 What if your next adventure began with just{' '}
-                <span className="font-cursive font-bold text-amber-300 whitespace-nowrap" style={{fontStyle: 'italic'}}>
+                <span className="font-bold text-amber-300 whitespace-nowrap">
                   one sentence?
                 </span>
               </p>
