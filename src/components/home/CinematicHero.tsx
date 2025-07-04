@@ -23,13 +23,13 @@ const CinematicHero: React.FC = () => {
         loop
         playsInline
         className="absolute inset-0 w-full h-full object-cover"
-        style={{ filter: 'brightness(0.7) contrast(1.1) saturate(1.2)' }}
+        style={{ filter: 'brightness(0.8) contrast(1.1) saturate(1.2)' }}
       >
         <source src="https://cdn.midjourney.com/video/566c522d-e313-44be-a80b-06c61ca372ea/0.mp4" type="video/mp4" />
       </video>
 
-      {/* Much Lighter Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/30"></div>
+      {/* Lighter Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/20"></div>
 
       {/* Main Content Overlay */}
       <div className="relative z-10 min-h-screen flex flex-col justify-center items-center px-4">
@@ -37,9 +37,6 @@ const CinematicHero: React.FC = () => {
         <div className="text-center mb-16">
           <h1 className="tale-forge-title text-6xl md:text-8xl lg:text-9xl font-bold font-serif text-white mb-8 leading-tight">
             Tale Forge
-            <div className="tale-forge-glow absolute inset-0 tale-forge-title -z-10 blur-sm">
-              Tale Forge
-            </div>
           </h1>
           
           {/* Simple Tagline */}
