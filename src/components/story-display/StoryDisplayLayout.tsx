@@ -8,9 +8,9 @@ interface StoryDisplayLayoutProps {
 const StoryDisplayLayout: React.FC<StoryDisplayLayoutProps> = ({ children }) => {
   return (
     <div 
-      className="min-h-screen bg-slate-900"
+      className="min-h-screen bg-gradient-to-br from-amber-50 to-amber-100 dark:from-slate-900 dark:to-slate-800"
       style={{
-        backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('https://cdn.midjourney.com/11bac597-89f4-4f16-99f0-4b114af4473f/0_2.png')`,
+        backgroundImage: `linear-gradient(rgba(252, 211, 77, 0.1), rgba(245, 158, 11, 0.05)), url('https://cdn.midjourney.com/11bac597-89f4-4f16-99f0-4b114af4473f/0_2.png')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       }}

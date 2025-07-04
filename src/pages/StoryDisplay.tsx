@@ -142,6 +142,7 @@ const StoryDisplay: React.FC = () => {
         allStorySegments={allStorySegments}
         fullStoryAudioUrl={storyData?.full_story_audio_url}
         audioGenerationStatus={storyData?.audio_generation_status}
+        isPublic={storyData?.is_public}
       />
 
       {/* Show main content if story is not completed */}

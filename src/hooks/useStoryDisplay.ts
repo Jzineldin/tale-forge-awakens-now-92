@@ -14,6 +14,7 @@ interface StoryData {
   title?: string;
   full_story_audio_url?: string | null;
   audio_generation_status?: string;
+  is_public?: boolean;
 }
 
 export const useStoryDisplay = () => {
@@ -72,7 +73,7 @@ export const useStoryDisplay = () => {
       console.log('📚 Fetching story data for:', storyId);
       const { data: story, error } = await supabase
         .from('stories')
-        .select('id, title, full_story_audio_url, audio_generation_status')
+        .select('id, title, full_story_audio_url, audio_generation_status, is_public')
         .eq('id', storyId)
         .single();
 
