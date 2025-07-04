@@ -1,4 +1,3 @@
-
 interface ChangelogEntry {
   version: string;
   date: string;
@@ -27,6 +26,26 @@ class ChangelogManager {
     
     // Return updated default changelog with latest improvements
     return [
+      {
+        version: '2.6.0',
+        date: '2025-07-04',
+        type: 'minor',
+        changes: [
+          { type: 'improvement', description: 'Streamlined User Interface (UI) - drastically reduced text density and information overload on the landing page' },
+          { type: 'improvement', description: 'Transitioned from "game-like" feel to a more professional, product-focused design addressing UI overwhelm feedback' },
+          { type: 'improvement', description: 'Enhanced AI Core with refined subject adherence, ensuring better focus on intended narrative and context' },
+          { type: 'feature', description: 'Alternative Sub-Page for Education - dedicated page designed for serious learning experience' },
+          { type: 'feature', description: 'Educational content prioritization over adventure and storytelling for educators and parents' },
+          { type: 'improvement', description: 'Comprehensive Rebuild - systematic platform rebuild ensuring robust and scalable foundation' },
+          { type: 'improvement', description: 'Long-term stability approach avoiding temporary patches for sustainable growth' },
+          { type: 'improvement', description: 'Improved Accessibility & Content Safety measures, particularly for younger users and classroom environments' },
+          { type: 'feature', description: 'Pre-made Story Examples and tutorials to help new users get started with clear prompting guidance' },
+          { type: 'feature', description: 'UI Theming Options including lighter themes to broaden appeal beyond gaming aesthetic' },
+          { type: 'improvement', description: 'Differentiated "Choose Your Own Adventure" emphasis as unique selling proposition' },
+          { type: 'improvement', description: 'Optimized Story Pacing with A/B testing exploration for engagement and retention sweet spot' },
+          { type: 'improvement', description: 'Maintained positive design elements - retained highly praised UI/UX design and visually appealing login page' },
+        ],
+      },
       {
         version: '2.5.0',
         date: '2025-06-30',
@@ -159,7 +178,7 @@ class ChangelogManager {
   }
   
   // Generate version number based on change types
-  static generateNextVersion(changes: ChangelogEntry['changes'], currentVersion: string = '2.5.0'): string {
+  static generateNextVersion(changes: ChangelogEntry['changes'], currentVersion: string = '2.6.0'): string {
     const [major, minor, patch] = currentVersion.split('.').map(Number);
     
     const hasMajor = changes.some(change => change.type === 'feature' && change.description.includes('breaking'));
@@ -180,7 +199,7 @@ class ChangelogManager {
   // Quick method to add changes
   static logChanges(changes: { type: 'feature' | 'improvement' | 'fix'; description: string }[]): void {
     const current = this.getCurrentChangelog();
-    const currentVersion = current[0]?.version || '2.5.0';
+    const currentVersion = current[0]?.version || '2.6.0';
     const nextVersion = this.generateNextVersion(changes, currentVersion);
     
     const entry: ChangelogEntry = {
