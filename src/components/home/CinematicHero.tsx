@@ -16,30 +16,33 @@ const CinematicHero: React.FC = () => {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
-      {/* Full-screen Image Background */}
+      {/* Full-screen Image Background - No dark filters */}
       <div
         className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
         style={{ 
           backgroundImage: 'url("https://cdn.midjourney.com/9ec967b3-6669-45ea-927f-1b3492a72cf3/0_0.png")',
-          filter: 'brightness(0.85) contrast(1.1) saturate(1.2)'
+          filter: 'contrast(1.1) saturate(1.2)'
         }}
       />
 
-      {/* Lightened Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-black/40"></div>
-
-      {/* Main Content Overlay with Lighter Glassmorphism */}
+      {/* Main Content Overlay - No dark background */}
       <div className="relative z-10 min-h-screen flex flex-col justify-center items-center px-4">
-        {/* Glassmorphism Container */}
-        <div className="backdrop-blur-sm bg-black/10 rounded-2xl p-8 md:p-12 border border-white/10 shadow-2xl max-w-5xl mx-auto">
+        {/* Transparent Container with only blur effect */}
+        <div className="backdrop-blur-sm bg-transparent rounded-2xl p-8 md:p-12 border border-white/20 shadow-2xl max-w-5xl mx-auto">
           {/* Tale Forge Title */}
           <div className="text-center mb-16">
-            <h1 className="tale-forge-title text-6xl md:text-8xl lg:text-9xl font-bold font-serif text-white mb-8 leading-tight">
+            <h1 className="tale-forge-title text-6xl md:text-8xl lg:text-9xl font-bold font-serif text-white mb-8 leading-tight"
+                style={{
+                  textShadow: '0 0 30px rgba(0, 0, 0, 0.9), 0 0 60px rgba(0, 0, 0, 0.7), 4px 4px 12px rgba(0, 0, 0, 0.95), -2px -2px 8px rgba(0, 0, 0, 0.8)'
+                }}>
               Tale Forge
             </h1>
             
             {/* Simple Tagline */}
-            <p className="text-2xl md:text-4xl text-white max-w-4xl mx-auto leading-relaxed mb-8 text-shadow-strong">
+            <p className="text-2xl md:text-4xl text-white max-w-4xl mx-auto leading-relaxed mb-8"
+               style={{
+                 textShadow: '0 0 20px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 0, 0, 0.7), 3px 3px 8px rgba(0, 0, 0, 0.95), -1px -1px 6px rgba(0, 0, 0, 0.8)'
+               }}>
               Where imagination meets
               <span className="font-cursive text-amber-300 mx-2" style={{fontStyle: 'italic'}}>
                 infinite possibilities

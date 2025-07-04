@@ -74,17 +74,23 @@ const StoryModeCard: React.FC<StoryModeCardProps> = ({
         imageError || !imageLoaded ? "opacity-100" : "opacity-0"
       )} />
 
-      {/* Badge (icon) with lighter background */}
-      <div className="absolute top-3 right-3 p-2 bg-black/40 backdrop-blur-sm rounded-full border border-white/20">
-        <mode.icon className="h-4 w-4 text-white" />
+      {/* Badge (icon) - transparent background */}
+      <div className="absolute top-3 right-3 p-2 bg-transparent backdrop-blur-sm rounded-full border border-white/40">
+        <mode.icon className="h-4 w-4 text-white" style={{
+          filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.9)) drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.8))'
+        }} />
       </div>
       
-      {/* Content with enhanced text shadows for readability - lighter overlay */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 text-left bg-gradient-to-t from-black/50 via-black/20 to-transparent">
-        <h3 className="text-base font-bold text-white mb-1 drop-shadow-[2px_2px_4px_rgba(0,0,0,0.8)]">
+      {/* Content with very strong text shadows - NO background overlay */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 text-left bg-transparent">
+        <h3 className="text-base font-bold text-white mb-1" style={{
+          textShadow: '0 0 20px rgba(0, 0, 0, 0.95), 0 0 40px rgba(0, 0, 0, 0.8), 3px 3px 8px rgba(0, 0, 0, 0.95), -1px -1px 6px rgba(0, 0, 0, 0.9)'
+        }}>
           {mode.name}
         </h3>
-        <p className="text-xs text-gray-200 leading-relaxed drop-shadow-[1px_1px_2px_rgba(0,0,0,0.8)] line-clamp-2">
+        <p className="text-xs text-gray-200 leading-relaxed line-clamp-2" style={{
+          textShadow: '0 0 15px rgba(0, 0, 0, 0.95), 0 0 30px rgba(0, 0, 0, 0.8), 2px 2px 6px rgba(0, 0, 0, 0.95), -1px -1px 4px rgba(0, 0, 0, 0.9)'
+        }}>
           {mode.description}
         </p>
       </div>
