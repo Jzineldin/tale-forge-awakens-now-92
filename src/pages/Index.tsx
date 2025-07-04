@@ -1,16 +1,13 @@
 
 import React from 'react';
-import SplitScreenOverlay from '@/components/home/SplitScreenOverlay';
+import CinematicLanding from '@/components/home/CinematicLanding';
 
 const Index = () => {
-  console.log('Index component: Rendering split-screen overlay');
+  console.log('Index component: Rendering cinematic landing page');
 
   return (
-    <div className="relative h-screen w-full bg-transparent">
-      <SplitScreenOverlay 
-        creativeStudioImage="/images/Flux_Dev_Lonely_astronaut_sitting_on_a_pile_of_books_in_space__0.jpg"
-        learningLabImage="/images/Leonardo_Phoenix_10_A_cozy_wooden_library_at_night_with_floati_0.jpg"
-      />
+    <div className="relative min-h-screen w-full bg-transparent">
+      <CinematicLanding />
     </div>
   );
 };
