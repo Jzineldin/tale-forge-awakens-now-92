@@ -15,7 +15,7 @@ serve(async (req) => {
   try {
     const { storyId, voiceId = 'fable' } = await req.json()
 
-    console.log('Generating full story audio for:', { storyId, voiceId })
+    console.log('🎵 Generating full story audio for:', { storyId, voiceId })
 
     if (!storyId) {
       throw new Error('Story ID is required')
@@ -33,12 +33,14 @@ serve(async (req) => {
     )
 
     // Update story status to in_progress
+    console.log('📝 Updating story audio status to in_progress')
     await supabase
       .from('stories')
       .update({ audio_generation_status: 'in_progress' })
       .eq('id', storyId)
 
     // Get story segments
+    console.log('📚 Fetching story segments')
     const { data: segments, error: segmentsError } = await supabase
       .from('story_segments')
       .select('segment_text')
@@ -46,6 +48,7 @@ serve(async (req) => {
       .order('created_at', { ascending: true })
 
     if (segmentsError) {
+      console.error('❌ Error fetching segments:', segmentsError)
       throw new Error(`Failed to fetch story segments: ${segmentsError.message}`)
     }
 
@@ -53,9 +56,11 @@ serve(async (req) => {
       throw new Error('No story segments found')
     }
 
+    console.log(`📖 Found ${segments.length} segments`)
+
     // Combine all segment text
     const fullText = segments.map(s => s.segment_text).join('\n\n')
-    console.log('Combined text length:', fullText.length, 'characters')
+    console.log('📝 Combined text length:', fullText.length, 'characters')
 
     // Split text into chunks (OpenAI limit is 4096 characters)
     const maxChunkSize = 4000
@@ -82,14 +87,14 @@ serve(async (req) => {
       }
     }
 
-    console.log('Split into', textChunks.length, 'chunks')
+    console.log(`🔀 Split into ${textChunks.length} chunks`)
 
     // Generate audio for each chunk
     const audioChunks: ArrayBuffer[] = []
     
     for (let i = 0; i < textChunks.length; i++) {
       const chunk = textChunks[i]
-      console.log(`Generating audio for chunk ${i + 1}/${textChunks.length} (${chunk.length} chars)`)
+      console.log(`🎙️ Generating audio for chunk ${i + 1}/${textChunks.length} (${chunk.length} chars)`)
       
       const response = await fetch('https://api.openai.com/v1/audio/speech', {
         method: 'POST',
@@ -107,15 +112,16 @@ serve(async (req) => {
 
       if (!response.ok) {
         const errorText = await response.text()
-        console.error('OpenAI TTS error:', response.status, errorText)
-        throw new Error(`OpenAI TTS error: ${response.status}`)
+        console.error('❌ OpenAI TTS error:', response.status, errorText)
+        throw new Error(`OpenAI TTS error: ${response.status} - ${errorText}`)
       }
 
       const audioBuffer = await response.arrayBuffer()
       audioChunks.push(audioBuffer)
+      console.log(`✅ Chunk ${i + 1} generated successfully`)
     }
 
-    console.log('Combining', audioChunks.length, 'audio chunks')
+    console.log(`🔗 Combining ${audioChunks.length} audio chunks`)
 
     // Combine audio chunks into single buffer
     const totalLength = audioChunks.reduce((sum, chunk) => sum + chunk.byteLength, 0)
@@ -127,8 +133,10 @@ serve(async (req) => {
       offset += chunk.byteLength
     }
 
-    // Upload to story-audio bucket (existing bucket)
+    // Upload to story-audio bucket
     const fileName = `full_story_${storyId}_${Date.now()}.mp3`
+    console.log(`📤 Uploading audio file: ${fileName}`)
+    
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('story-audio')
       .upload(fileName, combinedBuffer, {
@@ -137,7 +145,12 @@ serve(async (req) => {
       })
 
     if (uploadError) {
-      console.error('Storage upload error:', uploadError)
+      console.error('❌ Storage upload error:', uploadError)
+      // Update story status to failed
+      await supabase
+        .from('stories')
+        .update({ audio_generation_status: 'failed' })
+        .eq('id', storyId)
       throw new Error(`Storage upload failed: ${uploadError.message}`)
     }
 
@@ -146,8 +159,10 @@ serve(async (req) => {
       .from('story-audio')
       .getPublicUrl(fileName)
 
+    console.log(`🔗 Audio uploaded successfully: ${publicUrl}`)
+
     // Update story with audio URL and completed status
-    await supabase
+    const { error: updateError } = await supabase
       .from('stories')
       .update({
         full_story_audio_url: publicUrl,
@@ -155,7 +170,12 @@ serve(async (req) => {
       })
       .eq('id', storyId)
 
-    console.log('✅ Full story audio generated successfully:', publicUrl)
+    if (updateError) {
+      console.error('❌ Error updating story:', updateError)
+      throw new Error(`Failed to update story: ${updateError.message}`)
+    }
+
+    console.log('✅ Full story audio generated successfully')
 
     return new Response(
       JSON.stringify({ 
@@ -168,20 +188,24 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Error generating full story audio:', error)
+    console.error('💥 Error generating full story audio:', error)
     
     // Update story status to failed if we have storyId
-    const { storyId } = await req.json().catch(() => ({}))
-    if (storyId) {
-      const supabase = createClient(
-        Deno.env.get('SUPABASE_URL') ?? '',
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-      )
-      
-      await supabase
-        .from('stories')
-        .update({ audio_generation_status: 'failed' })
-        .eq('id', storyId)
+    try {
+      const { storyId } = await req.json().catch(() => ({}))
+      if (storyId) {
+        const supabase = createClient(
+          Deno.env.get('SUPABASE_URL') ?? '',
+          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+        )
+        
+        await supabase
+          .from('stories')
+          .update({ audio_generation_status: 'failed' })
+          .eq('id', storyId)
+      }
+    } catch (updateError) {
+      console.error('❌ Failed to update story status to failed:', updateError)
     }
     
     return new Response(

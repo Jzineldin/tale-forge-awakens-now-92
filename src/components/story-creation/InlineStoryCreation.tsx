@@ -15,6 +15,7 @@ import StoryEndSection from './StoryEndSection';
 import VoiceGenerationSection from './VoiceGenerationSection';
 import StoryImageSettings from './StoryImageSettings';
 import { useProgressiveStoryGeneration } from '@/hooks/story-creation/useProgressiveStoryGeneration';
+import { useGenerateFullStoryAudio } from '@/hooks/useGenerateFullStoryAudio';
 
 interface InlineStoryCreationProps {
   onExit: () => void;
@@ -30,21 +31,19 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
     error
   } = useProgressiveStoryGeneration();
 
-  // For now, we'll use simple state management instead of the complex inline generation hook
+  // State management
   const [storyHistory, setStoryHistory] = React.useState<any[]>([]);
   const [showCostDialog, setShowCostDialog] = React.useState(false);
-  const [pendingAction, setPendingAction] = React.useState<string>('');
+  const [pendingAction, setPendingAction] = React.useState<'choice' | 'audio' | 'start'>('start');
+  const [pendingChoice, setPendingChoice] = React.useState<string>('');
   const [skipImage, setSkipImage] = React.useState(false);
   const [apiCallsCount, setApiCallsCount] = React.useState(0);
   const [selectedVoice, setSelectedVoice] = React.useState('alloy');
   const [fullStoryAudioUrl, setFullStoryAudioUrl] = React.useState<string>('');
   const [showImageSettings, setShowImageSettings] = React.useState(false);
 
-  // Mock generate audio mutation for now
-  const generateAudioMutation = {
-    isPending: false,
-    mutate: () => {}
-  };
+  // Audio generation hook
+  const generateAudioMutation = useGenerateFullStoryAudio();
 
   const handleStoryFinish = () => {
     if (currentSegment) {
@@ -53,8 +52,11 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
     }
   };
 
-  const showConfirmation = (action: string, choice?: string) => {
+  const showConfirmation = (action: 'choice' | 'audio' | 'start', choice?: string) => {
     setPendingAction(action);
+    if (choice) {
+      setPendingChoice(choice);
+    }
     setShowCostDialog(true);
   };
 
@@ -62,18 +64,50 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
     setShowCostDialog(false);
     setApiCallsCount(prev => prev + 1);
     
-    if (pendingAction === 'choice') {
-      // Handle choice selection - for now just log
-      console.log('Choice selected, would generate next segment');
-    } else if (pendingAction === 'audio') {
-      // Handle audio generation - for now just log
-      console.log('Audio generation requested');
+    if (pendingAction === 'choice' && pendingChoice) {
+      // Generate next segment with selected choice
+      console.log('🎯 Generating next segment with choice:', pendingChoice);
+      try {
+        const result = await generateSegment({
+          storyId: currentSegment?.story_id,
+          parentSegmentId: currentSegment?.id,
+          choiceText: pendingChoice,
+          skipImage: skipImage,
+          skipAudio: true
+        });
+        
+        if (result) {
+          setStoryHistory(prev => [...prev, result]);
+        }
+      } catch (error) {
+        console.error('❌ Choice generation failed:', error);
+      }
+      setPendingChoice('');
+    } else if (pendingAction === 'audio' && currentSegment?.story_id) {
+      // Generate audio for the complete story
+      console.log('🎵 Starting audio generation for story:', currentSegment.story_id);
+      try {
+        const result = await generateAudioMutation.mutateAsync({
+          storyId: currentSegment.story_id,
+          voiceId: selectedVoice
+        });
+        
+        if (result?.audioUrl) {
+          setFullStoryAudioUrl(result.audioUrl);
+          console.log('✅ Audio generation completed:', result.audioUrl);
+        }
+      } catch (error) {
+        console.error('❌ Audio generation failed:', error);
+      }
     }
   };
 
   const resetStory = () => {
     // Reset story state
     console.log('Resetting story');
+    setStoryHistory([]);
+    setFullStoryAudioUrl('');
+    setApiCallsCount(0);
   };
 
   // Get URL parameters for initial story generation
@@ -186,13 +220,20 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
               onExit={onExit}
             />
 
-            {currentSegment.is_end && !fullStoryAudioUrl && (
+            {currentSegment.is_end && !fullStoryAudioUrl && !generateAudioMutation.isPending && (
               <VoiceGenerationSection
                 selectedVoice={selectedVoice}
                 onVoiceChange={setSelectedVoice}
                 onGenerateAudio={() => showConfirmation('audio')}
                 isGenerating={generateAudioMutation.isPending}
               />
+            )}
+
+            {/* Show audio generation status */}
+            {generateAudioMutation.isPending && (
+              <div className="text-center text-amber-300 text-sm">
+                🎵 Generating your story audio... This may take a few minutes.
+              </div>
             )}
 
             {/* Show subtle indicator when image is generating in background */}
