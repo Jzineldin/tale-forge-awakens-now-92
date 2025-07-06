@@ -251,11 +251,8 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
           onConfirm={confirmGeneration}
           pendingAction={pendingAction}
           skipImage={skipImage}
-          skipAudio={true}
+          apiCallsCount={apiCallsCount}
           onSkipImageChange={setSkipImage}
-          onSkipAudioChange={() => {}}
-          apiUsageCount={apiCallsCount}
-          showAudioOption={false}
         />
       </StoryDisplayLayout>
     );
