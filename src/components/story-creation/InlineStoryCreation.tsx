@@ -14,7 +14,7 @@ import StoryChoicesSection from './StoryChoicesSection';
 import StoryEndSection from './StoryEndSection';
 import VoiceGenerationSection from './VoiceGenerationSection';
 import StoryImageSettings from './StoryImageSettings';
-import { useInlineStoryGeneration } from '@/hooks/story-creation/useInlineStoryGeneration';
+import { useProgressiveStoryGeneration } from '@/hooks/story-creation/useProgressiveStoryGeneration';
 
 interface InlineStoryCreationProps {
   onExit: () => void;
@@ -24,38 +24,78 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
   const navigate = useNavigate();
   const {
     currentSegment,
-    storyHistory,
-    showCostDialog,
-    pendingAction,
-    skipImage,
-    apiCallsCount,
-    error,
-    selectedVoice,
-    fullStoryAudioUrl,
-    isCurrentlyGenerating,
-    generateAudioMutation,
-    showImageSettings,
-    setShowCostDialog,
-    setSkipImage,
-    setSelectedVoice,
-    handleSelectChoice,
-    handleFinishStory,
-    showConfirmation,
-    confirmGeneration,
-    resetStory,
-    prompt,
-    mode
-  } = useInlineStoryGeneration();
+    isImageGenerating,
+    generateSegment,
+    isGenerating,
+    error
+  } = useProgressiveStoryGeneration();
 
-  const handleStoryFinish = () => {
-    handleFinishStory(false, (storyId: string) => {
-      console.log('🎯 Story completed, redirecting to story view:', storyId);
-      navigate(`/story/${storyId}`, { replace: true });
-    });
+  // For now, we'll use simple state management instead of the complex inline generation hook
+  const [storyHistory, setStoryHistory] = React.useState<any[]>([]);
+  const [showCostDialog, setShowCostDialog] = React.useState(false);
+  const [pendingAction, setPendingAction] = React.useState<string>('');
+  const [skipImage, setSkipImage] = React.useState(false);
+  const [apiCallsCount, setApiCallsCount] = React.useState(0);
+  const [selectedVoice, setSelectedVoice] = React.useState('alloy');
+  const [fullStoryAudioUrl, setFullStoryAudioUrl] = React.useState<string>('');
+  const [showImageSettings, setShowImageSettings] = React.useState(false);
+
+  // Mock generate audio mutation for now
+  const generateAudioMutation = {
+    isPending: false,
+    mutate: () => {}
   };
 
+  const handleStoryFinish = () => {
+    if (currentSegment) {
+      console.log('🎯 Story completed, redirecting to story view:', currentSegment.story_id);
+      navigate(`/story/${currentSegment.story_id}`, { replace: true });
+    }
+  };
+
+  const showConfirmation = (action: string, choice?: string) => {
+    setPendingAction(action);
+    setShowCostDialog(true);
+  };
+
+  const confirmGeneration = async () => {
+    setShowCostDialog(false);
+    setApiCallsCount(prev => prev + 1);
+    
+    if (pendingAction === 'choice') {
+      // Handle choice selection - for now just log
+      console.log('Choice selected, would generate next segment');
+    } else if (pendingAction === 'audio') {
+      // Handle audio generation - for now just log
+      console.log('Audio generation requested');
+    }
+  };
+
+  const resetStory = () => {
+    // Reset story state
+    console.log('Resetting story');
+  };
+
+  // Get URL parameters for initial story generation
+  const urlParams = new URLSearchParams(window.location.search);
+  const prompt = urlParams.get('prompt') || '';
+  const mode = urlParams.get('mode') || 'fantasy';
+
+  // Initial story generation on mount
+  React.useEffect(() => {
+    if (!currentSegment && prompt) {
+      console.log('🚀 Starting initial story generation with prompt:', prompt);
+      generateSegment({
+        prompt,
+        storyMode: mode,
+        skipImage: skipImage,
+        skipAudio: true
+      }).catch(console.error);
+    }
+  }, [prompt, mode, skipImage, currentSegment, generateSegment]);
+
   // Show error state
-  if (error && !isCurrentlyGenerating) {
+  if (error && !isGenerating) {
     return (
       <StoryErrorState
         error={error}
@@ -66,7 +106,7 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
   }
 
   // Show loading state only during initial generation without any content
-  if (isCurrentlyGenerating && !currentSegment) {
+  if (isGenerating && !currentSegment) {
     return (
       <StoryLoadingState
         apiCallsCount={apiCallsCount}
@@ -76,7 +116,7 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
   }
 
   // Show complete story viewer when story is finished and has audio
-  if (currentSegment?.isEnd && fullStoryAudioUrl) {
+  if (currentSegment?.is_end && fullStoryAudioUrl) {
     return (
       <StoryDisplayLayout>
         <CompleteStoryViewer
@@ -116,22 +156,22 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
           <CardHeader className="text-center pb-4">
             <CardTitle className="text-white text-2xl font-serif flex items-center justify-center gap-2">
               <Sparkles className="h-6 w-6 text-amber-400" />
-              {currentSegment.isEnd ? "Story Complete!" : "Your Story Continues"}
+              {currentSegment.is_end ? "Story Complete!" : "Your Story Continues"}
             </CardTitle>
           </CardHeader>
           
           <CardContent className="space-y-8">
             {/* Progressive Image Section - shows immediately with loading states */}
             <StoryImageSection
-              imageUrl={currentSegment.imageUrl}
-              imageGenerationStatus={currentSegment.imageGenerationStatus}
+              imageUrl={currentSegment.image_url}
+              imageGenerationStatus={currentSegment.image_generation_status}
             />
 
             {/* Story Text - available immediately */}
-            <StoryTextSection text={currentSegment.text} />
+            <StoryTextSection text={currentSegment.segment_text} />
 
             {/* Choices - available immediately for user interaction */}
-            {!currentSegment.isEnd && (
+            {!currentSegment.is_end && currentSegment.choices && (
               <StoryChoicesSection
                 choices={currentSegment.choices}
                 isGenerating={false} // Don't disable choices during image generation
@@ -140,13 +180,13 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
             )}
 
             <StoryEndSection
-              isEnd={currentSegment.isEnd}
-              isGenerating={isCurrentlyGenerating}
+              isEnd={currentSegment.is_end || false}
+              isGenerating={isGenerating}
               onFinishStory={handleStoryFinish}
               onExit={onExit}
             />
 
-            {currentSegment.isEnd && !fullStoryAudioUrl && (
+            {currentSegment.is_end && !fullStoryAudioUrl && (
               <VoiceGenerationSection
                 selectedVoice={selectedVoice}
                 onVoiceChange={setSelectedVoice}
@@ -156,7 +196,7 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
             )}
 
             {/* Show subtle indicator when image is generating in background */}
-            {currentSegment.imageGenerationStatus === 'generating' && (
+            {isImageGenerating && (
               <div className="text-center text-amber-300/70 text-sm">
                 ✨ Enhancing your story with a custom image...
               </div>

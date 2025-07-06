@@ -38,7 +38,7 @@ export const useProgressiveStoryGeneration = () => {
           console.log('📡 Received realtime update:', payload);
           
           if (payload.new && payload.new.id === currentSegment.id) {
-            const updatedSegment = payload.new as StorySegment;
+            const updatedSegment = payload.new as any;
             
             // Update the current segment with new image data
             setCurrentSegment(prev => prev ? {
@@ -83,16 +83,29 @@ export const useProgressiveStoryGeneration = () => {
       const segment = await storyGeneration.generateSegment(params);
       
       console.log('✅ Story segment generated:', segment);
-      setCurrentSegment(segment);
+      
+      // Transform the segment data to match our interface
+      const transformedSegment: StorySegment = {
+        id: segment.id,
+        story_id: segment.storyId,
+        segment_text: segment.text,
+        image_url: segment.imageUrl,
+        image_generation_status: segment.imageGenerationStatus || 'generating',
+        choices: segment.choices || [],
+        is_end: segment.isEnd || false
+      };
+      
+      setCurrentSegment(transformedSegment);
 
       // If image generation is in progress, the realtime subscription will handle updates
-      if (segment.image_generation_status === 'generating') {
+      if (transformedSegment.image_generation_status === 'generating') {
         console.log('🎨 Image generation in progress, waiting for realtime updates...');
+        setIsImageGenerating(true);
       } else {
         setIsImageGenerating(false);
       }
 
-      return segment;
+      return transformedSegment;
     } catch (error) {
       console.error('❌ Progressive story generation failed:', error);
       setIsImageGenerating(false);

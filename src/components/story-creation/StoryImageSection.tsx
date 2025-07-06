@@ -1,7 +1,6 @@
 
 import React from 'react';
-import { Loader2, ImageIcon, AlertCircle, RotateCcw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Loader2, ImageIcon, AlertCircle } from 'lucide-react';
 
 interface StoryImageSectionProps {
   imageUrl?: string | null;
@@ -33,7 +32,7 @@ const StoryImageSection: React.FC<StoryImageSectionProps> = ({
     return (
       <div className="story-image-section w-full">
         <div className="w-full max-w-4xl h-80 md:h-96 rounded-lg border-2 border-dashed border-amber-500/30 bg-slate-800/50 flex flex-col items-center justify-center mx-auto">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-400 mb-4"></div>
+          <Loader2 className="h-12 w-12 animate-spin text-amber-400 mb-4" />
           <p className="text-amber-300 text-lg">Creating your story image...</p>
           <p className="text-amber-300/70 text-sm mt-2">This may take 30-60 seconds</p>
         </div>
@@ -64,7 +63,6 @@ const StoryImageSection: React.FC<StoryImageSectionProps> = ({
           className="w-full max-w-4xl h-80 md:h-96 rounded-lg border border-amber-500/20 object-cover shadow-lg mx-auto"
           onError={(e) => {
             console.error('[StoryImageSection] Failed to load image:', imageUrl);
-            // Don't set a fallback here, let the parent component handle it via realtime updates
           }}
         />
       </div>
