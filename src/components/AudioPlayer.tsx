@@ -45,18 +45,16 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
       setErrorMessage,
     });
 
-    // Add all event listeners with debugging
-    console.log('🎵 Adding event listeners');
-    audio.addEventListener('loadeddata', eventHandlers.setAudioData);
+    // Add essential event listeners only (removed duplicates and onLoadStart)
+    console.log('🎵 Adding essential event listeners');
     audio.addEventListener('loadedmetadata', eventHandlers.onLoadedMetadata);
-    audio.addEventListener('loadeddata', eventHandlers.onLoadedData);
+    audio.addEventListener('loadeddata', eventHandlers.setAudioData);
+    audio.addEventListener('canplay', eventHandlers.onCanPlay);
     audio.addEventListener('timeupdate', eventHandlers.setAudioTime);
     audio.addEventListener('play', eventHandlers.onPlay);
     audio.addEventListener('pause', eventHandlers.onPause);
     audio.addEventListener('ended', eventHandlers.onPause);
     audio.addEventListener('error', eventHandlers.onError);
-    audio.addEventListener('loadstart', eventHandlers.onLoadStart);
-    audio.addEventListener('canplay', eventHandlers.onCanPlay);
 
     // Test if the audio URL is accessible
     console.log('🎵 Testing URL accessibility:', src);
@@ -87,16 +85,14 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
       if (audio) {
         audio.pause();
       }
-      audio.removeEventListener('loadeddata', eventHandlers.setAudioData);
       audio.removeEventListener('loadedmetadata', eventHandlers.onLoadedMetadata);
-      audio.removeEventListener('loadeddata', eventHandlers.onLoadedData);
+      audio.removeEventListener('loadeddata', eventHandlers.setAudioData);
+      audio.removeEventListener('canplay', eventHandlers.onCanPlay);
       audio.removeEventListener('timeupdate', eventHandlers.setAudioTime);
       audio.removeEventListener('play', eventHandlers.onPlay);
       audio.removeEventListener('pause', eventHandlers.onPause);
       audio.removeEventListener('ended', eventHandlers.onPause);
       audio.removeEventListener('error', eventHandlers.onError);
-      audio.removeEventListener('loadstart', eventHandlers.onLoadStart);
-      audio.removeEventListener('canplay', eventHandlers.onCanPlay);
     };
   }, [src]);
 

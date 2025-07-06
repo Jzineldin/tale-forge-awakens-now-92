@@ -58,33 +58,21 @@ export const createAudioEventHandlers = (
     setters.setErrorMessage('Unable to load audio file');
   };
 
-  const onLoadStart = () => {
-    console.log('🎵 Audio loading started:', {
-      src: audio.src,
-      readyState: audio.readyState,
-      networkState: audio.networkState
-    });
-    setters.setIsLoading(true);
-  };
-
   const onCanPlay = () => {
     console.log('🎵 Audio can play:', {
       duration: audio.duration,
       readyState: audio.readyState,
       networkState: audio.networkState
     });
-    setters.setIsLoading(false);
+    // Only set loading to false if we haven't already done so
+    // This prevents race conditions with loadeddata
+    if (isFinite(audio.duration)) {
+      setters.setIsLoading(false);
+    }
   };
 
   const onLoadedMetadata = () => {
     console.log('🎵 Audio metadata loaded:', {
-      duration: audio.duration,
-      readyState: audio.readyState
-    });
-  };
-
-  const onLoadedData = () => {
-    console.log('🎵 Audio data loaded:', {
       duration: audio.duration,
       readyState: audio.readyState
     });
@@ -96,9 +84,7 @@ export const createAudioEventHandlers = (
     onPlay,
     onPause,
     onError,
-    onLoadStart,
     onCanPlay,
     onLoadedMetadata,
-    onLoadedData,
   };
 };
