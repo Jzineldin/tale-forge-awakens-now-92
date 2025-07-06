@@ -161,8 +161,6 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
       console.log('🎵 Cleaning up audio element and event listeners');
       if (audio) {
         audio.pause();
-        audio.removeAttribute('src');
-        audio.load();
       }
       audio.removeEventListener('loadeddata', setAudioData);
       audio.removeEventListener('loadedmetadata', onLoadedMetadata);
