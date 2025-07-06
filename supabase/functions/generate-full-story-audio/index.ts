@@ -108,10 +108,11 @@ serve(async (req) => {
       if (!response.ok) {
         const errorText = await response.text()
         console.error('OpenAI TTS error:', response.status, errorText)
-        throw new Error(`OpenAI TTS error: ${response.status}`)
+        throw new Error(`OpenAI TTS error: ${response.status} - ${errorText}`)
       }
 
       const audioBuffer = await response.arrayBuffer()
+      console.log(`Chunk ${i + 1} audio generated: ${audioBuffer.byteLength} bytes`)
       audioChunks.push(audioBuffer)
     }
 
@@ -127,7 +128,9 @@ serve(async (req) => {
       offset += chunk.byteLength
     }
 
-    // Upload to story-audio bucket (existing bucket)
+    console.log(`Combined audio size: ${combinedBuffer.byteLength} bytes`)
+
+    // Upload to story-audio bucket
     const fileName = `full_story_${storyId}_${Date.now()}.mp3`
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('story-audio')
@@ -141,13 +144,33 @@ serve(async (req) => {
       throw new Error(`Storage upload failed: ${uploadError.message}`)
     }
 
-    // Get public URL
+    console.log('Audio uploaded successfully:', uploadData.path)
+
+    // Get public URL and verify it's accessible
     const { data: { publicUrl } } = supabase.storage
       .from('story-audio')
       .getPublicUrl(fileName)
 
+    console.log('Public URL generated:', publicUrl)
+
+    // Verify the uploaded file is accessible
+    try {
+      const verifyResponse = await fetch(publicUrl, { method: 'HEAD' })
+      console.log('File verification:', {
+        status: verifyResponse.status,
+        headers: Object.fromEntries(verifyResponse.headers.entries())
+      })
+      
+      if (!verifyResponse.ok) {
+        throw new Error(`File not accessible: ${verifyResponse.status}`)
+      }
+    } catch (verifyError) {
+      console.error('File verification failed:', verifyError)
+      // Don't fail the entire process, but log the issue
+    }
+
     // Update story with audio URL and completed status
-    await supabase
+    const { error: updateError } = await supabase
       .from('stories')
       .update({
         full_story_audio_url: publicUrl,
@@ -155,12 +178,18 @@ serve(async (req) => {
       })
       .eq('id', storyId)
 
+    if (updateError) {
+      console.error('Failed to update story:', updateError)
+      throw new Error(`Failed to update story: ${updateError.message}`)
+    }
+
     console.log('✅ Full story audio generated successfully:', publicUrl)
 
     return new Response(
       JSON.stringify({ 
         audioUrl: publicUrl,
-        success: true
+        success: true,
+        fileSize: combinedBuffer.byteLength
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -171,17 +200,21 @@ serve(async (req) => {
     console.error('Error generating full story audio:', error)
     
     // Update story status to failed if we have storyId
-    const { storyId } = await req.json().catch(() => ({}))
-    if (storyId) {
-      const supabase = createClient(
-        Deno.env.get('SUPABASE_URL') ?? '',
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-      )
-      
-      await supabase
-        .from('stories')
-        .update({ audio_generation_status: 'failed' })
-        .eq('id', storyId)
+    try {
+      const { storyId } = await req.json().catch(() => ({}))
+      if (storyId) {
+        const supabase = createClient(
+          Deno.env.get('SUPABASE_URL') ?? '',
+          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+        )
+        
+        await supabase
+          .from('stories')
+          .update({ audio_generation_status: 'failed' })
+          .eq('id', storyId)
+      }
+    } catch (updateError) {
+      console.error('Failed to update story status to failed:', updateError)
     }
     
     return new Response(
