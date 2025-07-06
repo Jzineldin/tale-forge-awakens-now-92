@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ChevronLeft, ChevronRight, Play, Pause, X, Maximize2, Eye, SkipForward, SkipBack } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, Pause, X, Eye } from 'lucide-react';
 import { StorySegmentRow } from '@/types/stories';
 import AudioPlayer from '@/components/AudioPlayer';
 import { cn } from '@/lib/utils';
@@ -74,44 +74,46 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
   if (!isOpen || segments.length === 0) return null;
 
   const currentSegment = segments[currentSlide];
-  const hasImages = segments.some(s => s.image_url);
 
   return (
-    <div className="fixed inset-0 bg-slate-800 z-50 flex flex-col">
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 bg-slate-900/95 border-b border-slate-600 backdrop-blur-sm">
+    <div className="fixed inset-0 bg-slate-600 z-50 flex flex-col">
+      {/* Header - Improved visibility */}
+      <div className="flex items-center justify-between p-4 bg-slate-800/95 border-b border-slate-400/50 backdrop-blur-sm shadow-lg">
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
             size="icon"
             onClick={togglePlayback}
-            className="text-white hover:bg-white/20"
+            className="text-white hover:bg-white/20 border border-white/30"
           >
             {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
           </Button>
-          <span className="text-white text-sm font-medium">
+          <span className="text-white text-lg font-semibold">
             Chapter {currentSlide + 1} of {segments.length}
           </span>
           {isPlaying && (
-            <span className="text-amber-400 text-xs animate-pulse">
+            <span className="text-amber-300 text-sm animate-pulse font-medium">
               ● PLAYING
             </span>
           )}
         </div>
+        
+        {/* Prominent Exit Button */}
         <Button
           variant="ghost"
-          size="icon"
+          size="lg"
           onClick={onClose}
-          className="text-white hover:bg-red-600 bg-red-500/20 border-2 border-red-400 hover:border-red-300 transition-all duration-200 shadow-lg"
+          className="text-white hover:bg-red-600 bg-red-500/30 border-2 border-red-400 hover:border-red-300 transition-all duration-200 shadow-lg font-bold text-lg px-6"
         >
-          <X className="h-6 w-6 font-bold" />
+          <X className="h-7 w-7 font-bold mr-2" />
+          EXIT
         </Button>
       </div>
 
-      {/* Main slide area */}
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-8">
+      {/* Main slide area - Much lighter background */}
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-8 bg-slate-500">
         <div className="max-w-5xl w-full">
-          <Card className="bg-slate-700/95 border-slate-500/50 shadow-2xl backdrop-blur-sm">
+          <Card className="bg-white/95 border-slate-300 shadow-2xl backdrop-blur-sm">
             <CardContent className="p-6 sm:p-8">
               {/* Image */}
               {currentSegment.image_url ? (
@@ -119,7 +121,7 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
                   <img
                     src={currentSegment.image_url}
                     alt={`Story chapter ${currentSlide + 1}`}
-                    className="w-full max-h-80 sm:max-h-96 object-contain rounded-lg shadow-lg"
+                    className="w-full max-h-80 sm:max-h-96 object-contain rounded-lg shadow-lg border border-slate-200"
                     onError={(e) => {
                       console.warn('Image failed to load:', currentSegment.image_url);
                       e.currentTarget.style.display = 'none';
@@ -127,26 +129,26 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
                   />
                 </div>
               ) : (
-                // Placeholder for missing images
-                <div className="mb-6 bg-gradient-to-br from-slate-600 to-slate-700 rounded-lg flex items-center justify-center h-64 sm:h-80 border border-slate-500/50">
-                  <div className="text-center text-slate-200">
+                // Placeholder for missing images - Much lighter
+                <div className="mb-6 bg-gradient-to-br from-slate-200 to-slate-300 rounded-lg flex items-center justify-center h-64 sm:h-80 border-2 border-slate-300 shadow-inner">
+                  <div className="text-center text-slate-700">
                     <Eye className="h-12 w-12 mx-auto mb-2 opacity-70" />
-                    <p className="text-sm font-medium">Chapter {currentSlide + 1}</p>
-                    <p className="text-xs opacity-70">Image generating...</p>
+                    <p className="text-lg font-semibold">Chapter {currentSlide + 1}</p>
+                    <p className="text-sm opacity-70">Image generating...</p>
                   </div>
                 </div>
               )}
               
-              {/* Text */}
-              <div className="text-slate-100 space-y-4">
-                <p className="text-base sm:text-lg leading-relaxed font-medium">
+              {/* Text - Dark text on light background */}
+              <div className="text-slate-800 space-y-4">
+                <p className="text-lg sm:text-xl leading-relaxed font-medium" style={{ fontFamily: "'Playfair Display', serif" }}>
                   {currentSegment.segment_text}
                 </p>
                 
                 {/* Choice indicator if available */}
                 {currentSegment.triggering_choice_text && (
-                  <div className="mt-4 pt-4 border-t border-slate-500/50">
-                    <p className="text-sm text-blue-200 italic">
+                  <div className="mt-4 pt-4 border-t border-slate-300">
+                    <p className="text-base text-blue-700 italic font-medium">
                       → Choice made: {currentSegment.triggering_choice_text}
                     </p>
                   </div>
@@ -157,51 +159,51 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
         </div>
       </div>
 
-      {/* Navigation Controls */}
-      <div className="flex items-center justify-between p-4 bg-slate-900/95 border-t border-slate-600 backdrop-blur-sm">
+      {/* Navigation Controls - Improved contrast */}
+      <div className="flex items-center justify-between p-4 bg-slate-800/95 border-t border-slate-400/50 backdrop-blur-sm shadow-lg">
         <Button
           variant="ghost"
           onClick={prevSlide}
-          className="text-white hover:bg-white/20 flex items-center gap-2"
+          className="text-white hover:bg-white/20 flex items-center gap-2 border border-white/30 px-4 py-2"
           disabled={segments.length <= 1}
         >
-          <ChevronLeft className="h-4 w-4" />
-          <span className="hidden sm:inline">Previous</span>
+          <ChevronLeft className="h-5 w-5" />
+          <span className="hidden sm:inline font-medium">Previous</span>
         </Button>
 
         {/* Slide indicators */}
-        <div className="flex gap-1 sm:gap-2 max-w-md overflow-x-auto">
+        <div className="flex gap-2 max-w-md overflow-x-auto">
           {segments.slice(0, 10).map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
               className={cn(
-                "w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-200 flex-shrink-0",
+                "w-3 h-3 rounded-full transition-all duration-200 flex-shrink-0 border",
                 index === currentSlide 
-                  ? "bg-white scale-125" 
-                  : "bg-white/30 hover:bg-white/50"
+                  ? "bg-amber-400 scale-125 border-amber-300" 
+                  : "bg-white/50 hover:bg-white/70 border-white/30"
               )}
             />
           ))}
           {segments.length > 10 && (
-            <span className="text-white/50 text-xs">+{segments.length - 10}</span>
+            <span className="text-white/70 text-sm font-medium">+{segments.length - 10}</span>
           )}
         </div>
 
         <Button
           variant="ghost"
           onClick={nextSlide}
-          className="text-white hover:bg-white/20 flex items-center gap-2"
+          className="text-white hover:bg-white/20 flex items-center gap-2 border border-white/30 px-4 py-2"
           disabled={segments.length <= 1}
         >
-          <span className="hidden sm:inline">Next</span>
-          <ChevronRight className="h-4 w-4" />
+          <span className="hidden sm:inline font-medium">Next</span>
+          <ChevronRight className="h-5 w-5" />
         </Button>
       </div>
 
-      {/* Audio player - Fixed at bottom */}
+      {/* Audio player - Fixed at bottom with better styling */}
       {fullStoryAudioUrl && (
-        <div className="p-4 bg-slate-900/95 border-t border-slate-600 backdrop-blur-sm">
+        <div className="p-4 bg-slate-800/95 border-t border-slate-400/50 backdrop-blur-sm">
           <div className="max-w-2xl mx-auto">
             <AudioPlayer src={fullStoryAudioUrl} />
           </div>
