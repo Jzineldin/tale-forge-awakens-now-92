@@ -94,25 +94,56 @@ Previous context: ${JSON.stringify(narrativeContext || {})}`;
 
     const data = await response.json();
     console.log('✅ OpenAI API Success - Usage:', data.usage);
-    console.log('📝 Raw OpenAI Response:', data.choices[0].message.content);
+    console.log('📝 Raw OpenAI Response Length:', data.choices[0].message.content?.length);
+    console.log('📝 Raw OpenAI Response Preview:', data.choices[0].message.content?.substring(0, 200));
     
     const responseText = data.choices[0].message.content;
+    
+    if (!responseText || responseText.trim().length === 0) {
+      console.error('❌ Empty response from OpenAI');
+      throw new Error('OpenAI returned empty response');
+    }
     
     // Validate JSON response
     let parsedResponse;
     try {
+      console.log('🔍 Attempting to parse JSON response...');
       parsedResponse = JSON.parse(responseText);
-      console.log('✅ JSON parsed successfully:', Object.keys(parsedResponse));
+      console.log('✅ JSON parsed successfully. Keys:', Object.keys(parsedResponse));
+      console.log('📝 Parsed response preview:', {
+        hasSegmentText: !!parsedResponse.segmentText,
+        segmentTextLength: parsedResponse.segmentText?.length,
+        hasChoices: !!parsedResponse.choices,
+        choicesCount: parsedResponse.choices?.length,
+        hasImagePrompt: !!parsedResponse.imagePrompt
+      });
     } catch (jsonError) {
       console.error('❌ JSON Parse Error:', jsonError);
-      console.error('❌ Raw response text:', responseText);
-      throw new Error(`Invalid JSON response from OpenAI: ${jsonError.message}`);
+      console.error('❌ Raw response text (first 500 chars):', responseText?.substring(0, 500));
+      console.error('❌ Raw response text (last 200 chars):', responseText?.substring(-200));
+      throw new Error(`Invalid JSON response from OpenAI: ${jsonError.message}. Response preview: ${responseText?.substring(0, 100)}...`);
     }
 
     // Validate required fields
     if (!parsedResponse.segmentText || !parsedResponse.choices || !Array.isArray(parsedResponse.choices)) {
-      console.error('❌ Invalid response structure:', parsedResponse);
-      throw new Error('OpenAI response missing required fields (segmentText, choices)');
+      console.error('❌ Invalid response structure. Expected fields missing:', {
+        hasSegmentText: !!parsedResponse.segmentText,
+        hasChoices: !!parsedResponse.choices,
+        choicesIsArray: Array.isArray(parsedResponse.choices),
+        actualStructure: Object.keys(parsedResponse)
+      });
+      console.error('❌ Full parsed response:', JSON.stringify(parsedResponse, null, 2));
+      throw new Error(`OpenAI response missing required fields. Has segmentText: ${!!parsedResponse.segmentText}, Has choices: ${!!parsedResponse.choices}, Choices is array: ${Array.isArray(parsedResponse.choices)}`);
+    }
+    
+    if (parsedResponse.segmentText.trim().length === 0) {
+      console.error('❌ Empty segmentText in OpenAI response');
+      throw new Error('OpenAI returned empty story text');
+    }
+    
+    if (parsedResponse.choices.length === 0) {
+      console.error('❌ No choices in OpenAI response');
+      throw new Error('OpenAI returned no story choices');
     }
     
     console.log('📝 Generated story segment:', {

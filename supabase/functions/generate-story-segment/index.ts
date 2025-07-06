@@ -184,10 +184,20 @@ serve(async (req) => {
 
     // Generate story text first
     console.log('📝 Starting enhanced text generation...')
+    console.log('📝 Generation params:', { 
+      prompt: prompt?.substring(0, 100), 
+      choiceText, 
+      genre: genre || storyMode || 'fantasy',
+      hasSupabaseClient: !!supabaseClient 
+    })
+    
     const storyResult = await generateStoryContent(prompt, choiceText, null, null, genre || storyMode || 'fantasy', supabaseClient)
+    
     console.log('✅ Text generation completed:', {
       textLength: storyResult.segmentText?.length,
-      choicesCount: storyResult.choices?.length
+      choicesCount: storyResult.choices?.length,
+      hasImagePrompt: !!storyResult.imagePrompt,
+      storyPreview: storyResult.segmentText?.substring(0, 150) + '...'
     })
     
     let imageUrl = null
