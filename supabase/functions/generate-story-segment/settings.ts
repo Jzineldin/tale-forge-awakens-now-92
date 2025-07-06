@@ -97,10 +97,15 @@ const defaultSettings: GenerationSettings = {
 
 export async function getGenerationSettings(supabaseClient: SupabaseClient): Promise<GenerationSettings> {
   try {
-    const { data } = await supabaseClient
+    const { data, error } = await supabaseClient
       .from('admin_settings')
-      .select('setting_key, setting_value')
-      .in('setting_key', ['text_providers', 'image_providers', 'tts_providers']);
+      .select('key, value')
+      .in('key', ['text_providers', 'image_providers', 'tts_providers']);
+
+    if (error) {
+      console.log('Admin settings query error:', error.message);
+      return defaultSettings;
+    }
 
     if (!data || data.length === 0) {
       console.log('No admin settings found, using defaults');
@@ -110,19 +115,23 @@ export async function getGenerationSettings(supabaseClient: SupabaseClient): Pro
     const settings = { ...defaultSettings };
     
     data.forEach(setting => {
-      if (setting.setting_key === 'text_providers') {
-        settings.textProviders = { ...settings.textProviders, ...setting.setting_value };
-      } else if (setting.setting_key === 'image_providers') {
-        settings.imageProviders = { ...settings.imageProviders, ...setting.setting_value };
-      } else if (setting.setting_key === 'tts_providers') {
-        settings.ttsProviders = { ...settings.ttsProviders, ...setting.setting_value };
+      try {
+        const parsedValue = typeof setting.value === 'string' ? JSON.parse(setting.value) : setting.value;
+        if (setting.key === 'text_providers') {
+          settings.textProviders = { ...settings.textProviders, ...parsedValue };
+        } else if (setting.key === 'image_providers') {
+          settings.imageProviders = { ...settings.imageProviders, ...parsedValue };
+        } else if (setting.key === 'tts_providers') {
+          settings.ttsProviders = { ...settings.ttsProviders, ...parsedValue };
+        }
+      } catch (parseError) {
+        console.log(`Failed to parse setting ${setting.key}:`, parseError);
       }
     });
 
-    console.log('Loaded admin settings:', settings);
     return settings;
   } catch (error) {
-    console.error('Error loading admin settings:', error);
+    console.log('Error loading admin settings, using defaults:', error);
     return defaultSettings;
   }
 }
