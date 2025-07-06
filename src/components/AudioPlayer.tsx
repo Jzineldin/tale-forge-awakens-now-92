@@ -45,7 +45,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
       setErrorMessage,
     });
 
-    // Add essential event listeners only (removed duplicates and onLoadStart)
+    // Add essential event listeners
     console.log('🎵 Adding essential event listeners');
     audio.addEventListener('loadedmetadata', eventHandlers.onLoadedMetadata);
     audio.addEventListener('loadeddata', eventHandlers.setAudioData);
@@ -155,43 +155,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
     }
   };
 
-  // Show error state
-  if (hasError) {
-    console.log('🎵 Rendering error state');
-    return (
-      <div className="flex items-center gap-2 w-full bg-destructive/10 border border-destructive/20 p-2 rounded-lg">
-        <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0" />
-        <div className="flex-1">
-          <p className="text-sm text-destructive font-medium">Audio Error</p>
-          <p className="text-xs text-destructive/80">{errorMessage}</p>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => window.location.reload()}
-          className="border-destructive/20 text-destructive hover:bg-destructive/10"
-        >
-          Retry
-        </Button>
-      </div>
-    );
-  }
+  console.log('🎵 Rendering audio player with state:', { isLoading, hasError, errorMessage });
 
-  // Show loading state
-  if (isLoading) {
-    console.log('🎵 Rendering loading state');
-    return (
-      <div className="flex items-center gap-2 w-full bg-muted border p-2 rounded-lg">
-        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary flex-shrink-0"></div>
-        <div className="flex-1">
-          <p className="text-sm font-medium">Loading audio...</p>
-          <p className="text-xs text-muted-foreground">Please wait while the audio loads</p>
-        </div>
-      </div>
-    );
-  }
-
-  console.log('🎵 Rendering audio player controls');
   return (
     <>
       <AudioDebugger
@@ -204,26 +169,54 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
         isPlaying={isPlaying}
       />
       
-      <div className="flex items-center gap-2 md:gap-4 w-full bg-background border p-2 rounded-lg shadow-sm">
-        <audio ref={audioRef} src={src} preload="metadata" />
-        
-        <AudioControls
-          isPlaying={isPlaying}
-          isMuted={isMuted}
-          volume={volume}
-          hasError={hasError}
-          onTogglePlayPause={togglePlayPause}
-          onRestart={restartAudio}
-          onToggleMute={toggleMute}
-          onVolumeChange={handleVolumeChange}
-        />
-        
-        <AudioProgress
-          currentTime={currentTime}
-          duration={duration}
-          onSeek={handleSeek}
-        />
-      </div>
+      {/* Always render the audio element - this is the key fix */}
+      <audio ref={audioRef} src={src} preload="metadata" className="sr-only" />
+      
+      {/* Conditionally render UI based on state */}
+      {hasError ? (
+        <div className="flex items-center gap-2 w-full bg-destructive/10 border border-destructive/20 p-2 rounded-lg">
+          <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0" />
+          <div className="flex-1">
+            <p className="text-sm text-destructive font-medium">Audio Error</p>
+            <p className="text-xs text-destructive/80">{errorMessage}</p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => window.location.reload()}
+            className="border-destructive/20 text-destructive hover:bg-destructive/10"
+          >
+            Retry
+          </Button>
+        </div>
+      ) : isLoading ? (
+        <div className="flex items-center gap-2 w-full bg-muted border p-2 rounded-lg">
+          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary flex-shrink-0"></div>
+          <div className="flex-1">
+            <p className="text-sm font-medium">Loading audio...</p>
+            <p className="text-xs text-muted-foreground">Please wait while the audio loads</p>
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-center gap-2 md:gap-4 w-full bg-background border p-2 rounded-lg shadow-sm">
+          <AudioControls
+            isPlaying={isPlaying}
+            isMuted={isMuted}
+            volume={volume}
+            hasError={hasError}
+            onTogglePlayPause={togglePlayPause}
+            onRestart={restartAudio}
+            onToggleMute={toggleMute}
+            onVolumeChange={handleVolumeChange}
+          />
+          
+          <AudioProgress
+            currentTime={currentTime}
+            duration={duration}
+            onSeek={handleSeek}
+          />
+        </div>
+      )}
     </>
   );
 };
