@@ -113,7 +113,7 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
   // Get URL parameters for initial story generation
   const urlParams = new URLSearchParams(window.location.search);
   const prompt = urlParams.get('prompt') || '';
-  const mode = urlParams.get('mode') || 'fantasy';
+  const genre = urlParams.get('genre') || 'fantasy';
 
   // Initial story generation on mount
   React.useEffect(() => {
@@ -121,12 +121,12 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
       console.log('🚀 Starting initial story generation with prompt:', prompt);
       generateSegment({
         prompt,
-        storyMode: mode,
+        storyMode: genre,
         skipImage: skipImage,
         skipAudio: true
       }).catch(console.error);
     }
-  }, [prompt, mode, skipImage, currentSegment, generateSegment]);
+  }, [prompt, genre, skipImage, currentSegment]); // Removed generateSegment from deps
 
   // Show error state
   if (error && !isGenerating) {

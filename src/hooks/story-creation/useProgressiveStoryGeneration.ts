@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useStoryGeneration } from '@/hooks/useStoryGeneration';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -63,7 +63,7 @@ export const useProgressiveStoryGeneration = () => {
     };
   }, [currentSegment?.id]);
 
-  const generateSegment = async (params: {
+  const generateSegment = useCallback(async (params: {
     prompt?: string;
     storyId?: string;
     parentSegmentId?: string;
@@ -111,7 +111,7 @@ export const useProgressiveStoryGeneration = () => {
       setIsImageGenerating(false);
       throw error;
     }
-  };
+  }, [storyGeneration.generateSegment]);
 
   return {
     currentSegment,
