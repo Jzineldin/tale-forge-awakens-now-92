@@ -2,6 +2,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { createEnhancedImagePrompt } from './enhanced-image-prompting.ts'
+import { generateStoryContent } from './llm.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -178,9 +179,9 @@ serve(async (req) => {
 
     // Generate story text first
     console.log('📝 Starting enhanced text generation...')
-    const storyResult = await generateStoryText(prompt, genre || storyMode || 'fantasy', choiceText)
+    const storyResult = await generateStoryContent(prompt, choiceText, null, null, genre || storyMode || 'fantasy', supabaseClient)
     console.log('✅ Text generation completed:', {
-      textLength: storyResult.text?.length,
+      textLength: storyResult.segmentText?.length,
       choicesCount: storyResult.choices?.length
     })
     
@@ -192,7 +193,7 @@ serve(async (req) => {
       
       try {
         imageUrl = await generateImageWithEnhancedPrompting(
-          storyResult.text,
+          storyResult.segmentText,
           {
             genre: genre || storyMode || 'fantasy',
             characters: [],
@@ -215,7 +216,7 @@ serve(async (req) => {
     if (!skipAudio) {
       try {
         console.log('🔊 Starting audio generation...')
-        audioUrl = await generateAudio(storyResult.text)
+        audioUrl = await generateAudio(storyResult.segmentText)
         audioStatus = audioUrl ? 'completed' : 'failed';
         console.log('✅ Audio generation completed:', { audioUrl: !!audioUrl })
       } catch (audioError) {
@@ -225,7 +226,7 @@ serve(async (req) => {
     }
 
     // Calculate word count
-    const wordCount = storyResult.text?.split(/\s+/).filter(word => word.length > 0).length || 0;
+    const wordCount = storyResult.segmentText?.split(/\s+/).filter(word => word.length > 0).length || 0;
 
     // Save to database with enhanced data - ENSURE storyId is set
     console.log('💾 Saving enhanced segment to database with story_id:', finalStoryId)
@@ -234,7 +235,7 @@ serve(async (req) => {
       .insert({
         story_id: finalStoryId, // CRITICAL: Ensure this is not null
         parent_segment_id: parentSegmentId,
-        segment_text: storyResult.text,
+        segment_text: storyResult.segmentText,
         image_url: imageUrl,
         audio_url: audioUrl,
         choices: storyResult.choices || [],
@@ -276,152 +277,6 @@ serve(async (req) => {
     )
   }
 })
-
-async function generateStoryText(prompt: string, genre: string, choiceText?: string) {
-  console.log('🤖 Attempting story generation...')
-  
-  const openAIKey = Deno.env.get('OPENAI_API_KEY')
-  if (openAIKey) {
-    try {
-      console.log('🚀 Using OpenAI GPT-4.1-2025-04-14 for text generation')
-      return await generateWithOpenAI(prompt, genre, choiceText, openAIKey)
-    } catch (error) {
-      console.error('❌ OpenAI generation failed:', error)
-    }
-  } else {
-    console.log('⚠️ OpenAI API key not found')
-  }
-  
-  const googleKey = Deno.env.get('GOOGLE_API_KEY')
-  if (googleKey) {
-    try {
-      console.log('🔄 Using Google Gemini for text generation')
-      return await generateWithGoogle(prompt, genre, choiceText, googleKey)
-    } catch (error) {
-      console.error('❌ Google AI generation failed:', error)
-    }
-  } else {
-    console.log('⚠️ Google API key not found')
-  }
-  
-  console.log('🔄 All AI services failed, using fallback response')
-  return {
-    text: `In the realm of ${genre.toLowerCase()}, your adventure begins with an intriguing situation: ${prompt || choiceText}. The world around you is filled with possibilities, and every decision you make will shape the path ahead. As you stand at this crossroads, you feel the weight of destiny upon your shoulders, knowing that your choices will determine not just your fate, but perhaps the fate of all those around you.`,
-    choices: [
-      "Explore the mysterious path ahead",
-      "Seek guidance from a wise mentor", 
-      "Trust your instincts and forge ahead boldly"
-    ],
-    isEnd: false
-  }
-}
-
-async function generateWithOpenAI(prompt: string, genre: string, choiceText?: string, apiKey: string) {
-  const systemPrompt = `You are a master storyteller. Create engaging ${genre} story segments.
-
-CRITICAL REQUIREMENTS:
-- Generate 150-250 words for rich, immersive storytelling
-- Create exactly 3 meaningful choices that advance the plot
-- Match the ${genre} genre perfectly
-- Use vivid, descriptive language
-
-Respond with JSON in this EXACT format:
-{
-  "text": "Your 150-250 word story segment here",
-  "choices": ["Choice 1", "Choice 2", "Choice 3"],
-  "isEnd": false
-}`
-
-  const userPrompt = prompt 
-    ? `Start a new ${genre} story: "${prompt}"`
-    : `Continue the ${genre} story. The reader chose: "${choiceText}"`
-
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      model: 'gpt-4.1-2025-04-14',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt }
-      ],
-      temperature: 0.8,
-      max_tokens: 1000
-    })
-  })
-
-  if (!response.ok) {
-    const errorText = await response.text()
-    console.error('OpenAI API error:', response.status, errorText)
-    throw new Error(`OpenAI API error: ${response.status} - ${errorText}`)
-  }
-
-  const data = await response.json()
-  const content = data.choices[0].message.content
-  
-  try {
-    return JSON.parse(content)
-  } catch {
-    return {
-      text: content,
-      choices: ["Continue the adventure", "Take a different approach", "Investigate further"],
-      isEnd: false
-    }
-  }
-}
-
-async function generateWithGoogle(prompt: string, genre: string, choiceText?: string, apiKey: string) {
-  const systemPrompt = `Create an engaging ${genre} story segment.
-
-Requirements:
-- Write 150-250 words
-- Create exactly 3 compelling choices
-- Match the ${genre} genre
-- Use vivid descriptions
-
-Format as JSON:
-{
-  "text": "Your story segment",
-  "choices": ["Choice 1", "Choice 2", "Choice 3"],
-  "isEnd": false
-}`
-
-  const userPrompt = prompt 
-    ? `Start a ${genre} story: "${prompt}"`
-    : `Continue the story. Reader chose: "${choiceText}"`
-
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ 
-        parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }] 
-      }]
-    })
-  })
-
-  if (!response.ok) {
-    const errorText = await response.text()
-    console.error('Google AI API error:', response.status, errorText)
-    throw new Error(`Google AI API error: ${response.status}`)
-  }
-
-  const data = await response.json()
-  const content = data.candidates[0].content.parts[0].text
-  
-  try {
-    return JSON.parse(content)
-  } catch {
-    return {
-      text: content,
-      choices: ["Continue the adventure", "Take a different path", "Investigate further"],
-      isEnd: false
-    }
-  }
-}
 
 async function generateAudio(text: string): Promise<string | null> {
   const openAIKey = Deno.env.get('OPENAI_API_KEY')

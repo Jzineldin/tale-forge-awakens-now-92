@@ -13,7 +13,7 @@ export async function generateStoryWithOpenAI(
     throw new Error('OpenAI API key not available');
   }
 
-  console.log('🤖 Generating story with OpenAI GPT-4.1-2025-04-14...');
+  console.log('🤖 Generating story with OpenAI GPT-4o-mini...');
   console.log('Generation params:', {
     hasPrompt: !!initialPrompt,
     hasChoice: !!choiceText,
@@ -59,7 +59,7 @@ Response format (EXACT JSON):
 Previous context: ${JSON.stringify(narrativeContext || {})}`;
 
   try {
-    console.log('📡 Calling OpenAI API with GPT-4.1-2025-04-14...');
+    console.log('📡 Calling OpenAI API with GPT-4o-mini...');
     
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -68,7 +68,7 @@ Previous context: ${JSON.stringify(narrativeContext || {})}`;
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4.1-2025-04-14',
+        model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }

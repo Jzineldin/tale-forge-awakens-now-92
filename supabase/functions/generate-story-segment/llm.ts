@@ -12,7 +12,7 @@ export async function generateStoryContent(
   storyMode?: string,
   supabaseClient?: SupabaseClient
 ) {
-  console.log('🚀 Starting story generation with OpenAI GPT-4.1-2025-04-14');
+  console.log('🚀 Starting story generation with OpenAI GPT-4o-mini');
   console.log('Generation params:', { 
     hasPrompt: !!initialPrompt, 
     hasChoiceText: !!choiceText, 
@@ -30,11 +30,11 @@ export async function generateStoryContent(
 
   console.log('Using generation settings:', textSettings);
 
-  // Try OpenAI with GPT-4.1-2025-04-14
+  // Try OpenAI with GPT-4o-mini
   const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
   if (openAIApiKey) {
     try {
-      console.log('🎯 Using OpenAI GPT-4.1-2025-04-14 as primary provider');
+      console.log('🎯 Using OpenAI GPT-4o-mini as primary provider');
       return await generateStoryWithOpenAI(
         initialPrompt, 
         choiceText, 
