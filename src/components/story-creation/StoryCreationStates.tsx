@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import StoryDisplay from '@/components/StoryDisplay';
@@ -20,12 +21,12 @@ interface StoryCreationStatesProps {
   skipImage: boolean;
   apiCallsCount: number;
   showCostDialog: boolean;
-  pendingAction: 'start' | 'choice' | 'finish' | null;
+  pendingAction: 'start' | 'choice' | 'audio' | null;
   hookError: string | null;
   handleGoHome: () => void;
   handleRestartStory: () => void;
   handleSkipImageChange: (checked: CheckedState) => void;
-  showConfirmation: (action: 'start' | 'choice' | 'finish', choice?: string) => void;
+  showConfirmation: (action: 'start' | 'choice' | 'audio', choice?: string) => void;
   confirmGeneration: () => Promise<void>;
   setShowCostDialog: (show: boolean) => void;
 }
@@ -179,7 +180,7 @@ export const StoryCreationStates: React.FC<StoryCreationStatesProps> = ({
                 segmentId: currentSegment.id,
               }}
               onSelectChoice={(choice) => showConfirmation('choice', choice)}
-              onFinishStory={() => showConfirmation('finish')}
+              onFinishStory={() => showConfirmation('audio')}
               onRestart={handleRestartStory}
               isLoading={isLoading}
               isFinishingStory={isFinishingStory}
@@ -200,15 +201,17 @@ export const StoryCreationStates: React.FC<StoryCreationStatesProps> = ({
         </div>
       )}
 
-      <CostConfirmationDialog
-        open={showCostDialog}
-        onOpenChange={setShowCostDialog}
-        pendingAction={pendingAction}
-        skipImage={skipImage}
-        apiCallsCount={apiCallsCount}
-        onSkipImageChange={handleSkipImageChange}
-        onConfirm={confirmGeneration}
-      />
+      {pendingAction && (
+        <CostConfirmationDialog
+          open={showCostDialog}
+          onOpenChange={setShowCostDialog}
+          pendingAction={pendingAction}
+          skipImage={skipImage}
+          apiCallsCount={apiCallsCount}
+          onSkipImageChange={handleSkipImageChange}
+          onConfirm={confirmGeneration}
+        />
+      )}
     </div>
   );
 };
