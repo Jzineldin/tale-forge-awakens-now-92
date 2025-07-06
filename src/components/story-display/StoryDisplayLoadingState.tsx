@@ -15,9 +15,9 @@ const StoryDisplayLoadingState: React.FC<StoryDisplayLoadingStateProps> = ({
 }) => {
   return (
     <div 
-      className="min-h-screen bg-slate-700"
+      className="min-h-screen bg-slate-900"
       style={{
-        backgroundImage: `linear-gradient(rgba(71, 85, 105, 0.85), rgba(51, 65, 85, 0.85)), url('/images/Flux_Dev_Lonely_astronaut_sitting_on_a_pile_of_books_in_space__0.jpg')`,
+        backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('/images/Flux_Dev_Lonely_astronaut_sitting_on_a_pile_of_books_in_space__0.jpg')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       }}
@@ -29,31 +29,24 @@ const StoryDisplayLoadingState: React.FC<StoryDisplayLoadingStateProps> = ({
           apiUsageCount={apiUsageCount}
         />
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center text-white max-w-md bg-slate-800/90 p-8 rounded-xl border border-amber-500/30 backdrop-blur-sm shadow-2xl">
+          <div className="text-center text-white max-w-md">
             <div className="flex justify-center mb-6 space-x-4">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-amber-400 border-t-4 border-amber-400/30"></div>
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-amber-400"></div>
             </div>
-            <h2 className="text-3xl font-serif mb-4 text-amber-300">Crafting Your Story...</h2>
-            <div className="space-y-4 text-slate-100">
-              <div className="flex items-center justify-center gap-3 bg-slate-700/60 p-3 rounded-lg">
-                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-                <span className="font-medium">Generating story text...</span>
+            <h2 className="text-2xl font-serif mb-2">Crafting Your Story...</h2>
+            <div className="space-y-3 text-gray-300">
+              <div className="flex items-center justify-center gap-2">
+                <span>Generating story text...</span>
               </div>
               {!skipImage && (
-                <div className="flex items-center justify-center gap-3 bg-slate-700/60 p-3 rounded-lg">
-                  <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
-                  <span className="font-medium">Creating visual scene...</span>
+                <div className="flex items-center justify-center gap-2">
+                  <span>Creating visual scene...</span>
                 </div>
               )}
             </div>
-            <div className="mt-6 p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-              <p className="text-sm text-amber-200 font-medium">
-                This usually takes 30-60 seconds. Please wait...
-              </p>
-              <p className="text-xs text-slate-300 mt-2">
-                API Calls: {apiUsageCount}
-              </p>
-            </div>
+            <p className="text-sm text-gray-400 mt-6">
+              This usually takes 30-60 seconds. Please wait...
+            </p>
           </div>
         </div>
       </div>

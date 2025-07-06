@@ -9,7 +9,7 @@ import { CheckedState } from '@radix-ui/react-checkbox';
 interface CostConfirmationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  pendingAction: 'start' | 'choice' | 'audio';
+  pendingAction: 'start' | 'choice' | 'finish' | null;
   skipImage: boolean;
   apiCallsCount: number;
   onSkipImageChange: (checked: CheckedState) => void;
@@ -35,7 +35,7 @@ const CostConfirmationDialog: React.FC<CostConfirmationDialogProps> = ({
   const getCostEstimate = () => {
     if (pendingAction === 'start') return skipImage ? '1 credit' : '2-3 credits';
     if (pendingAction === 'choice') return skipImage ? '1 credit' : '2-3 credits';
-    if (pendingAction === 'audio') return '1-2 credits';
+    if (pendingAction === 'finish') return '1-2 credits';
     return '1-3 credits';
   };
 
@@ -73,7 +73,7 @@ const CostConfirmationDialog: React.FC<CostConfirmationDialogProps> = ({
             </p>
           </div>
           
-          {pendingAction !== 'audio' && (
+          {pendingAction !== 'finish' && (
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="skip-image-dialog"

@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Sparkles } from 'lucide-react';
-import CostConfirmationDialog from './CostConfirmationDialog';
+import { CostConfirmationDialog } from '@/components/CostConfirmationDialog';
 import StoryDisplayLayout from '@/components/story-display/StoryDisplayLayout';
 import CompleteStoryViewer from './CompleteStoryViewer';
 import StoryErrorState from './StoryErrorState';
@@ -14,8 +13,7 @@ import StoryChoicesSection from './StoryChoicesSection';
 import StoryEndSection from './StoryEndSection';
 import VoiceGenerationSection from './VoiceGenerationSection';
 import StoryImageSettings from './StoryImageSettings';
-import { useProgressiveStoryGeneration } from '@/hooks/story-creation/useProgressiveStoryGeneration';
-import { useGenerateFullStoryAudio } from '@/hooks/useGenerateFullStoryAudio';
+import { useInlineStoryGeneration } from '@/hooks/story-creation/useInlineStoryGeneration';
 
 interface InlineStoryCreationProps {
   onExit: () => void;
@@ -25,111 +23,38 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
   const navigate = useNavigate();
   const {
     currentSegment,
-    isImageGenerating,
-    generateSegment,
-    isGenerating,
-    error
-  } = useProgressiveStoryGeneration();
-
-  // State management
-  const [storyHistory, setStoryHistory] = React.useState<any[]>([]);
-  const [showCostDialog, setShowCostDialog] = React.useState(false);
-  const [pendingAction, setPendingAction] = React.useState<'choice' | 'audio' | 'start'>('start');
-  const [pendingChoice, setPendingChoice] = React.useState<string>('');
-  const [skipImage, setSkipImage] = React.useState(false);
-  const [apiCallsCount, setApiCallsCount] = React.useState(0);
-  const [selectedVoice, setSelectedVoice] = React.useState('alloy');
-  const [fullStoryAudioUrl, setFullStoryAudioUrl] = React.useState<string>('');
-  const [showImageSettings, setShowImageSettings] = React.useState(false);
-
-  // Audio generation hook
-  const generateAudioMutation = useGenerateFullStoryAudio();
+    storyHistory,
+    showCostDialog,
+    pendingAction,
+    skipImage,
+    apiCallsCount,
+    error,
+    selectedVoice,
+    fullStoryAudioUrl,
+    isCurrentlyGenerating,
+    generateAudioMutation,
+    showImageSettings,
+    setShowCostDialog,
+    setSkipImage,
+    setSelectedVoice,
+    handleSelectChoice,
+    handleFinishStory,
+    showConfirmation,
+    confirmGeneration,
+    resetStory,
+    prompt,
+    mode
+  } = useInlineStoryGeneration();
 
   const handleStoryFinish = () => {
-    if (currentSegment) {
-      console.log('🎯 Story completed, redirecting to story view:', currentSegment.story_id);
-      navigate(`/story/${currentSegment.story_id}`, { replace: true });
-    }
+    handleFinishStory(false, (storyId: string) => {
+      console.log('🎯 Story completed, redirecting to story view:', storyId);
+      navigate(`/story/${storyId}`, { replace: true });
+    });
   };
-
-  const showConfirmation = (action: 'choice' | 'audio' | 'start', choice?: string) => {
-    setPendingAction(action);
-    if (choice) {
-      setPendingChoice(choice);
-    }
-    setShowCostDialog(true);
-  };
-
-  const confirmGeneration = async () => {
-    setShowCostDialog(false);
-    setApiCallsCount(prev => prev + 1);
-    
-    if (pendingAction === 'choice' && pendingChoice) {
-      // Generate next segment with selected choice
-      console.log('🎯 Generating next segment with choice:', pendingChoice);
-      try {
-        const result = await generateSegment({
-          storyId: currentSegment?.story_id,
-          parentSegmentId: currentSegment?.id,
-          choiceText: pendingChoice,
-          skipImage: skipImage,
-          skipAudio: true
-        });
-        
-        if (result) {
-          setStoryHistory(prev => [...prev, result]);
-        }
-      } catch (error) {
-        console.error('❌ Choice generation failed:', error);
-      }
-      setPendingChoice('');
-    } else if (pendingAction === 'audio' && currentSegment?.story_id) {
-      // Generate audio for the complete story
-      console.log('🎵 Starting audio generation for story:', currentSegment.story_id);
-      try {
-        const result = await generateAudioMutation.mutateAsync({
-          storyId: currentSegment.story_id,
-          voiceId: selectedVoice
-        });
-        
-        if (result?.audioUrl) {
-          setFullStoryAudioUrl(result.audioUrl);
-          console.log('✅ Audio generation completed:', result.audioUrl);
-        }
-      } catch (error) {
-        console.error('❌ Audio generation failed:', error);
-      }
-    }
-  };
-
-  const resetStory = () => {
-    // Reset story state
-    console.log('Resetting story');
-    setStoryHistory([]);
-    setFullStoryAudioUrl('');
-    setApiCallsCount(0);
-  };
-
-  // Get URL parameters for initial story generation
-  const urlParams = new URLSearchParams(window.location.search);
-  const prompt = urlParams.get('prompt') || '';
-  const genre = urlParams.get('genre') || 'fantasy';
-
-  // Initial story generation on mount
-  React.useEffect(() => {
-    if (!currentSegment && prompt) {
-      console.log('🚀 Starting initial story generation with prompt:', prompt);
-      generateSegment({
-        prompt,
-        storyMode: genre,
-        skipImage: skipImage,
-        skipAudio: true
-      }).catch(console.error);
-    }
-  }, [prompt, genre, skipImage, currentSegment]); // Removed generateSegment from deps
 
   // Show error state
-  if (error && !isGenerating) {
+  if (error && !isCurrentlyGenerating) {
     return (
       <StoryErrorState
         error={error}
@@ -139,8 +64,8 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
     );
   }
 
-  // Show loading state only during initial generation without any content
-  if (isGenerating && !currentSegment) {
+  // Show loading state during initial generation
+  if (isCurrentlyGenerating && !currentSegment) {
     return (
       <StoryLoadingState
         apiCallsCount={apiCallsCount}
@@ -150,7 +75,7 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
   }
 
   // Show complete story viewer when story is finished and has audio
-  if (currentSegment?.is_end && fullStoryAudioUrl) {
+  if (currentSegment?.isEnd && fullStoryAudioUrl) {
     return (
       <StoryDisplayLayout>
         <CompleteStoryViewer
@@ -182,7 +107,7 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
     );
   }
 
-  // Show story display with progressive loading
+  // Show story display once we have content
   if (currentSegment) {
     return (
       <StoryDisplayLayout>
@@ -190,57 +115,40 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
           <CardHeader className="text-center pb-4">
             <CardTitle className="text-white text-2xl font-serif flex items-center justify-center gap-2">
               <Sparkles className="h-6 w-6 text-amber-400" />
-              {currentSegment.is_end ? "Story Complete!" : "Your Story Continues"}
+              {currentSegment.isEnd ? "Story Complete!" : "Your Story Continues"}
             </CardTitle>
           </CardHeader>
           
           <CardContent className="space-y-8">
-            {/* Progressive Image Section - shows immediately with loading states */}
             <StoryImageSection
-              imageUrl={currentSegment.image_url}
-              imageGenerationStatus={currentSegment.image_generation_status}
+              imageUrl={currentSegment.imageUrl}
+              imageGenerationStatus={currentSegment.imageGenerationStatus}
             />
 
-            {/* Story Text - available immediately */}
-            <StoryTextSection text={currentSegment.segment_text} />
+            <StoryTextSection text={currentSegment.text} />
 
-            {/* Choices - available immediately for user interaction */}
-            {!currentSegment.is_end && currentSegment.choices && (
+            {!currentSegment.isEnd && (
               <StoryChoicesSection
                 choices={currentSegment.choices}
-                isGenerating={false} // Don't disable choices during image generation
+                isGenerating={isCurrentlyGenerating}
                 onChoiceSelect={(choice) => showConfirmation('choice', choice)}
               />
             )}
 
             <StoryEndSection
-              isEnd={currentSegment.is_end || false}
-              isGenerating={isGenerating}
+              isEnd={currentSegment.isEnd}
+              isGenerating={isCurrentlyGenerating}
               onFinishStory={handleStoryFinish}
               onExit={onExit}
             />
 
-            {currentSegment.is_end && !fullStoryAudioUrl && !generateAudioMutation.isPending && (
+            {currentSegment.isEnd && !fullStoryAudioUrl && (
               <VoiceGenerationSection
                 selectedVoice={selectedVoice}
                 onVoiceChange={setSelectedVoice}
                 onGenerateAudio={() => showConfirmation('audio')}
                 isGenerating={generateAudioMutation.isPending}
               />
-            )}
-
-            {/* Show audio generation status */}
-            {generateAudioMutation.isPending && (
-              <div className="text-center text-amber-300 text-sm">
-                🎵 Generating your story audio... This may take a few minutes.
-              </div>
-            )}
-
-            {/* Show subtle indicator when image is generating in background */}
-            {isImageGenerating && (
-              <div className="text-center text-amber-300/70 text-sm">
-                ✨ Enhancing your story with a custom image...
-              </div>
             )}
           </CardContent>
         </Card>
@@ -251,8 +159,11 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
           onConfirm={confirmGeneration}
           pendingAction={pendingAction}
           skipImage={skipImage}
-          apiCallsCount={apiCallsCount}
-          onSkipImageChange={(checked) => setSkipImage(checked === true)}
+          skipAudio={true}
+          onSkipImageChange={setSkipImage}
+          onSkipAudioChange={() => {}}
+          apiUsageCount={apiCallsCount}
+          showAudioOption={false}
         />
       </StoryDisplayLayout>
     );

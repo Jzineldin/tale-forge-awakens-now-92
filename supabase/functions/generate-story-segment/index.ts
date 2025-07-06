@@ -1,13 +1,14 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { createEnhancedImagePrompt } from './enhanced-image-prompting.ts'
-import { buildNarrativeContext, generateContextAwarePrompt, type NarrativeContext } from './narrative-context.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// Debug and validate API key
 function cleanAndValidateAPIKey() {
   console.log('=== API KEY VALIDATION ===');
   
@@ -18,52 +19,67 @@ function cleanAndValidateAPIKey() {
     return null;
   }
   
-  apiKey = apiKey.trim().replace(/[\r\n]/g, '');
+  // Clean the API key
+  const originalKey = apiKey;
+  apiKey = apiKey.trim(); // Remove whitespace
+  apiKey = apiKey.replace(/[\r\n]/g, ''); // Remove newlines
   
-  console.log('✅ API key found and cleaned');
+  if (originalKey !== apiKey) {
+    console.log('🧹 API key was cleaned (had whitespace/newlines)');
+  }
+  
+  console.log('✅ API key found');
   console.log('Key length:', apiKey.length);
+  console.log('Key prefix:', apiKey.substring(0, 7));
   console.log('Key format valid:', apiKey.startsWith('sk-'));
   
-  if (!apiKey.startsWith('sk-') || apiKey.length < 40) {
-    console.error('🚨 Invalid API key format');
+  // Check for common issues
+  if (apiKey.includes(' ')) {
+    console.error('🚨 API key contains spaces - this will cause 403 errors');
+  }
+  
+  if (!apiKey.startsWith('sk-')) {
+    console.error('🚨 API key doesn\'t start with "sk-" - invalid format');
+    return null;
+  }
+  
+  if (apiKey.length < 40) {
+    console.error('🚨 API key too short - invalid format');
     return null;
   }
   
   return apiKey;
 }
 
-// Background image generation and storage function
-async function generateImageInBackground(
-  segmentId: string,
-  storyText: string,
+// Enhanced image generation with better prompting
+async function generateImageWithEnhancedPrompting(
+  storyText: string, 
   storyContext: any = {},
-  previousSegments: any[] = [],
-  supabaseClient: any
-) {
-  console.log('🎨 Starting background image generation for segment:', segmentId);
+  previousSegments: any[] = []
+): Promise<string | null> {
+  console.log('🎨 Starting enhanced image generation...');
   
   const cleanApiKey = cleanAndValidateAPIKey();
   if (!cleanApiKey) {
-    console.error('❌ API key validation failed for background image generation');
-    return;
+    console.error('❌ API key validation failed');
+    return null;
   }
 
+  // Create enhanced prompt
+  const enhancedPrompt = createEnhancedImagePrompt(
+    storyText,
+    previousSegments,
+    {
+      genre: storyContext.genre || 'fantasy',
+      mainCharacters: storyContext.characters || [],
+      setting: storyContext.setting || '',
+      artStyle: 'digital illustration, storybook style, high quality'
+    }
+  );
+
+  console.log('🖼️ Enhanced prompt created:', enhancedPrompt.substring(0, 200) + '...');
+
   try {
-    // Create enhanced prompt with visual consistency
-    const enhancedPrompt = createEnhancedImagePrompt(
-      storyText,
-      previousSegments,
-      {
-        genre: storyContext.genre || 'fantasy',
-        mainCharacters: storyContext.characters || [],
-        setting: storyContext.setting || '',
-        artStyle: 'digital illustration, storybook style, high quality, consistent character design'
-      }
-    );
-
-    console.log('🖼️ Enhanced image prompt:', enhancedPrompt.substring(0, 200) + '...');
-
-    // Generate image with DALL-E-3
     const response = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
       headers: {
@@ -81,81 +97,20 @@ async function generateImageInBackground(
       }),
     });
 
-    console.log('🎨 Background image generation status:', response.status);
+    console.log('🎨 Enhanced image generation status:', response.status);
 
     if (response.ok) {
       const result = await response.json();
-      const tempImageUrl = result.data[0]?.url;
-      
-      if (tempImageUrl) {
-        console.log('📥 Fetching image for permanent storage...');
-        
-        // Fetch the generated image
-        const imageResponse = await fetch(tempImageUrl);
-        if (imageResponse.ok) {
-          const imageBlob = await imageResponse.blob();
-          
-          // Upload to Supabase storage
-          const fileName = `story_image_${Date.now()}.png`;
-          console.log('📤 Uploading to story-images bucket...');
-          
-          const { data: uploadData, error: uploadError } = await supabaseClient.storage
-            .from('story-images')
-            .upload(fileName, imageBlob, {
-              contentType: 'image/png',
-            });
-
-          if (uploadError) {
-            console.error('❌ Upload failed:', uploadError);
-            // Update segment with temp URL as fallback
-            await supabaseClient
-              .from('story_segments')
-              .update({ 
-                image_url: tempImageUrl, 
-                image_generation_status: 'completed' 
-              })
-              .eq('id', segmentId);
-            return;
-          }
-
-          // Get permanent public URL
-          const { data: { publicUrl } } = supabaseClient.storage
-            .from('story-images')
-            .getPublicUrl(uploadData.path);
-
-          console.log('✅ Image permanently stored, updating segment:', publicUrl);
-          
-          // Update the segment with the permanent image URL
-          await supabaseClient
-            .from('story_segments')
-            .update({ 
-              image_url: publicUrl, 
-              image_generation_status: 'completed' 
-            })
-            .eq('id', segmentId);
-            
-          console.log('✅ Background image generation completed for segment:', segmentId);
-        }
-      }
+      console.log('✅ Enhanced image generated successfully');
+      return result.data[0]?.url;
     } else {
       const errorText = await response.text();
-      console.error('❌ Background image generation failed:', errorText);
-      
-      // Update segment status to failed
-      await supabaseClient
-        .from('story_segments')
-        .update({ image_generation_status: 'failed' })
-        .eq('id', segmentId);
+      console.error('❌ Enhanced image generation failed:', errorText);
+      return null;
     }
-    
   } catch (error) {
-    console.error('❌ Background image generation error:', error);
-    
-    // Update segment status to failed
-    await supabaseClient
-      .from('story_segments')
-      .update({ image_generation_status: 'failed' })
-      .eq('id', segmentId);
+    console.error('❌ Enhanced image generation error:', error);
+    return null;
   }
 }
 
@@ -165,11 +120,11 @@ serve(async (req) => {
   }
 
   try {
-    console.log('=== PROGRESSIVE STORY GENERATION START ===');
+    console.log('=== ENHANCED STORY GENERATION START ===');
     
     const { prompt, genre, storyId, parentSegmentId, choiceText, skipImage, skipAudio, storyMode } = await req.json()
 
-    console.log('🚀 Progressive request:', { 
+    console.log('🚀 Enhanced story generation request:', { 
       hasPrompt: !!prompt, 
       genre: genre || storyMode, 
       storyId, 
@@ -185,7 +140,7 @@ serve(async (req) => {
       { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
     )
 
-    // Create story first if no storyId provided
+    // CRITICAL FIX: Create story first if no storyId provided
     let finalStoryId = storyId;
     if (!finalStoryId && prompt) {
       console.log('📝 Creating new story record...');
@@ -195,7 +150,7 @@ serve(async (req) => {
           title: prompt.substring(0, 100) + (prompt.length > 100 ? '...' : ''),
           description: prompt,
           story_mode: genre || storyMode || 'fantasy',
-          user_id: null
+          user_id: null // Allow anonymous stories
         })
         .select()
         .single();
@@ -219,51 +174,75 @@ serve(async (req) => {
         .order('created_at', { ascending: true });
       
       previousSegments = segments || [];
-      console.log('📚 Loaded', previousSegments.length, 'previous segments for context');
     }
 
-    // Build comprehensive narrative context
-    const narrativeContext = buildNarrativeContext(previousSegments, genre || storyMode || 'fantasy');
-    console.log('🧠 Narrative context built:', {
-      stage: narrativeContext.storyArc.stage,
-      progress: narrativeContext.storyArc.progressPercentage,
-      plotThreads: narrativeContext.plotThreads.length,
-      characters: narrativeContext.characters.protagonist.traits
-    });
-
-    // Generate story text (this is the only blocking operation)
-    console.log('📝 Starting story text generation...')
-    const storyResult = await generateEnhancedStoryText(
-      prompt, 
-      genre || storyMode || 'fantasy', 
-      choiceText, 
-      narrativeContext,
-      previousSegments
-    )
-    console.log('✅ Story text generation completed:', {
+    // Generate story text first
+    console.log('📝 Starting enhanced text generation...')
+    const storyResult = await generateStoryText(prompt, genre || storyMode || 'fantasy', choiceText)
+    console.log('✅ Text generation completed:', {
       textLength: storyResult.text?.length,
       choicesCount: storyResult.choices?.length
     })
+    
+    let imageUrl = null
+    let imageStatus = 'not_started'
+    
+    if (!skipImage) {
+      console.log('🎨 Starting enhanced image generation...')
+      
+      try {
+        imageUrl = await generateImageWithEnhancedPrompting(
+          storyResult.text,
+          {
+            genre: genre || storyMode || 'fantasy',
+            characters: [],
+            setting: ''
+          },
+          previousSegments
+        );
+        
+        imageStatus = imageUrl ? 'completed' : 'failed';
+        console.log('✅ Enhanced image generation result:', { imageUrl: !!imageUrl, status: imageStatus });
+      } catch (imageError) {
+        console.error('❌ Enhanced image generation failed:', imageError);
+        imageStatus = 'failed';
+      }
+    }
+
+    let audioUrl = null
+    let audioStatus = 'not_started'
+    
+    if (!skipAudio) {
+      try {
+        console.log('🔊 Starting audio generation...')
+        audioUrl = await generateAudio(storyResult.text)
+        audioStatus = audioUrl ? 'completed' : 'failed';
+        console.log('✅ Audio generation completed:', { audioUrl: !!audioUrl })
+      } catch (audioError) {
+        console.error('❌ Audio generation failed:', audioError)
+        audioStatus = 'failed';
+      }
+    }
 
     // Calculate word count
     const wordCount = storyResult.text?.split(/\s+/).filter(word => word.length > 0).length || 0;
 
-    // Save segment with text immediately - set image status as 'generating' if not skipping
-    console.log('💾 Saving segment with immediate text response')
+    // Save to database with enhanced data - ENSURE storyId is set
+    console.log('💾 Saving enhanced segment to database with story_id:', finalStoryId)
     const { data: segment, error } = await supabaseClient
       .from('story_segments')
       .insert({
-        story_id: finalStoryId,
+        story_id: finalStoryId, // CRITICAL: Ensure this is not null
         parent_segment_id: parentSegmentId,
         segment_text: storyResult.text,
-        image_url: null, // Will be updated by background task
-        audio_url: null, // Audio generation still synchronous for now
+        image_url: imageUrl,
+        audio_url: audioUrl,
         choices: storyResult.choices || [],
         triggering_choice_text: choiceText,
         is_end: storyResult.isEnd || false,
-        image_generation_status: skipImage ? 'not_started' : 'generating',
+        image_generation_status: imageStatus,
         word_count: wordCount,
-        audio_generation_status: 'not_started'
+        audio_generation_status: audioStatus
       })
       .select()
       .single()
@@ -273,28 +252,8 @@ serve(async (req) => {
       throw new Error(`Database error: ${error.message}`)
     }
 
-    console.log('✅ Segment saved with immediate text response:', segment.id)
+    console.log('✅ Successfully created enhanced segment:', segment.id)
 
-    // Start background image generation if not skipped
-    if (!skipImage && segment.id) {
-      console.log('🎨 Starting background image generation...');
-      EdgeRuntime.waitUntil(
-        generateImageInBackground(
-          segment.id,
-          storyResult.text,
-          {
-            genre: genre || storyMode || 'fantasy',
-            characters: narrativeContext.characters,
-            setting: narrativeContext.worldBuilding.setting
-          },
-          previousSegments,
-          supabaseClient
-        )
-      );
-    }
-
-    // Return immediate response with text content
-    console.log('🚀 Returning immediate response with text content');
     return new Response(
       JSON.stringify({ success: true, data: segment }),
       { 
@@ -303,11 +262,11 @@ serve(async (req) => {
       }
     )
   } catch (error) {
-    console.error('💥 Error in progressive story generation:', error)
+    console.error('💥 Error in enhanced story generation:', error)
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error.message || 'Progressive story generation failed',
+        error: error.message || 'Enhanced story generation failed',
         details: error.stack
       }),
       { 
@@ -318,72 +277,64 @@ serve(async (req) => {
   }
 })
 
-async function generateEnhancedStoryText(
-  prompt: string, 
-  genre: string, 
-  choiceText: string | null,
-  narrativeContext: NarrativeContext,
-  previousSegments: any[]
-) {
-  console.log('🤖 Starting enhanced story generation with full context...')
+async function generateStoryText(prompt: string, genre: string, choiceText?: string) {
+  console.log('🤖 Attempting story generation...')
   
   const openAIKey = Deno.env.get('OPENAI_API_KEY')
   if (openAIKey) {
     try {
-      console.log('🚀 Using enhanced OpenAI GPT-4.1-2025-04-14 with narrative context')
-      return await generateWithEnhancedOpenAI(prompt, genre, choiceText, openAIKey, narrativeContext, previousSegments)
+      console.log('🚀 Using OpenAI GPT-4.1-2025-04-14 for text generation')
+      return await generateWithOpenAI(prompt, genre, choiceText, openAIKey)
     } catch (error) {
-      console.error('❌ Enhanced OpenAI generation failed:', error)
+      console.error('❌ OpenAI generation failed:', error)
     }
+  } else {
+    console.log('⚠️ OpenAI API key not found')
   }
   
-  // Fallback with basic generation
-  console.log('🔄 Using fallback generation')
-  return generateFallbackStory(prompt, genre, choiceText, narrativeContext)
+  const googleKey = Deno.env.get('GOOGLE_API_KEY')
+  if (googleKey) {
+    try {
+      console.log('🔄 Using Google Gemini for text generation')
+      return await generateWithGoogle(prompt, genre, choiceText, googleKey)
+    } catch (error) {
+      console.error('❌ Google AI generation failed:', error)
+    }
+  } else {
+    console.log('⚠️ Google API key not found')
+  }
+  
+  console.log('🔄 All AI services failed, using fallback response')
+  return {
+    text: `In the realm of ${genre.toLowerCase()}, your adventure begins with an intriguing situation: ${prompt || choiceText}. The world around you is filled with possibilities, and every decision you make will shape the path ahead. As you stand at this crossroads, you feel the weight of destiny upon your shoulders, knowing that your choices will determine not just your fate, but perhaps the fate of all those around you.`,
+    choices: [
+      "Explore the mysterious path ahead",
+      "Seek guidance from a wise mentor", 
+      "Trust your instincts and forge ahead boldly"
+    ],
+    isEnd: false
+  }
 }
 
-async function generateWithEnhancedOpenAI(
-  prompt: string, 
-  genre: string, 
-  choiceText: string | null, 
-  apiKey: string,
-  narrativeContext: NarrativeContext,
-  previousSegments: any[]
-) {
-  // Create context-aware system prompt
-  const contextPrompt = generateContextAwarePrompt('', choiceText, narrativeContext, genre);
-  
-  const enhancedSystemPrompt = `${contextPrompt}
+async function generateWithOpenAI(prompt: string, genre: string, choiceText?: string, apiKey: string) {
+  const systemPrompt = `You are a master storyteller. Create engaging ${genre} story segments.
 
-CRITICAL REQUIREMENTS for ${genre} story generation:
-- Generate exactly 200-300 words for rich, immersive storytelling
-- Create exactly 3 meaningful choices that advance the plot logically
-- Maintain character consistency and development
-- Advance active plot threads meaningfully
-- Ensure choices are relevant to current story context and character goals
-- Include detailed image description for visual consistency
-- Keep narrative coherent with established world rules and atmosphere
-
-STORY CONTINUITY RULES:
-- Reference previous events and choices when relevant
-- Maintain established character traits and relationships
-- Continue active plot threads before introducing new ones
-- Respect the current story arc stage and pacing
-- Ensure all choices are logical given current circumstances
+CRITICAL REQUIREMENTS:
+- Generate 150-250 words for rich, immersive storytelling
+- Create exactly 3 meaningful choices that advance the plot
+- Match the ${genre} genre perfectly
+- Use vivid, descriptive language
 
 Respond with JSON in this EXACT format:
 {
-  "text": "Your 200-300 word story segment with rich details and continuity",
-  "choices": ["Choice 1 that advances main plot", "Choice 2 that explores character", "Choice 3 that develops subplot"],
-  "isEnd": false,
-  "imagePrompt": "Detailed scene description for consistent visual generation"
-}`;
+  "text": "Your 150-250 word story segment here",
+  "choices": ["Choice 1", "Choice 2", "Choice 3"],
+  "isEnd": false
+}`
 
   const userPrompt = prompt 
     ? `Start a new ${genre} story: "${prompt}"`
-    : `Continue the ${genre} story. The reader chose: "${choiceText}"
-    
-Previous story context: ${previousSegments.slice(-2).map(s => s.segment_text).join(' ')}`
+    : `Continue the ${genre} story. The reader chose: "${choiceText}"`
 
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -394,17 +345,17 @@ Previous story context: ${previousSegments.slice(-2).map(s => s.segment_text).jo
     body: JSON.stringify({
       model: 'gpt-4.1-2025-04-14',
       messages: [
-        { role: 'system', content: enhancedSystemPrompt },
+        { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
       ],
-      temperature: 0.7,
-      max_tokens: 1500
+      temperature: 0.8,
+      max_tokens: 1000
     })
   })
 
   if (!response.ok) {
     const errorText = await response.text()
-    console.error('Enhanced OpenAI API error:', response.status, errorText)
+    console.error('OpenAI API error:', response.status, errorText)
     throw new Error(`OpenAI API error: ${response.status} - ${errorText}`)
   }
 
@@ -412,49 +363,63 @@ Previous story context: ${previousSegments.slice(-2).map(s => s.segment_text).jo
   const content = data.choices[0].message.content
   
   try {
-    const parsed = JSON.parse(content)
-    return {
-      text: parsed.text,
-      choices: parsed.choices || ["Continue the adventure", "Take a different approach", "Investigate further"],
-      isEnd: parsed.isEnd || false,
-      imagePrompt: parsed.imagePrompt || parsed.text
-    }
+    return JSON.parse(content)
   } catch {
     return {
       text: content,
       choices: ["Continue the adventure", "Take a different approach", "Investigate further"],
-      isEnd: false,
-      imagePrompt: content
+      isEnd: false
     }
   }
 }
 
-function generateFallbackStory(
-  prompt: string, 
-  genre: string, 
-  choiceText: string | null,
-  narrativeContext: NarrativeContext
-) {
-  const stageInstructions = {
-    'setup': 'establishing the world and characters',
-    'rising_action': 'building tension and complexity',
-    'climax': 'reaching the story\'s peak moment',
-    'falling_action': 'resolving conflicts',
-    'resolution': 'bringing the story to a satisfying conclusion'
-  };
+async function generateWithGoogle(prompt: string, genre: string, choiceText?: string, apiKey: string) {
+  const systemPrompt = `Create an engaging ${genre} story segment.
+
+Requirements:
+- Write 150-250 words
+- Create exactly 3 compelling choices
+- Match the ${genre} genre
+- Use vivid descriptions
+
+Format as JSON:
+{
+  "text": "Your story segment",
+  "choices": ["Choice 1", "Choice 2", "Choice 3"],
+  "isEnd": false
+}`
+
+  const userPrompt = prompt 
+    ? `Start a ${genre} story: "${prompt}"`
+    : `Continue the story. Reader chose: "${choiceText}"`
+
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ 
+        parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }] 
+      }]
+    })
+  })
+
+  if (!response.ok) {
+    const errorText = await response.text()
+    console.error('Google AI API error:', response.status, errorText)
+    throw new Error(`Google AI API error: ${response.status}`)
+  }
+
+  const data = await response.json()
+  const content = data.candidates[0].content.parts[0].text
   
-  const currentGoal = narrativeContext.characters.protagonist.currentGoal;
-  const stageDescription = stageInstructions[narrativeContext.storyArc.stage];
-  
-  return {
-    text: `In this ${genre} adventure, you find yourself ${stageDescription}. ${currentGoal ? `Your current goal is ${currentGoal}.` : ''} ${prompt || choiceText || 'The story continues...'} As you navigate this situation, you realize that every decision you make will shape not just your immediate future, but the very essence of your journey. The world around you responds to your choices, creating new possibilities and challenges. What started as a simple situation has evolved into something far more complex and meaningful, testing your resolve and character in ways you never expected.`,
-    choices: [
-      `Continue with ${narrativeContext.characters.protagonist.traits[0] || 'bold'} determination`,
-      "Seek more information before acting",
-      "Try a completely different approach"
-    ],
-    isEnd: narrativeContext.storyArc.stage === 'resolution',
-    imagePrompt: `${genre} scene: character in ${narrativeContext.worldBuilding.setting} with ${narrativeContext.worldBuilding.atmosphere} atmosphere`
+  try {
+    return JSON.parse(content)
+  } catch {
+    return {
+      text: content,
+      choices: ["Continue the adventure", "Take a different path", "Investigate further"],
+      isEnd: false
+    }
   }
 }
 

@@ -40,8 +40,19 @@ const StoryImage: React.FC<StoryImageProps> = ({
         }
     }, [imageUrl]);
 
+    // Auto-retry after 10 seconds on first error
+    useEffect(() => {
+        if (imageError && retryCount === 0) {
+            console.log('[StoryImage] Setting up auto-retry timer');
+            const timer = setTimeout(() => {
+                handleRetry();
+            }, 10000);
+            return () => clearTimeout(timer);
+        }
+    }, [imageError, retryCount]);
+
     const handleRetry = () => {
-        console.log('[StoryImage] Manual retry triggered');
+        console.log('[StoryImage] Manual/Auto retry triggered');
         setImageError(false);
         setRetryCount(prev => prev + 1);
         setImageKey(prev => prev + 1);
@@ -57,10 +68,7 @@ const StoryImage: React.FC<StoryImageProps> = ({
     };
 
     // Determine what to show based on the current state
-    const isValidImageUrl = imageUrl && 
-                           imageUrl !== '/placeholder.svg' && 
-                           imageUrl.trim() !== '' &&
-                           !imageUrl.includes('placeholder');
+    const isValidImageUrl = imageUrl && imageUrl !== '/placeholder.svg' && imageUrl.trim() !== '';
     const isGenerating = imageGenerationStatus === 'pending' || imageGenerationStatus === 'in_progress';
     const isCompleted = imageGenerationStatus === 'completed';
     const isFailed = imageGenerationStatus === 'failed';
@@ -80,11 +88,11 @@ const StoryImage: React.FC<StoryImageProps> = ({
     // Show spinner when generating and no valid image
     if (isGenerating && !isValidImageUrl) {
         return (
-            <div className={`relative flex items-center justify-center bg-slate-100 border-2 border-dashed border-slate-300 aspect-square w-full ${className}`}>
-                <div className="flex flex-col items-center space-y-2 text-slate-600">
+            <div className={`relative flex items-center justify-center bg-muted/50 border-2 border-dashed border-muted-foreground/20 aspect-square w-full ${className}`}>
+                <div className="flex flex-col items-center space-y-2 text-muted-foreground">
                     <Loader2 className="h-8 w-8 animate-spin" />
                     <p className="text-sm">Generating image...</p>
-                    <p className="text-xs text-amber-600">Please wait...</p>
+                    <p className="text-xs text-amber-400">Testing OpenAI connection...</p>
                 </div>
             </div>
         );
@@ -92,30 +100,23 @@ const StoryImage: React.FC<StoryImageProps> = ({
 
     // Show error state for failed generation or image load errors
     if (isFailed || imageError) {
-        const isExpiredUrl = imageError && imageUrl?.includes('oaidalleapiprodscus');
-        
         return (
-            <div className={`relative flex items-center justify-center bg-red-50 border-2 border-red-200 aspect-square w-full ${className}`}>
-                <div className="flex flex-col items-center space-y-3 text-red-600 p-4">
+            <div className={`relative flex items-center justify-center bg-destructive/10 border-2 border-destructive/20 aspect-square w-full ${className}`}>
+                <div className="flex flex-col items-center space-y-3 text-destructive p-4">
                     <AlertCircle className="h-8 w-8" />
                     <p className="text-sm text-center">
-                        {isExpiredUrl 
-                            ? 'Image URL has expired' 
-                            : isFailed 
-                                ? 'Image generation failed' 
-                                : 'Failed to load image'
-                        }
+                        {isFailed ? 'Image generation failed' : 'Failed to load image'}
                     </p>
-                    {isExpiredUrl && (
-                        <p className="text-xs text-center text-slate-600">
-                            AI-generated images expire after some time
+                    {isFailed && (
+                        <p className="text-xs text-center text-muted-foreground">
+                            Check console logs for OpenAI API details
                         </p>
                     )}
                     <Button 
                         onClick={handleRetry}
                         size="sm"
                         variant="outline"
-                        className="text-xs border-red-300 text-red-600 hover:bg-red-50"
+                        className="text-xs"
                     >
                         <RotateCcw className="h-3 w-3 mr-1" />
                         Retry
@@ -129,7 +130,7 @@ const StoryImage: React.FC<StoryImageProps> = ({
     if (isValidImageUrl) {
         console.log('[StoryImage] Rendering actual image with key:', imageKey);
         return (
-            <div className={`relative overflow-hidden border border-slate-200 aspect-square w-full ${className}`}>
+            <div className={`relative overflow-hidden border aspect-square w-full ${className}`}>
                 <img
                     key={`${imageUrl}-${imageKey}`}
                     src={imageUrl}
@@ -151,8 +152,8 @@ const StoryImage: React.FC<StoryImageProps> = ({
 
     // Show placeholder when no image is available and not failed
     return (
-        <div className={`relative flex items-center justify-center bg-slate-100 border-2 border-dashed border-slate-300 aspect-square w-full ${className}`}>
-            <div className="flex flex-col items-center space-y-2 text-slate-500">
+        <div className={`relative flex items-center justify-center bg-muted/20 border-2 border-dashed border-muted-foreground/20 aspect-square w-full ${className}`}>
+            <div className="flex flex-col items-center space-y-2 text-muted-foreground">
                 <ImageIcon className="h-8 w-8" />
                 <p className="text-sm">No image available</p>
                 <p className="text-xs">Images skipped for this story</p>
