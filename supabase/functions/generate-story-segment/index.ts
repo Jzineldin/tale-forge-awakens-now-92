@@ -62,8 +62,8 @@ async function generateImageWithEnhancedPrompting(
   
   const cleanApiKey = cleanAndValidateAPIKey();
   if (!cleanApiKey) {
-    console.error('❌ API key validation failed');
-    return null;
+    console.error('❌ API key validation failed for image generation');
+    throw new Error('OpenAI API key not configured or invalid. Cannot generate images.');
   }
 
   // Create enhanced prompt
@@ -98,20 +98,25 @@ async function generateImageWithEnhancedPrompting(
       }),
     });
 
-    console.log('🎨 Enhanced image generation status:', response.status);
+    console.log('🎨 Image generation response status:', response.status);
 
-    if (response.ok) {
-      const result = await response.json();
-      console.log('✅ Enhanced image generated successfully');
-      return result.data[0]?.url;
-    } else {
+    if (!response.ok) {
       const errorText = await response.text();
-      console.error('❌ Enhanced image generation failed:', errorText);
-      return null;
+      console.error('❌ Image generation failed:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText
+      });
+      throw new Error(`Image generation failed: ${response.status} - ${errorText}`);
     }
+
+    const result = await response.json();
+    console.log('✅ Image generated successfully');
+    return result.data[0]?.url || null;
+    
   } catch (error) {
-    console.error('❌ Enhanced image generation error:', error);
-    return null;
+    console.error('❌ Image generation error:', error);
+    throw error; // Re-throw to handle properly upstream
   }
 }
 

@@ -30,29 +30,22 @@ export async function generateStoryContent(
 
   console.log('Using generation settings:', textSettings);
 
-  // Try OpenAI with GPT-4o-mini
+  // Check for OpenAI API key
   const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
-  if (openAIApiKey) {
-    try {
-      console.log('🎯 Using OpenAI GPT-4o-mini as primary provider');
-      return await generateStoryWithOpenAI(
-        initialPrompt, 
-        choiceText, 
-        visualContext, 
-        narrativeContext, 
-        storyMode,
-        textSettings.wordCount,
-        textSettings.temperature
-      );
-    } catch (error) {
-      console.error('❌ OpenAI generation failed:', error);
-      console.log('📋 Falling back to mock response');
-    }
-  } else {
+  if (!openAIApiKey) {
     console.error('❌ OpenAI API key not found');
+    throw new Error('OpenAI API key not configured. Please add your OpenAI API key to continue.');
   }
 
-  // Final fallback to mock service
-  console.log('🔄 Using mock response as fallback');
-  return generateMockResponse(initialPrompt || choiceText || "Adventure begins");
+  // Generate story with OpenAI
+  console.log('🎯 Using OpenAI GPT-4o-mini as primary provider');
+  return await generateStoryWithOpenAI(
+    initialPrompt, 
+    choiceText, 
+    visualContext, 
+    narrativeContext, 
+    storyMode,
+    textSettings.wordCount,
+    textSettings.temperature
+  );
 }

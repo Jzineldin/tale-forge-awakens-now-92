@@ -75,23 +75,45 @@ Previous context: ${JSON.stringify(narrativeContext || {})}`;
         ],
         temperature: temp,
         max_tokens: 2048,
-        store: true // Track usage in OpenAI dashboard
+        response_format: { type: "json_object" } // Force JSON response
       }),
     });
 
-    console.log(`OpenAI API Response Status: ${response.status}`);
+    console.log(`📡 OpenAI API Response Status: ${response.status}`);
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('OpenAI API Error:', errorText);
+      console.error('❌ OpenAI API Error Details:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText,
+        headers: Object.fromEntries(response.headers.entries())
+      });
       throw new Error(`OpenAI API failed: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
     console.log('✅ OpenAI API Success - Usage:', data.usage);
+    console.log('📝 Raw OpenAI Response:', data.choices[0].message.content);
     
     const responseText = data.choices[0].message.content;
-    const parsedResponse = JSON.parse(responseText);
+    
+    // Validate JSON response
+    let parsedResponse;
+    try {
+      parsedResponse = JSON.parse(responseText);
+      console.log('✅ JSON parsed successfully:', Object.keys(parsedResponse));
+    } catch (jsonError) {
+      console.error('❌ JSON Parse Error:', jsonError);
+      console.error('❌ Raw response text:', responseText);
+      throw new Error(`Invalid JSON response from OpenAI: ${jsonError.message}`);
+    }
+
+    // Validate required fields
+    if (!parsedResponse.segmentText || !parsedResponse.choices || !Array.isArray(parsedResponse.choices)) {
+      console.error('❌ Invalid response structure:', parsedResponse);
+      throw new Error('OpenAI response missing required fields (segmentText, choices)');
+    }
     
     console.log('📝 Generated story segment:', {
       textLength: parsedResponse.segmentText?.length,
