@@ -9,61 +9,18 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// Debug and validate API key
-function cleanAndValidateAPIKey() {
-  console.log('=== API KEY VALIDATION ===');
-  
-  let apiKey = Deno.env.get('OPENAI_API_KEY');
-  
-  if (!apiKey) {
-    console.error('❌ No OPENAI_API_KEY found in environment');
-    return null;
-  }
-  
-  // Clean the API key
-  const originalKey = apiKey;
-  apiKey = apiKey.trim(); // Remove whitespace
-  apiKey = apiKey.replace(/[\r\n]/g, ''); // Remove newlines
-  
-  if (originalKey !== apiKey) {
-    console.log('🧹 API key was cleaned (had whitespace/newlines)');
-  }
-  
-  console.log('✅ API key found');
-  console.log('Key length:', apiKey.length);
-  console.log('Key prefix:', apiKey.substring(0, 7));
-  console.log('Key format valid:', apiKey.startsWith('sk-'));
-  
-  // Check for common issues
-  if (apiKey.includes(' ')) {
-    console.error('🚨 API key contains spaces - this will cause 403 errors');
-  }
-  
-  if (!apiKey.startsWith('sk-')) {
-    console.error('🚨 API key doesn\'t start with "sk-" - invalid format');
-    return null;
-  }
-  
-  if (apiKey.length < 40) {
-    console.error('🚨 API key too short - invalid format');
-    return null;
-  }
-  
-  return apiKey;
-}
-
 // Enhanced image generation with better prompting
 async function generateImageWithEnhancedPrompting(
   storyText: string, 
   storyContext: any = {},
   previousSegments: any[] = []
 ): Promise<string | null> {
-  console.log('🎨 Starting enhanced image generation...');
+  console.log('🎨 Starting image generation...');
   
-  const cleanApiKey = cleanAndValidateAPIKey();
-  if (!cleanApiKey) {
-    console.error('❌ API key validation failed for image generation');
-    throw new Error('OpenAI API key not configured or invalid. Cannot generate images.');
+  const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+  if (!openAIApiKey) {
+    console.error('❌ No OpenAI API key available');
+    return null;
   }
 
   // Create enhanced prompt
@@ -78,15 +35,12 @@ async function generateImageWithEnhancedPrompting(
     }
   );
 
-  console.log('🖼️ Enhanced prompt created:', enhancedPrompt.substring(0, 200) + '...');
-
   try {
     const response = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${cleanApiKey}`,
-        'Content-Type': 'application/json',
-        'User-Agent': 'Tale-Forge/1.0'
+        'Authorization': `Bearer ${openAIApiKey}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         model: 'dall-e-3',
@@ -98,16 +52,10 @@ async function generateImageWithEnhancedPrompting(
       }),
     });
 
-    console.log('🎨 Image generation response status:', response.status);
-
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('❌ Image generation failed:', {
-        status: response.status,
-        statusText: response.statusText,
-        error: errorText
-      });
-      throw new Error(`Image generation failed: ${response.status} - ${errorText}`);
+      console.error('❌ Image generation failed:', response.status, errorText);
+      return null;
     }
 
     const result = await response.json();
@@ -116,7 +64,7 @@ async function generateImageWithEnhancedPrompting(
     
   } catch (error) {
     console.error('❌ Image generation error:', error);
-    throw error; // Re-throw to handle properly upstream
+    return null;
   }
 }
 
@@ -126,11 +74,11 @@ serve(async (req) => {
   }
 
   try {
-    console.log('=== ENHANCED STORY GENERATION START ===');
+    console.log('=== STORY GENERATION START ===');
     
     const { prompt, genre, storyId, parentSegmentId, choiceText, skipImage, skipAudio, storyMode } = await req.json()
 
-    console.log('🚀 Enhanced story generation request:', { 
+    console.log('🚀 Story generation request:', { 
       hasPrompt: !!prompt, 
       genre: genre || storyMode, 
       storyId, 
@@ -146,7 +94,7 @@ serve(async (req) => {
       { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
     )
 
-    // CRITICAL FIX: Create story first if no storyId provided
+    // Create story first if no storyId provided
     let finalStoryId = storyId;
     if (!finalStoryId && prompt) {
       console.log('📝 Creating new story record...');
@@ -156,7 +104,7 @@ serve(async (req) => {
           title: prompt.substring(0, 100) + (prompt.length > 100 ? '...' : ''),
           description: prompt,
           story_mode: genre || storyMode || 'fantasy',
-          user_id: null // Allow anonymous stories
+          user_id: null
         })
         .select()
         .single();
@@ -182,29 +130,16 @@ serve(async (req) => {
       previousSegments = segments || [];
     }
 
-    // Generate story text first
-    console.log('📝 Starting enhanced text generation...')
-    console.log('📝 Generation params:', { 
-      prompt: prompt?.substring(0, 100), 
-      choiceText, 
-      genre: genre || storyMode || 'fantasy',
-      hasSupabaseClient: !!supabaseClient 
-    })
-    
+    // Generate story text
+    console.log('📝 Starting text generation...')
     const storyResult = await generateStoryContent(prompt, choiceText, null, null, genre || storyMode || 'fantasy', supabaseClient)
-    
-    console.log('✅ Text generation completed:', {
-      textLength: storyResult.segmentText?.length,
-      choicesCount: storyResult.choices?.length,
-      hasImagePrompt: !!storyResult.imagePrompt,
-      storyPreview: storyResult.segmentText?.substring(0, 150) + '...'
-    })
+    console.log('✅ Text generation completed')
     
     let imageUrl = null
     let imageStatus = 'not_started'
     
     if (!skipImage) {
-      console.log('🎨 Starting enhanced image generation...')
+      console.log('🎨 Starting image generation...')
       
       try {
         imageUrl = await generateImageWithEnhancedPrompting(
@@ -218,9 +153,9 @@ serve(async (req) => {
         );
         
         imageStatus = imageUrl ? 'completed' : 'failed';
-        console.log('✅ Enhanced image generation result:', { imageUrl: !!imageUrl, status: imageStatus });
+        console.log('✅ Image generation result:', { hasImage: !!imageUrl });
       } catch (imageError) {
-        console.error('❌ Enhanced image generation failed:', imageError);
+        console.error('❌ Image generation failed:', imageError);
         imageStatus = 'failed';
       }
     }
@@ -233,7 +168,6 @@ serve(async (req) => {
         console.log('🔊 Starting audio generation...')
         audioUrl = await generateAudio(storyResult.segmentText)
         audioStatus = audioUrl ? 'completed' : 'failed';
-        console.log('✅ Audio generation completed:', { audioUrl: !!audioUrl })
       } catch (audioError) {
         console.error('❌ Audio generation failed:', audioError)
         audioStatus = 'failed';
@@ -243,12 +177,12 @@ serve(async (req) => {
     // Calculate word count
     const wordCount = storyResult.segmentText?.split(/\s+/).filter(word => word.length > 0).length || 0;
 
-    // Save to database with enhanced data - ENSURE storyId is set
-    console.log('💾 Saving enhanced segment to database with story_id:', finalStoryId)
+    // Save to database
+    console.log('💾 Saving segment to database with story_id:', finalStoryId)
     const { data: segment, error } = await supabaseClient
       .from('story_segments')
       .insert({
-        story_id: finalStoryId, // CRITICAL: Ensure this is not null
+        story_id: finalStoryId,
         parent_segment_id: parentSegmentId,
         segment_text: storyResult.segmentText,
         image_url: imageUrl,
@@ -268,7 +202,7 @@ serve(async (req) => {
       throw new Error(`Database error: ${error.message}`)
     }
 
-    console.log('✅ Successfully created enhanced segment:', segment.id)
+    console.log('✅ Successfully created segment:', segment.id)
 
     return new Response(
       JSON.stringify({ success: true, data: segment }),
@@ -278,12 +212,11 @@ serve(async (req) => {
       }
     )
   } catch (error) {
-    console.error('💥 Error in enhanced story generation:', error)
+    console.error('💥 Error in story generation:', error)
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error.message || 'Enhanced story generation failed',
-        details: error.stack
+        error: error.message || 'Story generation failed'
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 

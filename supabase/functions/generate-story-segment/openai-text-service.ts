@@ -14,53 +14,31 @@ export async function generateStoryWithOpenAI(
   }
 
   console.log('🤖 Generating story with OpenAI GPT-4o-mini...');
-  console.log('Generation params:', {
-    hasPrompt: !!initialPrompt,
-    hasChoice: !!choiceText,
-    storyMode,
-    wordCount
-  });
 
   const { min: minWords, max: maxWords } = wordCount || { min: 120, max: 200 };
   const temp = temperature || 0.7;
 
-  // Build context-aware system prompt
-  let systemPrompt = `You are a master storyteller AI. Generate immersive story segments in JSON format.
+  // Build system prompt
+  const systemPrompt = `You are a master storyteller AI. Generate immersive story segments in JSON format.
 
-CRITICAL REQUIREMENTS:
+REQUIREMENTS:
 - Generate ${minWords}-${maxWords} words for rich, detailed storytelling
 - Create exactly 3 meaningful choices that advance the plot
 - Include detailed image descriptions for visual consistency
-- Maintain narrative flow and character development
 
 Response format (EXACT JSON):
 {
   "segmentText": "A ${minWords}-${maxWords} word story segment with vivid descriptions",
   "choices": ["Choice 1", "Choice 2", "Choice 3"],
   "isEnd": false,
-  "imagePrompt": "Detailed scene description for image generation",
-  "visualContext": {"style": "consistent art style", "characters": {"name": "description"}},
-  "narrativeContext": {"summary": "story summary", "currentObjective": "current goal", "arcStage": "story phase"}
+  "imagePrompt": "Detailed scene description for image generation"
 }`;
-
-  // Add context-aware instructions
-  if (visualContext?.characters) {
-    systemPrompt += `\n\nCharacter consistency: ${JSON.stringify(visualContext.characters)}`;
-  }
-  
-  if (narrativeContext?.summary) {
-    systemPrompt += `\n\nStory context: ${narrativeContext.summary}`;
-  }
 
   const userPrompt = initialPrompt 
     ? `Start a new ${storyMode || 'fantasy'} story: "${initialPrompt}"`
-    : `Continue the story. User chose: "${choiceText}"
-    
-Previous context: ${JSON.stringify(narrativeContext || {})}`;
+    : `Continue the story. User chose: "${choiceText}"`;
 
   try {
-    console.log('📡 Calling OpenAI API with GPT-4o-mini...');
-    
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -74,88 +52,35 @@ Previous context: ${JSON.stringify(narrativeContext || {})}`;
           { role: 'user', content: userPrompt }
         ],
         temperature: temp,
-        max_tokens: 2048,
-        response_format: { type: "json_object" } // Force JSON response
+        max_tokens: 1500,
+        response_format: { type: "json_object" }
       }),
     });
 
-    console.log(`📡 OpenAI API Response Status: ${response.status}`);
-
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('❌ OpenAI API Error Details:', {
-        status: response.status,
-        statusText: response.statusText,
-        error: errorText,
-        headers: Object.fromEntries(response.headers.entries())
-      });
       throw new Error(`OpenAI API failed: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    console.log('✅ OpenAI API Success - Usage:', data.usage);
-    console.log('📝 Raw OpenAI Response Length:', data.choices[0].message.content?.length);
-    console.log('📝 Raw OpenAI Response Preview:', data.choices[0].message.content?.substring(0, 200));
-    
     const responseText = data.choices[0].message.content;
     
-    if (!responseText || responseText.trim().length === 0) {
-      console.error('❌ Empty response from OpenAI');
+    if (!responseText) {
       throw new Error('OpenAI returned empty response');
     }
     
-    // Validate JSON response
-    let parsedResponse;
-    try {
-      console.log('🔍 Attempting to parse JSON response...');
-      parsedResponse = JSON.parse(responseText);
-      console.log('✅ JSON parsed successfully. Keys:', Object.keys(parsedResponse));
-      console.log('📝 Parsed response preview:', {
-        hasSegmentText: !!parsedResponse.segmentText,
-        segmentTextLength: parsedResponse.segmentText?.length,
-        hasChoices: !!parsedResponse.choices,
-        choicesCount: parsedResponse.choices?.length,
-        hasImagePrompt: !!parsedResponse.imagePrompt
-      });
-    } catch (jsonError) {
-      console.error('❌ JSON Parse Error:', jsonError);
-      console.error('❌ Raw response text (first 500 chars):', responseText?.substring(0, 500));
-      console.error('❌ Raw response text (last 200 chars):', responseText?.substring(-200));
-      throw new Error(`Invalid JSON response from OpenAI: ${jsonError.message}. Response preview: ${responseText?.substring(0, 100)}...`);
-    }
-
-    // Validate required fields
-    if (!parsedResponse.segmentText || !parsedResponse.choices || !Array.isArray(parsedResponse.choices)) {
-      console.error('❌ Invalid response structure. Expected fields missing:', {
-        hasSegmentText: !!parsedResponse.segmentText,
-        hasChoices: !!parsedResponse.choices,
-        choicesIsArray: Array.isArray(parsedResponse.choices),
-        actualStructure: Object.keys(parsedResponse)
-      });
-      console.error('❌ Full parsed response:', JSON.stringify(parsedResponse, null, 2));
-      throw new Error(`OpenAI response missing required fields. Has segmentText: ${!!parsedResponse.segmentText}, Has choices: ${!!parsedResponse.choices}, Choices is array: ${Array.isArray(parsedResponse.choices)}`);
+    const parsedResponse = JSON.parse(responseText);
+    
+    // Basic validation
+    if (!parsedResponse.segmentText || !parsedResponse.choices) {
+      throw new Error('OpenAI response missing required fields');
     }
     
-    if (parsedResponse.segmentText.trim().length === 0) {
-      console.error('❌ Empty segmentText in OpenAI response');
-      throw new Error('OpenAI returned empty story text');
-    }
-    
-    if (parsedResponse.choices.length === 0) {
-      console.error('❌ No choices in OpenAI response');
-      throw new Error('OpenAI returned no story choices');
-    }
-    
-    console.log('📝 Generated story segment:', {
-      textLength: parsedResponse.segmentText?.length,
-      choicesCount: parsedResponse.choices?.length,
-      hasImagePrompt: !!parsedResponse.imagePrompt
-    });
-    
+    console.log('✅ Story generation successful');
     return parsedResponse;
     
   } catch (error) {
-    console.error('OpenAI text generation failed:', error);
-    throw new Error(`Story generation failed: ${error.message}`);
+    console.error('OpenAI generation failed:', error);
+    throw error;
   }
 }
