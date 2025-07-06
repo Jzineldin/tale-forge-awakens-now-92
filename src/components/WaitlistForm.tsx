@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,7 +26,7 @@ const WaitlistForm: React.FC = () => {
 
     try {
       const { error } = await supabase
-        .from('waitlist_entries')
+        .from('waitlist')
         .insert([
           {
             email: email.toLowerCase().trim(),

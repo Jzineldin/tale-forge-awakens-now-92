@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -41,7 +40,7 @@ const WaitlistSignup: React.FC<WaitlistSignupProps> = ({ variant = 'card', class
     setIsLoading(true);
     try {
       const { error } = await supabase
-        .from('waitlist_entries')
+        .from('waitlist')
         .insert({
           name: data.name,
           email: data.email,

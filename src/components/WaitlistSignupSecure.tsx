@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -63,7 +62,7 @@ const WaitlistSignupSecure: React.FC = () => {
       const sanitizedEmail = validateInput.email(formData.email);
 
       const { error } = await supabase
-        .from('waitlist_entries')
+        .from('waitlist')
         .insert([
           {
             name: sanitizedName,

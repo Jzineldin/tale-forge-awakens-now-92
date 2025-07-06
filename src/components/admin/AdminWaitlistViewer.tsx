@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -20,7 +19,7 @@ const AdminWaitlistViewer: React.FC = () => {
     queryKey: ['waitlist-entries'],
     queryFn: async () => {
     const { data, error } = await supabase
-      .from('waitlist_entries')
+      .from('waitlist')
       .select('*')
         .order('created_at', { ascending: false });
       
