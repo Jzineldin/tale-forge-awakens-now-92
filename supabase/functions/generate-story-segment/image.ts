@@ -19,7 +19,7 @@ export async function generateImageWithFallback(prompt: string, visualContext?: 
   return null;
 }
 
-// Upload function that ensures storage bucket exists
+// Upload function that ensures storage bucket exists with CORRECT bucket name
 async function ensureStorageBucket(client: SupabaseClient): Promise<boolean> {
   try {
     const { data: buckets, error: listError } = await client.storage.listBuckets();
@@ -29,11 +29,12 @@ async function ensureStorageBucket(client: SupabaseClient): Promise<boolean> {
       return false;
     }
     
-    const bucketExists = buckets?.some(bucket => bucket.name === 'story_images');
+    // Check for correct bucket name: 'story-images' (with dash, not underscore)
+    const bucketExists = buckets?.some(bucket => bucket.name === 'story-images');
     
     if (!bucketExists) {
-      console.log('📁 Creating story_images bucket...');
-      const { error: createError } = await client.storage.createBucket('story_images', {
+      console.log('📁 Creating story-images bucket...');
+      const { error: createError } = await client.storage.createBucket('story-images', {
         public: true,
         fileSizeLimit: 10485760, // 10MB
         allowedMimeTypes: ['image/png', 'image/jpeg', 'image/webp']
@@ -43,7 +44,7 @@ async function ensureStorageBucket(client: SupabaseClient): Promise<boolean> {
         console.error('Error creating bucket:', createError);
         return false;
       }
-      console.log('✅ Successfully created story_images bucket');
+      console.log('✅ Successfully created story-images bucket');
     }
     
     return true;

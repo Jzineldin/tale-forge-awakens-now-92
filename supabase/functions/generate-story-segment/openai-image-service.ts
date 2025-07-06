@@ -19,8 +19,17 @@ function enhanceImagePrompt(prompt: string, visualContext?: any): string {
     enhancedPrompt = `${enhancedPrompt} - Art style: ${visualContext.style}`;
   }
   
+  // Add setting and atmosphere continuity
+  if (visualContext?.setting) {
+    enhancedPrompt = `${enhancedPrompt} - Setting: ${visualContext.setting}`;
+  }
+  
+  if (visualContext?.atmosphere) {
+    enhancedPrompt = `${enhancedPrompt} - Atmosphere: ${visualContext.atmosphere}`;
+  }
+  
   // Add quality descriptors for DALL-E-3
-  enhancedPrompt = `High quality digital illustration, detailed and vibrant: ${enhancedPrompt}. Professional storybook art style, consistent character design.`;
+  enhancedPrompt = `High quality digital illustration, detailed and vibrant: ${enhancedPrompt}. Professional storybook art style, consistent character design, maintain visual continuity.`;
   
   // Keep within limits
   if (enhancedPrompt.length > 4000) {
@@ -59,32 +68,15 @@ export async function generateImageWithOpenAI(prompt: string, visualContext?: an
     });
 
     console.log(`📊 OpenAI Image API Response Status: ${response.status}`);
-    console.log(`📊 Response Headers:`, Object.fromEntries(response.headers.entries()));
 
     if (!response.ok) {
       const errorText = await response.text();
       console.error('❌ OpenAI Image API Error Response:', errorText);
-      
-      // Try to parse error for better logging
-      try {
-        const errorData = JSON.parse(errorText);
-        console.error('❌ Parsed OpenAI Error:', errorData);
-        if (errorData.error?.message) {
-          console.error('❌ Error Message:', errorData.error.message);
-        }
-      } catch (parseError) {
-        console.error('❌ Could not parse error response:', parseError);
-      }
-      
       return null;
     }
 
     const data = await response.json();
-    console.log('✅ OpenAI Image API Success Response Structure:', {
-      hasData: !!data.data,
-      dataLength: data.data?.length,
-      firstItemKeys: data.data?.[0] ? Object.keys(data.data[0]) : null
-    });
+    console.log('✅ OpenAI Image API Success');
     
     // DALL-E-3 returns URL, need to fetch the image
     if (data.data && data.data[0] && data.data[0].url) {
@@ -109,11 +101,6 @@ export async function generateImageWithOpenAI(prompt: string, visualContext?: an
     
   } catch (error) {
     console.error('❌ OpenAI image generation failed with exception:', error);
-    console.error('❌ Error details:', {
-      name: error.name,
-      message: error.message,
-      stack: error.stack
-    });
     return null;
   }
 }
@@ -123,8 +110,9 @@ export async function uploadImageToStorage(imageBlob: Blob, client: SupabaseClie
   console.log(`📤 Uploading image to storage: ${filePath}`);
 
   try {
+    // Use correct bucket name: 'story-images' (with dash)
     const { data, error } = await client.storage
-      .from('story_images')
+      .from('story-images')
       .upload(filePath, imageBlob, {
         contentType: 'image/png',
       });
@@ -134,8 +122,9 @@ export async function uploadImageToStorage(imageBlob: Blob, client: SupabaseClie
       throw new Error(`Failed to upload image: ${error.message}`);
     }
     
+    // Get public URL from correct bucket
     const { data: { publicUrl } } = client.storage
-      .from('story_images')
+      .from('story-images')
       .getPublicUrl(data.path);
     
     console.log(`✅ Image uploaded successfully: ${publicUrl}`);
