@@ -3,7 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Sparkles } from 'lucide-react';
-import { CostConfirmationDialog } from '@/components/CostConfirmationDialog';
+import CostConfirmationDialog from './CostConfirmationDialog';
 import StoryDisplayLayout from '@/components/story-display/StoryDisplayLayout';
 import CompleteStoryViewer from './CompleteStoryViewer';
 import StoryErrorState from './StoryErrorState';
@@ -252,7 +252,7 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
           pendingAction={pendingAction}
           skipImage={skipImage}
           apiCallsCount={apiCallsCount}
-          onSkipImageChange={setSkipImage}
+          onSkipImageChange={(checked) => setSkipImage(checked === true)}
         />
       </StoryDisplayLayout>
     );
