@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { createEnhancedImagePrompt } from './enhanced-image-prompting.ts'
@@ -33,19 +32,20 @@ function cleanAndValidateAPIKey() {
   return apiKey;
 }
 
-// Enhanced image generation with proper storage to Supabase
-async function generateAndStoreImage(
-  storyText: string, 
+// Background image generation and storage function
+async function generateImageInBackground(
+  segmentId: string,
+  storyText: string,
   storyContext: any = {},
   previousSegments: any[] = [],
   supabaseClient: any
-): Promise<{ imageUrl: string | null; status: string }> {
-  console.log('🎨 Starting enhanced image generation and storage...');
+) {
+  console.log('🎨 Starting background image generation for segment:', segmentId);
   
   const cleanApiKey = cleanAndValidateAPIKey();
   if (!cleanApiKey) {
-    console.error('❌ API key validation failed');
-    return { imageUrl: null, status: 'failed' };
+    console.error('❌ API key validation failed for background image generation');
+    return;
   }
 
   try {
@@ -81,21 +81,21 @@ async function generateAndStoreImage(
       }),
     });
 
-    console.log('🎨 Image generation status:', response.status);
+    console.log('🎨 Background image generation status:', response.status);
 
     if (response.ok) {
       const result = await response.json();
       const tempImageUrl = result.data[0]?.url;
       
       if (tempImageUrl) {
-        console.log('📥 Fetching image for storage...');
+        console.log('📥 Fetching image for permanent storage...');
         
         // Fetch the generated image
         const imageResponse = await fetch(tempImageUrl);
         if (imageResponse.ok) {
           const imageBlob = await imageResponse.blob();
           
-          // Upload to Supabase storage (correct bucket name)
+          // Upload to Supabase storage
           const fileName = `story_image_${Date.now()}.png`;
           console.log('📤 Uploading to story-images bucket...');
           
@@ -107,7 +107,15 @@ async function generateAndStoreImage(
 
           if (uploadError) {
             console.error('❌ Upload failed:', uploadError);
-            return { imageUrl: tempImageUrl, status: 'completed' }; // Fallback to temp URL
+            // Update segment with temp URL as fallback
+            await supabaseClient
+              .from('story_segments')
+              .update({ 
+                image_url: tempImageUrl, 
+                image_generation_status: 'completed' 
+              })
+              .eq('id', segmentId);
+            return;
           }
 
           // Get permanent public URL
@@ -115,19 +123,39 @@ async function generateAndStoreImage(
             .from('story-images')
             .getPublicUrl(uploadData.path);
 
-          console.log('✅ Image permanently stored:', publicUrl);
-          return { imageUrl: publicUrl, status: 'completed' };
+          console.log('✅ Image permanently stored, updating segment:', publicUrl);
+          
+          // Update the segment with the permanent image URL
+          await supabaseClient
+            .from('story_segments')
+            .update({ 
+              image_url: publicUrl, 
+              image_generation_status: 'completed' 
+            })
+            .eq('id', segmentId);
+            
+          console.log('✅ Background image generation completed for segment:', segmentId);
         }
       }
+    } else {
+      const errorText = await response.text();
+      console.error('❌ Background image generation failed:', errorText);
+      
+      // Update segment status to failed
+      await supabaseClient
+        .from('story_segments')
+        .update({ image_generation_status: 'failed' })
+        .eq('id', segmentId);
     }
-
-    const errorText = await response.text();
-    console.error('❌ Image generation failed:', errorText);
-    return { imageUrl: null, status: 'failed' };
     
   } catch (error) {
-    console.error('❌ Image generation error:', error);
-    return { imageUrl: null, status: 'failed' };
+    console.error('❌ Background image generation error:', error);
+    
+    // Update segment status to failed
+    await supabaseClient
+      .from('story_segments')
+      .update({ image_generation_status: 'failed' })
+      .eq('id', segmentId);
   }
 }
 
@@ -137,11 +165,11 @@ serve(async (req) => {
   }
 
   try {
-    console.log('=== ENHANCED STORY GENERATION START ===');
+    console.log('=== PROGRESSIVE STORY GENERATION START ===');
     
     const { prompt, genre, storyId, parentSegmentId, choiceText, skipImage, skipAudio, storyMode } = await req.json()
 
-    console.log('🚀 Enhanced request:', { 
+    console.log('🚀 Progressive request:', { 
       hasPrompt: !!prompt, 
       genre: genre || storyMode, 
       storyId, 
@@ -181,7 +209,7 @@ serve(async (req) => {
       console.log('✅ New story created with ID:', finalStoryId);
     }
 
-    // Fetch previous segments with full context
+    // Fetch previous segments for context
     let previousSegments: any[] = [];
     if (finalStoryId) {
       const { data: segments } = await supabaseClient
@@ -203,8 +231,8 @@ serve(async (req) => {
       characters: narrativeContext.characters.protagonist.traits
     });
 
-    // Generate enhanced story text with context awareness
-    console.log('📝 Starting context-aware text generation...')
+    // Generate story text (this is the only blocking operation)
+    console.log('📝 Starting story text generation...')
     const storyResult = await generateEnhancedStoryText(
       prompt, 
       genre || storyMode || 'fantasy', 
@@ -212,69 +240,30 @@ serve(async (req) => {
       narrativeContext,
       previousSegments
     )
-    console.log('✅ Enhanced text generation completed:', {
+    console.log('✅ Story text generation completed:', {
       textLength: storyResult.text?.length,
-      choicesCount: storyResult.choices?.length,
-      hasImagePrompt: !!storyResult.imagePrompt
+      choicesCount: storyResult.choices?.length
     })
-    
-    let imageUrl = null
-    let imageStatus = 'not_started'
-    
-    if (!skipImage && storyResult.text) {
-      console.log('🎨 Starting enhanced image generation with storage...')
-      
-      const imageResult = await generateAndStoreImage(
-        storyResult.text,
-        {
-          genre: genre || storyMode || 'fantasy',
-          characters: narrativeContext.characters,
-          setting: narrativeContext.worldBuilding.setting
-        },
-        previousSegments,
-        supabaseClient
-      );
-      
-      imageUrl = imageResult.imageUrl;
-      imageStatus = imageResult.status;
-      
-      console.log('✅ Enhanced image result:', { imageUrl: !!imageUrl, status: imageStatus });
-    }
-
-    let audioUrl = null
-    let audioStatus = 'not_started'
-    
-    if (!skipAudio) {
-      try {
-        console.log('🔊 Starting audio generation...')
-        audioUrl = await generateAudio(storyResult.text)
-        audioStatus = audioUrl ? 'completed' : 'failed';
-        console.log('✅ Audio generation completed:', { audioUrl: !!audioUrl })
-      } catch (audioError) {
-        console.error('❌ Audio generation failed:', audioError)
-        audioStatus = 'failed';
-      }
-    }
 
     // Calculate word count
     const wordCount = storyResult.text?.split(/\s+/).filter(word => word.length > 0).length || 0;
 
-    // Save enhanced segment to database
-    console.log('💾 Saving enhanced segment to database with story_id:', finalStoryId)
+    // Save segment with text immediately - set image status as 'generating' if not skipping
+    console.log('💾 Saving segment with immediate text response')
     const { data: segment, error } = await supabaseClient
       .from('story_segments')
       .insert({
         story_id: finalStoryId,
         parent_segment_id: parentSegmentId,
         segment_text: storyResult.text,
-        image_url: imageUrl,
-        audio_url: audioUrl,
+        image_url: null, // Will be updated by background task
+        audio_url: null, // Audio generation still synchronous for now
         choices: storyResult.choices || [],
         triggering_choice_text: choiceText,
         is_end: storyResult.isEnd || false,
-        image_generation_status: imageStatus,
+        image_generation_status: skipImage ? 'not_started' : 'generating',
         word_count: wordCount,
-        audio_generation_status: audioStatus
+        audio_generation_status: 'not_started'
       })
       .select()
       .single()
@@ -284,8 +273,28 @@ serve(async (req) => {
       throw new Error(`Database error: ${error.message}`)
     }
 
-    console.log('✅ Successfully created enhanced segment:', segment.id)
+    console.log('✅ Segment saved with immediate text response:', segment.id)
 
+    // Start background image generation if not skipped
+    if (!skipImage && segment.id) {
+      console.log('🎨 Starting background image generation...');
+      EdgeRuntime.waitUntil(
+        generateImageInBackground(
+          segment.id,
+          storyResult.text,
+          {
+            genre: genre || storyMode || 'fantasy',
+            characters: narrativeContext.characters,
+            setting: narrativeContext.worldBuilding.setting
+          },
+          previousSegments,
+          supabaseClient
+        )
+      );
+    }
+
+    // Return immediate response with text content
+    console.log('🚀 Returning immediate response with text content');
     return new Response(
       JSON.stringify({ success: true, data: segment }),
       { 
@@ -294,11 +303,11 @@ serve(async (req) => {
       }
     )
   } catch (error) {
-    console.error('💥 Error in enhanced story generation:', error)
+    console.error('💥 Error in progressive story generation:', error)
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error.message || 'Enhanced story generation failed',
+        error: error.message || 'Progressive story generation failed',
         details: error.stack
       }),
       { 

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -64,7 +65,7 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
     );
   }
 
-  // Show loading state during initial generation
+  // Show loading state only during initial generation without any content
   if (isCurrentlyGenerating && !currentSegment) {
     return (
       <StoryLoadingState
@@ -107,7 +108,7 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
     );
   }
 
-  // Show story display once we have content
+  // Show story display with progressive loading
   if (currentSegment) {
     return (
       <StoryDisplayLayout>
@@ -120,17 +121,20 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
           </CardHeader>
           
           <CardContent className="space-y-8">
+            {/* Progressive Image Section - shows immediately with loading states */}
             <StoryImageSection
               imageUrl={currentSegment.imageUrl}
               imageGenerationStatus={currentSegment.imageGenerationStatus}
             />
 
+            {/* Story Text - available immediately */}
             <StoryTextSection text={currentSegment.text} />
 
+            {/* Choices - available immediately for user interaction */}
             {!currentSegment.isEnd && (
               <StoryChoicesSection
                 choices={currentSegment.choices}
-                isGenerating={isCurrentlyGenerating}
+                isGenerating={false} // Don't disable choices during image generation
                 onChoiceSelect={(choice) => showConfirmation('choice', choice)}
               />
             )}
@@ -149,6 +153,13 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
                 onGenerateAudio={() => showConfirmation('audio')}
                 isGenerating={generateAudioMutation.isPending}
               />
+            )}
+
+            {/* Show subtle indicator when image is generating in background */}
+            {currentSegment.imageGenerationStatus === 'generating' && (
+              <div className="text-center text-amber-300/70 text-sm">
+                ✨ Enhancing your story with a custom image...
+              </div>
             )}
           </CardContent>
         </Card>
