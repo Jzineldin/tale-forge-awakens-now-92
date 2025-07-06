@@ -9,13 +9,255 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      admin_settings: {
+        Row: {
+          created_at: string
+          id: string
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      stories: {
+        Row: {
+          animated_video_status: string
+          audio_generation_status: string
+          created_at: string
+          description: string | null
+          full_story_audio_url: string | null
+          id: string
+          is_completed: boolean
+          is_public: boolean
+          narrative_context: Json | null
+          published_at: string | null
+          segment_count: number
+          shotstack_render_id: string | null
+          shotstack_status: string
+          shotstack_video_url: string | null
+          story_mode: string
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          user_id: string | null
+          visual_context: Json | null
+        }
+        Insert: {
+          animated_video_status?: string
+          audio_generation_status?: string
+          created_at?: string
+          description?: string | null
+          full_story_audio_url?: string | null
+          id?: string
+          is_completed?: boolean
+          is_public?: boolean
+          narrative_context?: Json | null
+          published_at?: string | null
+          segment_count?: number
+          shotstack_render_id?: string | null
+          shotstack_status?: string
+          shotstack_video_url?: string | null
+          story_mode?: string
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          user_id?: string | null
+          visual_context?: Json | null
+        }
+        Update: {
+          animated_video_status?: string
+          audio_generation_status?: string
+          created_at?: string
+          description?: string | null
+          full_story_audio_url?: string | null
+          id?: string
+          is_completed?: boolean
+          is_public?: boolean
+          narrative_context?: Json | null
+          published_at?: string | null
+          segment_count?: number
+          shotstack_render_id?: string | null
+          shotstack_status?: string
+          shotstack_video_url?: string | null
+          story_mode?: string
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+          visual_context?: Json | null
+        }
+        Relationships: []
+      }
+      story_segments: {
+        Row: {
+          animated_video_status: string
+          animated_video_url: string | null
+          audio_duration: number | null
+          audio_generation_status: string
+          audio_url: string | null
+          choices: string[]
+          created_at: string
+          id: string
+          image_generation_status: string
+          image_url: string | null
+          is_end: boolean
+          parent_segment_id: string | null
+          segment_text: string
+          story_id: string
+          triggering_choice_text: string | null
+          word_count: number | null
+        }
+        Insert: {
+          animated_video_status?: string
+          animated_video_url?: string | null
+          audio_duration?: number | null
+          audio_generation_status?: string
+          audio_url?: string | null
+          choices?: string[]
+          created_at?: string
+          id?: string
+          image_generation_status?: string
+          image_url?: string | null
+          is_end?: boolean
+          parent_segment_id?: string | null
+          segment_text: string
+          story_id: string
+          triggering_choice_text?: string | null
+          word_count?: number | null
+        }
+        Update: {
+          animated_video_status?: string
+          animated_video_url?: string | null
+          audio_duration?: number | null
+          audio_generation_status?: string
+          audio_url?: string | null
+          choices?: string[]
+          created_at?: string
+          id?: string
+          image_generation_status?: string
+          image_url?: string | null
+          is_end?: boolean
+          parent_segment_id?: string | null
+          segment_text?: string
+          story_id?: string
+          triggering_choice_text?: string | null
+          word_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "story_segments_parent_segment_id_fkey"
+            columns: ["parent_segment_id"]
+            isOneToOne: false
+            referencedRelation: "story_segments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "story_segments_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      waitlist_entries: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          marketing_consent: boolean
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          marketing_consent?: boolean
+          name: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          marketing_consent?: boolean
+          name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      delete_story_and_segments: {
+        Args: { p_story_id: string }
+        Returns: undefined
+      }
+      end_story_at_segment: {
+        Args: { p_segment_id: string }
+        Returns: {
+          animated_video_status: string
+          animated_video_url: string | null
+          audio_duration: number | null
+          audio_generation_status: string
+          audio_url: string | null
+          choices: string[]
+          created_at: string
+          id: string
+          image_generation_status: string
+          image_url: string | null
+          is_end: boolean
+          parent_segment_id: string | null
+          segment_text: string
+          story_id: string
+          triggering_choice_text: string | null
+          word_count: number | null
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
