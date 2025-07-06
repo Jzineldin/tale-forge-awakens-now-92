@@ -15,21 +15,21 @@ export type Database = {
           id: string
           key: string
           updated_at: string
-          value: Json
+          value: string | null
         }
         Insert: {
           created_at?: string
           id?: string
           key: string
           updated_at?: string
-          value: Json
+          value?: string | null
         }
         Update: {
           created_at?: string
           id?: string
           key?: string
           updated_at?: string
-          value?: Json
+          value?: string | null
         }
         Relationships: []
       }
@@ -37,114 +37,170 @@ export type Database = {
         Row: {
           avatar_url: string | null
           bio: string | null
-          created_at: string
-          display_name: string | null
+          created_at: string | null
+          email: string
+          full_name: string | null
           id: string
-          updated_at: string
-          user_id: string
+          updated_at: string | null
+          username: string | null
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
-          created_at?: string
-          display_name?: string | null
-          id?: string
-          updated_at?: string
-          user_id: string
+          created_at?: string | null
+          email: string
+          full_name?: string | null
+          id: string
+          updated_at?: string | null
+          username?: string | null
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
-          created_at?: string
-          display_name?: string | null
+          created_at?: string | null
+          email?: string
+          full_name?: string | null
           id?: string
-          updated_at?: string
-          user_id?: string
+          updated_at?: string | null
+          username?: string | null
         }
         Relationships: []
       }
       stories: {
         Row: {
-          animated_video_status: string
-          audio_generation_status: string
+          audio_generation_status: string | null
           created_at: string
           description: string | null
           full_story_audio_url: string | null
           id: string
-          is_completed: boolean
-          is_public: boolean
-          narrative_context: Json | null
+          is_completed: boolean | null
+          is_public: boolean | null
           published_at: string | null
-          segment_count: number
+          segment_count: number | null
           shotstack_render_id: string | null
-          shotstack_status: string
+          shotstack_status: string | null
           shotstack_video_url: string | null
-          story_mode: string
+          story_mode: string | null
           thumbnail_url: string | null
-          title: string
+          title: string | null
           updated_at: string
           user_id: string | null
-          visual_context: Json | null
         }
         Insert: {
-          animated_video_status?: string
-          audio_generation_status?: string
+          audio_generation_status?: string | null
           created_at?: string
           description?: string | null
           full_story_audio_url?: string | null
           id?: string
-          is_completed?: boolean
-          is_public?: boolean
-          narrative_context?: Json | null
+          is_completed?: boolean | null
+          is_public?: boolean | null
           published_at?: string | null
-          segment_count?: number
+          segment_count?: number | null
           shotstack_render_id?: string | null
-          shotstack_status?: string
+          shotstack_status?: string | null
           shotstack_video_url?: string | null
-          story_mode?: string
+          story_mode?: string | null
           thumbnail_url?: string | null
-          title: string
+          title?: string | null
           updated_at?: string
           user_id?: string | null
-          visual_context?: Json | null
         }
         Update: {
-          animated_video_status?: string
-          audio_generation_status?: string
+          audio_generation_status?: string | null
           created_at?: string
           description?: string | null
           full_story_audio_url?: string | null
           id?: string
-          is_completed?: boolean
-          is_public?: boolean
-          narrative_context?: Json | null
+          is_completed?: boolean | null
+          is_public?: boolean | null
           published_at?: string | null
-          segment_count?: number
+          segment_count?: number | null
           shotstack_render_id?: string | null
-          shotstack_status?: string
+          shotstack_status?: string | null
           shotstack_video_url?: string | null
-          story_mode?: string
+          story_mode?: string | null
           thumbnail_url?: string | null
-          title?: string
+          title?: string | null
           updated_at?: string
           user_id?: string | null
-          visual_context?: Json | null
         }
         Relationships: []
       }
+      story_comments: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          story_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          story_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          story_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "story_comments_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      story_likes: {
+        Row: {
+          created_at: string | null
+          id: string
+          story_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          story_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          story_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "story_likes_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       story_segments: {
         Row: {
-          animated_video_status: string
-          animated_video_url: string | null
           audio_duration: number | null
-          audio_generation_status: string
+          audio_generation_status: string | null
           audio_url: string | null
-          choices: string[]
+          choices: string[] | null
           created_at: string
           id: string
-          image_generation_status: string
+          image_generation_status: string | null
           image_url: string | null
-          is_end: boolean
+          is_end: boolean | null
           parent_segment_id: string | null
           segment_text: string
           story_id: string
@@ -152,17 +208,15 @@ export type Database = {
           word_count: number | null
         }
         Insert: {
-          animated_video_status?: string
-          animated_video_url?: string | null
           audio_duration?: number | null
-          audio_generation_status?: string
+          audio_generation_status?: string | null
           audio_url?: string | null
-          choices?: string[]
+          choices?: string[] | null
           created_at?: string
           id?: string
-          image_generation_status?: string
+          image_generation_status?: string | null
           image_url?: string | null
-          is_end?: boolean
+          is_end?: boolean | null
           parent_segment_id?: string | null
           segment_text: string
           story_id: string
@@ -170,17 +224,15 @@ export type Database = {
           word_count?: number | null
         }
         Update: {
-          animated_video_status?: string
-          animated_video_url?: string | null
           audio_duration?: number | null
-          audio_generation_status?: string
+          audio_generation_status?: string | null
           audio_url?: string | null
-          choices?: string[]
+          choices?: string[] | null
           created_at?: string
           id?: string
-          image_generation_status?: string
+          image_generation_status?: string | null
           image_url?: string | null
-          is_end?: boolean
+          is_end?: boolean | null
           parent_segment_id?: string | null
           segment_text?: string
           story_id?: string
@@ -204,26 +256,47 @@ export type Database = {
           },
         ]
       }
-      waitlist_entries: {
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      waitlist: {
         Row: {
           created_at: string
           email: string
           id: string
-          marketing_consent: boolean
+          marketing_consent: boolean | null
           name: string
         }
         Insert: {
           created_at?: string
           email: string
           id?: string
-          marketing_consent?: boolean
+          marketing_consent?: boolean | null
           name: string
         }
         Update: {
           created_at?: string
           email?: string
           id?: string
-          marketing_consent?: boolean
+          marketing_consent?: boolean | null
           name?: string
         }
         Relationships: []
@@ -233,30 +306,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      delete_story_and_segments: {
-        Args: { p_story_id: string }
-        Returns: undefined
+      has_role: {
+        Args: { _user_id: string; _role: string }
+        Returns: boolean
       }
-      end_story_at_segment: {
-        Args: { p_segment_id: string }
-        Returns: {
-          animated_video_status: string
-          animated_video_url: string | null
-          audio_duration: number | null
-          audio_generation_status: string
-          audio_url: string | null
-          choices: string[]
-          created_at: string
-          id: string
-          image_generation_status: string
-          image_url: string | null
-          is_end: boolean
-          parent_segment_id: string | null
-          segment_text: string
-          story_id: string
-          triggering_choice_text: string | null
-          word_count: number | null
-        }[]
+      update_updated_at_column_void: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
     }
     Enums: {
