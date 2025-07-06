@@ -1,20 +1,17 @@
+
 import React, { useRef, useState, useEffect } from 'react';
-import { Play, Pause, Volume2, VolumeX, Rewind, AlertTriangle } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Slider } from '@/components/ui/slider';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import AudioControls from '@/components/audio/AudioControls';
+import AudioProgress from '@/components/audio/AudioProgress';
+import AudioDebugger from '@/components/audio/AudioDebugger';
+import { createAudioEventHandlers } from '@/components/audio/AudioStateManager';
 
 interface AudioPlayerProps {
   src: string;
 }
 
 const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
-  // --- PHASE 1: SOURCE DEBUGGING ---
-  console.log('🎵 AudioPlayer component received src prop:', src);
-  console.log('🎵 AudioPlayer src type:', typeof src);
-  console.log('🎵 AudioPlayer src length:', src ? src.length : 'N/A');
-  // ---------------------------------
-
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -39,99 +36,27 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
     setHasError(false);
     setErrorMessage('');
 
-    // --- PHASE 3: ENHANCED AUDIO ELEMENT DEBUGGING ---
-    const setAudioData = () => {
-      console.log('🎵 Audio loaded successfully:', {
-        duration: audio.duration,
-        src: audio.src,
-        readyState: audio.readyState,
-        networkState: audio.networkState
-      });
-      
-      if (isFinite(audio.duration)) {
-        console.log('🎵 Setting duration to:', audio.duration);
-        setDuration(audio.duration);
-        setIsLoading(false);
-        console.log('🎵 Loading set to false - audio should be ready');
-      } else {
-        console.log('🎵 Duration is not finite:', audio.duration);
-      }
-      setCurrentTime(audio.currentTime);
-    };
-
-    const setAudioTime = () => {
-      console.log('🎵 Time update:', audio.currentTime);
-      setCurrentTime(audio.currentTime);
-    };
-    
-    const onPlay = () => {
-      console.log('🎵 Audio play event');
-      setIsPlaying(true);
-    };
-    
-    const onPause = () => {
-      console.log('🎵 Audio pause event');
-      setIsPlaying(false);
-    };
-    
-    const onError = (e: Event) => {
-      console.error('🎵 Audio loading error:', {
-        error: e,
-        src: audio.src,
-        networkState: audio.networkState,
-        readyState: audio.readyState,
-        audioError: audio.error
-      });
-      
-      setHasError(true);
-      setIsLoading(false);
-      setErrorMessage('Unable to load audio file');
-    };
-
-    const onLoadStart = () => {
-      console.log('🎵 Audio loading started:', {
-        src: audio.src,
-        readyState: audio.readyState,
-        networkState: audio.networkState
-      });
-      setIsLoading(true);
-    };
-
-    const onCanPlay = () => {
-      console.log('🎵 Audio can play:', {
-        duration: audio.duration,
-        readyState: audio.readyState,
-        networkState: audio.networkState
-      });
-      setIsLoading(false);
-    };
-
-    const onLoadedMetadata = () => {
-      console.log('🎵 Audio metadata loaded:', {
-        duration: audio.duration,
-        readyState: audio.readyState
-      });
-    };
-
-    const onLoadedData = () => {
-      console.log('🎵 Audio data loaded:', {
-        duration: audio.duration,
-        readyState: audio.readyState
-      });
-    };
+    const eventHandlers = createAudioEventHandlers(audio, {
+      setDuration,
+      setCurrentTime,
+      setIsPlaying,
+      setIsLoading,
+      setHasError,
+      setErrorMessage,
+    });
 
     // Add all event listeners with debugging
     console.log('🎵 Adding event listeners');
-    audio.addEventListener('loadeddata', setAudioData);
-    audio.addEventListener('loadedmetadata', onLoadedMetadata);
-    audio.addEventListener('loadeddata', onLoadedData);
-    audio.addEventListener('timeupdate', setAudioTime);
-    audio.addEventListener('play', onPlay);
-    audio.addEventListener('pause', onPause);
-    audio.addEventListener('ended', onPause);
-    audio.addEventListener('error', onError);
-    audio.addEventListener('loadstart', onLoadStart);
-    audio.addEventListener('canplay', onCanPlay);
+    audio.addEventListener('loadeddata', eventHandlers.setAudioData);
+    audio.addEventListener('loadedmetadata', eventHandlers.onLoadedMetadata);
+    audio.addEventListener('loadeddata', eventHandlers.onLoadedData);
+    audio.addEventListener('timeupdate', eventHandlers.setAudioTime);
+    audio.addEventListener('play', eventHandlers.onPlay);
+    audio.addEventListener('pause', eventHandlers.onPause);
+    audio.addEventListener('ended', eventHandlers.onPause);
+    audio.addEventListener('error', eventHandlers.onError);
+    audio.addEventListener('loadstart', eventHandlers.onLoadStart);
+    audio.addEventListener('canplay', eventHandlers.onCanPlay);
 
     // Test if the audio URL is accessible
     console.log('🎵 Testing URL accessibility:', src);
@@ -162,16 +87,16 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
       if (audio) {
         audio.pause();
       }
-      audio.removeEventListener('loadeddata', setAudioData);
-      audio.removeEventListener('loadedmetadata', onLoadedMetadata);
-      audio.removeEventListener('loadeddata', onLoadedData);
-      audio.removeEventListener('timeupdate', setAudioTime);
-      audio.removeEventListener('play', onPlay);
-      audio.removeEventListener('pause', onPause);
-      audio.removeEventListener('ended', onPause);
-      audio.removeEventListener('error', onError);
-      audio.removeEventListener('loadstart', onLoadStart);
-      audio.removeEventListener('canplay', onCanPlay);
+      audio.removeEventListener('loadeddata', eventHandlers.setAudioData);
+      audio.removeEventListener('loadedmetadata', eventHandlers.onLoadedMetadata);
+      audio.removeEventListener('loadeddata', eventHandlers.onLoadedData);
+      audio.removeEventListener('timeupdate', eventHandlers.setAudioTime);
+      audio.removeEventListener('play', eventHandlers.onPlay);
+      audio.removeEventListener('pause', eventHandlers.onPause);
+      audio.removeEventListener('ended', eventHandlers.onPause);
+      audio.removeEventListener('error', eventHandlers.onError);
+      audio.removeEventListener('loadstart', eventHandlers.onLoadStart);
+      audio.removeEventListener('canplay', eventHandlers.onCanPlay);
     };
   }, [src]);
 
@@ -228,22 +153,11 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
     }
   };
 
-  const formatTime = (time: number) => {
-    if (isNaN(time) || time === Infinity) return '0:00';
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  const handleSeek = (time: number) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = time;
+    }
   };
-
-  // Debug current state
-  console.log('🎵 AudioPlayer current state:', {
-    isLoading,
-    hasError,
-    errorMessage,
-    duration,
-    currentTime,
-    isPlaying
-  });
 
   // Show error state
   if (hasError) {
@@ -283,54 +197,38 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
 
   console.log('🎵 Rendering audio player controls');
   return (
-    <TooltipProvider delayDuration={200}>
+    <>
+      <AudioDebugger
+        src={src}
+        isLoading={isLoading}
+        hasError={hasError}
+        errorMessage={errorMessage}
+        duration={duration}
+        currentTime={currentTime}
+        isPlaying={isPlaying}
+      />
+      
       <div className="flex items-center gap-2 md:gap-4 w-full bg-background border p-2 rounded-lg shadow-sm">
         <audio ref={audioRef} src={src} preload="metadata" />
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={togglePlayPause} className="flex-shrink-0">
-              {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent><p>{isPlaying ? 'Pause' : 'Play'}</p></TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={restartAudio} className="flex-shrink-0">
-              <Rewind className="h-5 w-5" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent><p>Restart</p></TooltipContent>
-        </Tooltip>
         
-        <div className="text-sm font-mono text-muted-foreground w-12 text-center">{formatTime(currentTime)}</div>
-        <Slider
-          value={[currentTime]}
-          max={duration || 100}
-          step={1}
-          className="flex-grow"
-          onValueChange={(value) => {
-            if (audioRef.current) audioRef.current.currentTime = value[0];
-          }}
+        <AudioControls
+          isPlaying={isPlaying}
+          isMuted={isMuted}
+          volume={volume}
+          hasError={hasError}
+          onTogglePlayPause={togglePlayPause}
+          onRestart={restartAudio}
+          onToggleMute={toggleMute}
+          onVolumeChange={handleVolumeChange}
         />
-        <div className="text-sm font-mono text-muted-foreground w-12 text-center">{formatTime(duration)}</div>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={toggleMute} className="flex-shrink-0">
-              {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent><p>{isMuted ? 'Unmute' : 'Mute'}</p></TooltipContent>
-        </Tooltip>
-        <Slider
-          value={[isMuted ? 0 : volume]}
-          max={1}
-          step={0.01}
-          className="w-16 md:w-24"
-          onValueChange={handleVolumeChange}
+        
+        <AudioProgress
+          currentTime={currentTime}
+          duration={duration}
+          onSeek={handleSeek}
         />
       </div>
-    </TooltipProvider>
+    </>
   );
 };
 
