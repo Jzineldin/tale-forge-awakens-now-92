@@ -6,12 +6,12 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// Enhanced image generation with DALL-E 3
+// Cost-optimized image generation with DALL-E 2 (much cheaper than DALL-E 3)
 async function generateImageWithDALLE(
   storyText: string, 
   storyContext: any = {}
 ): Promise<string | null> {
-  console.log('🎨 Starting image generation with DALL-E 3...');
+  console.log('🎨 Starting cost-optimized image generation with DALL-E 2...');
   
   const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
   if (!openAIApiKey) {
@@ -19,9 +19,17 @@ async function generateImageWithDALLE(
     return null;
   }
 
-  // Create enhanced image prompt
+  // Validate API key format
+  if (!openAIApiKey.startsWith('sk-')) {
+    console.error('❌ Invalid OpenAI API key format');
+    return null;
+  }
+
+  // Create enhanced image prompt (keep it under 1000 chars for DALL-E 2)
   const genre = storyContext.genre || 'fantasy';
-  const enhancedPrompt = `Create a high-quality, detailed illustration for a ${genre} story. Scene: ${storyText.substring(0, 500)}. Style: cinematic, atmospheric, storybook illustration with rich colors and dramatic lighting. Focus on the main action or setting described in the text.`;
+  const enhancedPrompt = `High-quality ${genre} story illustration: ${storyText.substring(0, 400)}. Cinematic, atmospheric style.`;
+
+  console.log('🔑 Using OpenAI API key:', openAIApiKey.substring(0, 7) + '...' + openAIApiKey.slice(-4));
 
   try {
     const response = await fetch('https://api.openai.com/v1/images/generations', {
@@ -31,11 +39,10 @@ async function generateImageWithDALLE(
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'dall-e-3',
+        model: 'dall-e-2', // Much cheaper: $0.020 vs $0.040 for DALL-E 3
         prompt: enhancedPrompt,
         n: 1,
         size: '1024x1024',
-        quality: 'hd',
         response_format: 'url'
       }),
     });
@@ -43,11 +50,19 @@ async function generateImageWithDALLE(
     if (!response.ok) {
       const errorText = await response.text();
       console.error('❌ Image generation failed:', response.status, errorText);
+      
+      // Log specific error types for debugging
+      if (response.status === 429) {
+        console.error('🚨 QUOTA EXCEEDED - Check your OpenAI billing and usage limits');
+      } else if (response.status === 401) {
+        console.error('🚨 AUTHENTICATION FAILED - Check if API key is correct and active');
+      }
+      
       return null;
     }
 
     const result = await response.json();
-    console.log('✅ Image generated successfully');
+    console.log('✅ Image generated successfully with DALL-E 2');
     return result.data[0]?.url || null;
     
   } catch (error) {
