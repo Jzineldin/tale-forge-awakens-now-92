@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useStoryState } from './useStoryState';
 import { useStoryActions } from './useStoryActions';
 import { useStoryConfirmation } from './useStoryConfirmation';
+import { useInlineStoryRealtime } from './useInlineStoryRealtime';
 
 export const useInlineStoryGeneration = () => {
   const [searchParams] = useSearchParams();
@@ -50,6 +51,13 @@ export const useInlineStoryGeneration = () => {
     }
   }, [prompt, mode, storyState.currentSegment, storyState.storyHistory.length, storyState.generationStartedRef, storyState.initializedRef, storyState.error, storyState.isGeneratingStartup, storyActions]);
 
+  // Setup realtime subscription for current segment updates
+  const { isSubscribed } = useInlineStoryRealtime({
+    currentSegment: storyState.currentSegment,
+    setCurrentSegment: storyState.setCurrentSegment,
+    setStoryHistory: storyState.setStoryHistory
+  });
+
   const confirmGeneration = async () => {
     confirmation.setShowCostDialog(false);
     
@@ -92,5 +100,8 @@ export const useInlineStoryGeneration = () => {
     // URL parameters for redirection
     prompt,
     mode,
+    
+    // Realtime status for debugging
+    isSubscribed,
   };
 };
