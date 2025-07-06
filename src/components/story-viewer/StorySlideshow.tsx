@@ -77,9 +77,9 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
   const hasImages = segments.some(s => s.image_url);
 
   return (
-    <div className="fixed inset-0 bg-black z-50 flex flex-col">
+    <div className="fixed inset-0 bg-slate-800 z-50 flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 bg-black border-b border-gray-700">
+      <div className="flex items-center justify-between p-4 bg-slate-900/95 border-b border-slate-600 backdrop-blur-sm">
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
@@ -102,16 +102,16 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
           variant="ghost"
           size="icon"
           onClick={onClose}
-          className="text-white hover:bg-red-500/20 border border-white/20 hover:border-red-500/50 transition-all duration-200"
+          className="text-white hover:bg-red-600 bg-red-500/20 border-2 border-red-400 hover:border-red-300 transition-all duration-200 shadow-lg"
         >
-          <X className="h-5 w-5" />
+          <X className="h-6 w-6 font-bold" />
         </Button>
       </div>
 
       {/* Main slide area */}
       <div className="flex-1 flex items-center justify-center p-4 sm:p-8">
         <div className="max-w-5xl w-full">
-          <Card className="bg-slate-900/90 border-gray-600/50 shadow-2xl backdrop-blur-sm">
+          <Card className="bg-slate-700/95 border-slate-500/50 shadow-2xl backdrop-blur-sm">
             <CardContent className="p-6 sm:p-8">
               {/* Image */}
               {currentSegment.image_url ? (
@@ -128,25 +128,25 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
                 </div>
               ) : (
                 // Placeholder for missing images
-                <div className="mb-6 bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg flex items-center justify-center h-64 sm:h-80">
-                  <div className="text-center text-slate-400">
-                    <Eye className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">Chapter {currentSlide + 1}</p>
+                <div className="mb-6 bg-gradient-to-br from-slate-600 to-slate-700 rounded-lg flex items-center justify-center h-64 sm:h-80 border border-slate-500/50">
+                  <div className="text-center text-slate-200">
+                    <Eye className="h-12 w-12 mx-auto mb-2 opacity-70" />
+                    <p className="text-sm font-medium">Chapter {currentSlide + 1}</p>
                     <p className="text-xs opacity-70">Image generating...</p>
                   </div>
                 </div>
               )}
               
               {/* Text */}
-              <div className="text-white space-y-4">
+              <div className="text-slate-100 space-y-4">
                 <p className="text-base sm:text-lg leading-relaxed font-medium">
                   {currentSegment.segment_text}
                 </p>
                 
                 {/* Choice indicator if available */}
                 {currentSegment.triggering_choice_text && (
-                  <div className="mt-4 pt-4 border-t border-gray-600/50">
-                    <p className="text-sm text-blue-300 italic">
+                  <div className="mt-4 pt-4 border-t border-slate-500/50">
+                    <p className="text-sm text-blue-200 italic">
                       → Choice made: {currentSegment.triggering_choice_text}
                     </p>
                   </div>
@@ -158,7 +158,7 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
       </div>
 
       {/* Navigation Controls */}
-      <div className="flex items-center justify-between p-4 bg-black border-t border-gray-700">
+      <div className="flex items-center justify-between p-4 bg-slate-900/95 border-t border-slate-600 backdrop-blur-sm">
         <Button
           variant="ghost"
           onClick={prevSlide}
@@ -201,7 +201,7 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
 
       {/* Audio player - Fixed at bottom */}
       {fullStoryAudioUrl && (
-        <div className="p-4 bg-black border-t border-gray-700">
+        <div className="p-4 bg-slate-900/95 border-t border-slate-600 backdrop-blur-sm">
           <div className="max-w-2xl mx-auto">
             <AudioPlayer src={fullStoryAudioUrl} />
           </div>
