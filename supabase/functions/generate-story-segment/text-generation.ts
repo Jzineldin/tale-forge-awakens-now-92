@@ -17,10 +17,13 @@ REQUIREMENTS:
 - Generate 120-200 words for rich, detailed storytelling
 - Create exactly 3 meaningful choices that advance the plot
 - Include detailed image descriptions for visual consistency
+- DO NOT include choice prompts, transitions, or references to choices within the segmentText
+- The segmentText should end naturally as part of the story narrative
+- Choices will be presented separately as interactive buttons
 
 Response format (EXACT JSON):
 {
-  "segmentText": "A 120-200 word story segment with vivid descriptions",
+  "segmentText": "A 120-200 word story segment with vivid descriptions that ends naturally without any choice prompts",
   "choices": ["Choice 1", "Choice 2", "Choice 3"],
   "isEnd": false,
   "imagePrompt": "Detailed scene description for image generation"
