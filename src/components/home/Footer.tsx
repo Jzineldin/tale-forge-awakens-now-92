@@ -47,7 +47,7 @@ const Footer: React.FC = () => {
                 className="bg-yellow-500 hover:bg-yellow-600 text-black font-medium"
               >
                 <a 
-                  href="#" 
+                  href="https://paypal.me/zinfinityhs" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2"

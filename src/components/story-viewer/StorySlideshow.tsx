@@ -77,9 +77,9 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
   const hasImages = segments.some(s => s.image_url);
 
   return (
-    <div className="fixed inset-0 bg-black/98 z-50 flex flex-col">
+    <div className="fixed inset-0 bg-black z-50 flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 bg-black/70 backdrop-blur-sm border-b border-gray-800">
+      <div className="flex items-center justify-between p-4 bg-black border-b border-gray-700">
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
@@ -102,7 +102,7 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
           variant="ghost"
           size="icon"
           onClick={onClose}
-          className="text-white hover:bg-white/20"
+          className="text-white hover:bg-red-500/20 border border-white/20 hover:border-red-500/50 transition-all duration-200"
         >
           <X className="h-5 w-5" />
         </Button>
@@ -111,7 +111,7 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
       {/* Main slide area */}
       <div className="flex-1 flex items-center justify-center p-4 sm:p-8">
         <div className="max-w-5xl w-full">
-          <Card className="bg-black/40 backdrop-blur-lg border-gray-700/50 shadow-2xl">
+          <Card className="bg-slate-900/90 border-gray-600/50 shadow-2xl backdrop-blur-sm">
             <CardContent className="p-6 sm:p-8">
               {/* Image */}
               {currentSegment.image_url ? (
@@ -158,7 +158,7 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
       </div>
 
       {/* Navigation Controls */}
-      <div className="flex items-center justify-between p-4 bg-black/70 backdrop-blur-sm border-t border-gray-800">
+      <div className="flex items-center justify-between p-4 bg-black border-t border-gray-700">
         <Button
           variant="ghost"
           onClick={prevSlide}
@@ -201,7 +201,7 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
 
       {/* Audio player - Fixed at bottom */}
       {fullStoryAudioUrl && (
-        <div className="p-4 bg-black/80 backdrop-blur-sm border-t border-gray-800">
+        <div className="p-4 bg-black border-t border-gray-700">
           <div className="max-w-2xl mx-auto">
             <AudioPlayer src={fullStoryAudioUrl} />
           </div>

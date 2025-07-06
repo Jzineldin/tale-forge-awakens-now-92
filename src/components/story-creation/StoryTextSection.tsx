@@ -13,8 +13,13 @@ const StoryTextSection: React.FC<StoryTextSectionProps> = ({ text }) => {
         <CardContent className="p-8">
           <div className="prose prose-invert max-w-none">
             <div 
-              className="text-gray-100 text-lg leading-relaxed font-serif whitespace-pre-wrap"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              className="text-gray-100 text-base sm:text-lg leading-relaxed font-serif whitespace-pre-wrap break-words overflow-wrap-anywhere"
+              style={{ 
+                fontFamily: "'Playfair Display', serif",
+                wordBreak: 'break-word',
+                overflowWrap: 'anywhere',
+                hyphens: 'auto'
+              }}
             >
               {text}
             </div>

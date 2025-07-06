@@ -16,6 +16,9 @@
 /* Import new responsive genre styles */
 @import "./styles/genre-responsive.css";
 
+/* Import mobile responsive styles */
+@import "./styles/mobile-responsive.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -95,28 +98,7 @@
     background-color: hsl(var(--primary)) !important;
   }
   
-  /* Remove any blue color overrides */
-  .text-blue-500,
-  .text-blue-600,
-  .text-blue-700,
-  .text-blue-800,
-  .text-blue-900 {
-    color: hsl(var(--foreground)) !important;
-  }
-  
-  /* Remove any blue background overrides */
-  .bg-blue-50,
-  .bg-blue-100,
-  .bg-blue-200,
-  .bg-blue-300,
-  .bg-blue-400,
-  .bg-blue-500,
-  .bg-blue-600,
-  .bg-blue-700,
-  .bg-blue-800,
-  .bg-blue-900 {
-    background-color: hsl(var(--primary)) !important;
-  }
+  /* Allow blue colors to display properly for UI elements */
 }
 
 /* Override any potential inconsistent backgrounds */
