@@ -1,3 +1,4 @@
+
 import { useNavigate } from 'react-router-dom';
 import { useStoryGeneration } from '@/hooks/useStoryGeneration';
 import { useStoryState } from '@/hooks/useStoryState';
@@ -7,7 +8,6 @@ import { useStorySegments } from './useStoryDisplay/useStorySegments';
 import { useStoryUIState } from './useStoryDisplay/useStoryUIState';
 import { useStoryInitialization } from './useStoryDisplay/useStoryInitialization';
 import { useStoryHandlers } from './useStoryDisplay/useStoryHandlers';
-
 import { useStoryInitializationLogic } from './useStoryDisplay/useStoryInitializationLogic';
 
 export const useStoryDisplay = () => {
@@ -88,7 +88,7 @@ export const useStoryDisplay = () => {
     await handleViewModeChange(newMode, () => refetchStorySegments(id!, fetchStoryData));
   };
 
-  // Initialize story loading logic
+  // Initialize story loading logic - only run when we have stable data
   useStoryInitializationLogic({
     id,
     prompt,

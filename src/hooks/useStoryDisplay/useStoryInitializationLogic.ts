@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+
+import { useEffect, useRef } from 'react';
 import { useStoryLoader } from './useStoryLoader';
 import { StorySegment } from './types';
 import { isValidUUID } from './utils';
@@ -35,6 +36,7 @@ export const useStoryInitializationLogic = ({
   showConfirmation,
 }: UseStoryInitializationLogicProps) => {
   const { loadExistingStory } = useStoryLoader();
+  const initializationAttempted = useRef(false);
 
   // Enhanced story loader with callback
   const loadExistingStoryWithCallback = async (storyId: string) => {
@@ -55,16 +57,25 @@ export const useStoryInitializationLogic = ({
 
   // Load existing story segments if available, or start new story generation
   useEffect(() => {
+    // Prevent multiple initialization attempts
+    if (initializationAttempted.current) {
+      console.log('🔍 Initialization already attempted, skipping...');
+      return;
+    }
+
     console.log('🔍 useEffect for story loading:', { 
       id, 
       isValidId: isValidUUID(id), 
       isInitialLoad, 
       prompt, 
       hasCurrentSegment: !!currentStorySegment,
-      storyLoaded
+      storyLoaded,
+      initializationAttempted: initializationAttempted.current
     });
 
     const handleStoryFlow = async () => {
+      initializationAttempted.current = true;
+      
       if (id && isValidUUID(id)) {
         // Try to load existing story first
         const loaded = await loadExistingStoryWithCallback(id);
@@ -74,6 +85,10 @@ export const useStoryInitializationLogic = ({
         if (!loaded && isInitialLoad && prompt && !currentStorySegment) {
           console.log('🚀 No existing story found, starting initial generation for prompt:', prompt);
           showConfirmation('start');
+        }
+        
+        // Mark initial load as complete
+        if (isInitialLoad) {
           setIsInitialLoad(false);
         }
       } else if (isInitialLoad && prompt && !currentStorySegment) {
@@ -85,5 +100,13 @@ export const useStoryInitializationLogic = ({
     };
 
     handleStoryFlow();
-  }, [id, isInitialLoad, prompt, currentStorySegment]);
+  }, []); // Empty dependency array to run only once
+
+  // Separate effect to handle story data fetching when ID changes
+  useEffect(() => {
+    if (id && isValidUUID(id) && !initializationAttempted.current) {
+      console.log('📚 ID changed, fetching story data:', id);
+      fetchStoryData(id);
+    }
+  }, [id, fetchStoryData]);
 };
