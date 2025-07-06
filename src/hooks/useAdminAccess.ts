@@ -17,18 +17,9 @@ export const useAdminAccess = () => {
           return;
         }
 
-        const { data: roles, error } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', user.id);
-
-        if (error) {
-          console.error('Error fetching user roles:', error);
-          setHasAccess(false);
-        } else {
-          const isAdmin = roles?.some(r => r.role === 'admin') || false;
-          setHasAccess(isAdmin);
-        }
+        // For now, just check if user exists - no roles table implemented yet
+        const isAdmin = user.email === 'admin@taleforge.com'; // Replace with your admin email
+        setHasAccess(isAdmin);
       } catch (error) {
         console.error('Error checking admin access:', error);
         setHasAccess(false);

@@ -41,7 +41,7 @@ const WaitlistSignup: React.FC<WaitlistSignupProps> = ({ variant = 'card', class
     setIsLoading(true);
     try {
       const { error } = await supabase
-        .from('waitlist')
+        .from('waitlist_entries')
         .insert({
           name: data.name,
           email: data.email,

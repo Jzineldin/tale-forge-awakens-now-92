@@ -27,7 +27,7 @@ const WaitlistForm: React.FC = () => {
 
     try {
       const { error } = await supabase
-        .from('waitlist')
+        .from('waitlist_entries')
         .insert([
           {
             email: email.toLowerCase().trim(),

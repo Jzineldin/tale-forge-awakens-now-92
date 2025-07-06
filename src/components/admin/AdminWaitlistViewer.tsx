@@ -19,9 +19,9 @@ const AdminWaitlistViewer: React.FC = () => {
   const { data: waitlistEntries, isLoading, error } = useQuery({
     queryKey: ['waitlist-entries'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('waitlist')
-        .select('*')
+    const { data, error } = await supabase
+      .from('waitlist_entries')
+      .select('*')
         .order('created_at', { ascending: false });
       
       if (error) throw error;

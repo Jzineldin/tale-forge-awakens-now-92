@@ -63,7 +63,7 @@ const WaitlistSignupSecure: React.FC = () => {
       const sanitizedEmail = validateInput.email(formData.email);
 
       const { error } = await supabase
-        .from('waitlist')
+        .from('waitlist_entries')
         .insert([
           {
             name: sanitizedName,
