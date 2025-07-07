@@ -20,8 +20,8 @@ const Index = () => {
         <source src="https://cdn.midjourney.com/video/e44f0881-cc76-4255-9301-0f3bb45896de/3.mp4" type="video/mp4" />
       </video>
 
-      {/* Hero content area - reduced to 75vh */}
-      <section className="hero-content-area relative z-10 h-[75vh] flex flex-col justify-center items-center px-4 py-8">
+      {/* Hero content area - reduced to 65vh */}
+      <section className="hero-content-area relative z-10 h-[65vh] flex flex-col justify-center items-center px-4 py-8">
         <CinematicLanding />
       </section>
 
