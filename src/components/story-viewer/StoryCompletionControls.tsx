@@ -65,28 +65,43 @@ const StoryCompletionControls: React.FC<StoryCompletionControlsProps> = ({
         <>
             <div className="w-full max-w-4xl mx-auto space-y-6">
                 {/* Story Complete Announcement */}
-                <Card className="border-slate-600 bg-slate-800/50">
+                <Card className="border-2 border-amber-500/30 bg-slate-800/80 backdrop-blur-sm">
                     <CardHeader className="text-center">
-                        <CardTitle className="text-2xl flex items-center justify-center gap-2 text-green-400">
-                            <CheckCircle className="h-6 w-6" />
-                            Story Complete!
+                        <CardTitle className="text-3xl flex items-center justify-center gap-3 text-amber-200">
+                            <Sparkles className="h-8 w-8 text-amber-400" />
+                            🎉 Story Complete!
                         </CardTitle>
-                        <CardDescription className="text-slate-300">
-                            🎉 Congratulations! Your interactive story has reached its conclusion.
+                        <CardDescription className="text-amber-300 text-lg mt-2">
+                            Your adventure concluded with <strong>{segments.length} chapters</strong>, 
+                            <strong> {segments.filter(s => s.image_generation_status === 'completed').length} images</strong>, and countless memories!
                         </CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="text-center space-y-3">
-                            <p className="text-slate-400">
-                                Your story is complete with {segments.length} chapters and {segments.filter(s => s.image_generation_status === 'completed').length} generated images.
+                </Card>
+
+                {/* What's Next Section - Combined Share & Experience */}
+                <Card className="border-amber-500/30 bg-slate-800/80 backdrop-blur-sm">
+                    <CardHeader>
+                        <CardTitle className="text-2xl text-amber-200 flex items-center gap-2">
+                            <Eye className="h-6 w-6 text-amber-400" />
+                            What's Next?
+                        </CardTitle>
+                        <CardDescription className="text-slate-300">
+                            Experience your story in its full glory or start a new adventure
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        {/* Experience Section */}
+                        <div className="space-y-4">
+                            <h3 className="text-lg font-semibold text-amber-300">📖 Experience Your Story</h3>
+                            <p className="text-slate-300 mb-4">
+                                Watch your complete story as an immersive slideshow experience with images and narration
                             </p>
                             
-                            {/* Prominent Watch Story Button - Always Visible */}
-                            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                            <div className="flex flex-col sm:flex-row gap-3">
                                 <Button 
                                     onClick={handleWatchStory}
                                     size="lg"
-                                    className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-8 py-3"
+                                    className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold px-8 py-3 flex-1"
                                 >
                                     <Eye className="mr-2 h-5 w-5" />
                                     🎬 Watch Your Story
@@ -96,43 +111,47 @@ const StoryCompletionControls: React.FC<StoryCompletionControlsProps> = ({
                                     <Button 
                                         onClick={handleWatchStory}
                                         size="lg"
-                                        className="bg-amber-600 hover:bg-amber-700 text-white font-semibold px-8 py-3"
+                                        className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold px-8 py-3 flex-1"
                                     >
                                         <Play className="mr-2 h-5 w-5" />
                                         🎵 Watch with Audio
                                     </Button>
                                 )}
                             </div>
-                            
-                            <p className="text-sm text-slate-500">
-                                Experience your story as a full-screen slideshow with images and narration
-                            </p>
                         </div>
                         
                         <Separator className="bg-slate-600" />
                         
-                        {onRestart && (
-                            <Button onClick={onRestart} variant="outline" className="w-full">
-                                <Sparkles className="mr-2 h-4 w-4" />
-                                Start a New Story
-                            </Button>
-                        )}
+                        {/* New Adventure Section */}
+                        <div className="space-y-4">
+                            <h3 className="text-lg font-semibold text-amber-300">✨ Ready for More?</h3>
+                            {onRestart && (
+                                <Button 
+                                    onClick={onRestart} 
+                                    variant="outline" 
+                                    className="w-full border-amber-500/30 text-amber-300 hover:bg-amber-500/10"
+                                >
+                                    <Sparkles className="mr-2 h-4 w-4" />
+                                    Start a New Story
+                                </Button>
+                            )}
+                        </div>
                     </CardContent>
                 </Card>
 
                 {/* Audio Generation Section */}
                 {canGenerateAudio && (
-                    <Card className="border-amber-500/30 bg-amber-900/20">
+                    <Card className="border-amber-500/30 bg-slate-800/80 backdrop-blur-sm">
                         <CardHeader>
                             <CardTitle className="text-amber-300">🔊 Add Voice Narration</CardTitle>
-                            <CardDescription>Generate professional voice narration for the full slideshow experience</CardDescription>
+                            <CardDescription className="text-slate-300">Generate professional voice narration for the full slideshow experience</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <VoiceSelector selectedVoice={selectedVoice} onVoiceChange={setSelectedVoice} />
                             <Button 
                                 onClick={handleGenerateAudio} 
                                 disabled={isAnyJobRunning}
-                                className="w-full bg-amber-600 hover:bg-amber-700"
+                                className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold"
                                 size="lg"
                             >
                                 {generateAudioMutation.isPending ? (
@@ -155,7 +174,7 @@ const StoryCompletionControls: React.FC<StoryCompletionControlsProps> = ({
 
                 {/* Loading State */}
                 {audioGenerationStatus === 'in_progress' && (
-                    <Card className="border-blue-500/30 bg-blue-900/20">
+                    <Card className="border-blue-500/30 bg-slate-800/80 backdrop-blur-sm">
                         <CardContent className="text-center p-6">
                             <Loader2 className="h-8 w-8 animate-spin mx-auto mb-3 text-blue-400" />
                             <p className="text-blue-300 font-medium">Generating full story audio...</p>
@@ -166,9 +185,9 @@ const StoryCompletionControls: React.FC<StoryCompletionControlsProps> = ({
 
                 {/* Failed State */}
                 {audioGenerationStatus === 'failed' && (
-                    <Card className="border-red-500/30 bg-red-900/20">
+                    <Card className="border-red-500/30 bg-slate-800/80 backdrop-blur-sm">
                         <CardContent className="p-4 text-center">
-                            <div className="p-4 border border-red-500/30 rounded-lg">
+                            <div className="p-4 border border-red-500/30 rounded-lg bg-red-900/20">
                                 <span className="text-red-300">Audio generation failed. You can still watch your story without audio, or try generating audio again.</span>
                             </div>
                         </CardContent>
@@ -177,17 +196,17 @@ const StoryCompletionControls: React.FC<StoryCompletionControlsProps> = ({
 
                 {/* Generated Audio Player */}
                 {hasCompletedAudio && (
-                    <Card key={`audio-${fullStoryAudioUrl}-${Date.now()}`} className="border-green-500/30 bg-green-900/20">
+                    <Card key={`audio-${fullStoryAudioUrl}-${Date.now()}`} className="border-green-500/30 bg-slate-800/80 backdrop-blur-sm">
                         <CardHeader>
                             <CardTitle className="text-green-300">🎵 Your Story Audio is Ready!</CardTitle>
-                            <CardDescription>Your story now has professional voice narration</CardDescription>
+                            <CardDescription className="text-slate-300">Your story now has professional voice narration</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <AudioPlayer src={fullStoryAudioUrl} />
                             
                             <Button 
                                 onClick={handleWatchStory}
-                                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold"
+                                className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold"
                                 size="lg"
                             >
                                 <Maximize2 className="mr-2 h-4 w-4" />
