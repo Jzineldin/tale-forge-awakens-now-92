@@ -1,7 +1,7 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { generateImageWithFallback, uploadImageToStorage } from '../generate-story-segment/image.ts'
+import { generateImageWithFallback, uploadImageToStorageWithBucket } from '../_shared/image-generator.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -102,7 +102,7 @@ serve(async (req) => {
 
     // Upload the image
     console.log('📤 Uploading generated image...')
-    const imageUrl = await uploadImageToStorage(imageBlob, supabaseAdmin)
+    const imageUrl = await uploadImageToStorageWithBucket(imageBlob, supabaseAdmin)
     
     // Update the segment with the new image
     const { error: updateError } = await supabaseAdmin
