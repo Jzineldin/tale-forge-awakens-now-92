@@ -1,11 +1,12 @@
 
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { ChevronLeft, ChevronRight, Play, Pause, X, Eye } from 'lucide-react';
+import React from 'react';
 import { StorySegmentRow } from '@/types/stories';
-import AudioPlayer from '@/components/AudioPlayer';
-import { cn } from '@/lib/utils';
+import { useSlideshowState } from './hooks/useSlideshowState';
+import { useSlideshowAutoAdvance } from './hooks/useSlideshowAutoAdvance';
+import SlideshowHeader from './SlideshowHeader';
+import SlideshowContent from './SlideshowContent';
+import SlideshowNavigation from './SlideshowNavigation';
+import SlideshowAudioPlayer from './SlideshowAudioPlayer';
 
 interface StorySlideshowProps {
   segments: StorySegmentRow[];
@@ -20,59 +21,28 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
   isOpen, 
   onClose 
 }) => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [autoAdvance, setAutoAdvance] = useState(true);
+  const {
+    currentSlide,
+    isPlaying,
+    autoAdvance,
+    setCurrentSlide,
+    setIsPlaying,
+    nextSlide,
+    prevSlide,
+    togglePlayback,
+    goToSlide,
+  } = useSlideshowState({ segments, fullStoryAudioUrl, isOpen });
 
-  // Auto-advance slides when playing (sync with audio or default timing)
-  useEffect(() => {
-    if (!isPlaying || !autoAdvance || segments.length <= 1) return;
-    
-    // Calculate timing based on text length (approximate reading time)
-    const currentSegment = segments[currentSlide];
-    const wordCount = currentSegment?.segment_text?.split(' ').length || 100;
-    const readingTime = Math.max(5000, wordCount * 200); // Minimum 5 seconds, ~200ms per word
-    
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => {
-        const nextSlide = (prev + 1) % segments.length;
-        // If we've completed a full cycle, pause the slideshow
-        if (nextSlide === 0 && prev === segments.length - 1) {
-          setIsPlaying(false);
-        }
-        return nextSlide;
-      });
-    }, readingTime);
-
-    return () => clearInterval(interval);
-  }, [isPlaying, autoAdvance, segments.length, currentSlide]);
-
-  // Auto-start slideshow when audio is available
-  useEffect(() => {
-    if (isOpen && fullStoryAudioUrl && !isPlaying) {
-      console.log('🎬 Auto-starting slideshow with audio');
-      setIsPlaying(true);
-    }
-  }, [isOpen, fullStoryAudioUrl]);
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % segments.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + segments.length) % segments.length);
-  };
-
-  const togglePlayback = () => {
-    setIsPlaying(!isPlaying);
-  };
-
-  const goToSlide = (index: number) => {
-    setCurrentSlide(index);
-  };
+  useSlideshowAutoAdvance({
+    isPlaying,
+    autoAdvance,
+    segments,
+    currentSlide,
+    setCurrentSlide,
+    setIsPlaying,
+  });
 
   const handleClose = () => {
-    console.log('🎬 Slideshow back button clicked - closing slideshow');
     setIsPlaying(false);
     onClose();
   };
@@ -94,138 +64,29 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
         backgroundRepeat: 'no-repeat'
       }}
     >
-      {/* Header with play controls and chapter info - Mobile optimized */}
-      <div className="flex items-center justify-between p-2 md:p-4 bg-slate-800/95 border-b border-amber-500/30 backdrop-blur-sm shadow-lg">
-        <div className="flex items-center gap-2 md:gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={togglePlayback}
-            className="text-white hover:bg-amber-500/20 border border-amber-500/30 mobile-friendly-button"
-          >
-            {isPlaying ? <Pause className="h-4 w-4 md:h-5 md:w-5" /> : <Play className="h-4 w-4 md:h-5 md:w-5" />}
-          </Button>
-          <span className="text-amber-200 text-xs md:text-sm font-medium bg-slate-700/50 px-2 md:px-3 py-1 rounded-full border border-amber-500/30">
-            Chapter {currentSlide + 1} of {segments.length}
-          </span>
-          {isPlaying && (
-            <span className="text-amber-400 text-xs animate-pulse bg-amber-900/30 px-1 md:px-2 py-1 rounded-full border border-amber-500/50 hidden sm:inline">
-              ● PLAYING
-            </span>
-          )}
-        </div>
-      </div>
+      <SlideshowHeader
+        currentSlide={currentSlide}
+        totalSlides={segments.length}
+        isPlaying={isPlaying}
+        onTogglePlayback={togglePlayback}
+      />
 
-      {/* Main slide area - Mobile optimized */}
-      <div className="flex-1 flex items-center justify-center p-2 sm:p-4 md:p-8">
-        <div className="max-w-5xl w-full">
-          <Card className="bg-slate-800/90 border-amber-500/30 shadow-2xl backdrop-blur-sm border-2">
-            <CardContent className="card-content p-3 sm:p-6 md:p-8">
-              {/* Image - Mobile responsive */}
-              {currentSegment.image_url ? (
-                <div className="mb-4 md:mb-6">
-                  <img
-                    src={currentSegment.image_url}
-                    alt={`Story chapter ${currentSlide + 1}`}
-                    className="w-full max-h-60 sm:max-h-80 md:max-h-96 object-contain rounded-lg shadow-lg border border-amber-500/20"
-                    onError={(e) => {
-                      console.warn('Image failed to load:', currentSegment.image_url);
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                </div>
-              ) : (
-                // Placeholder for missing images - Mobile optimized
-                <div className="mb-4 md:mb-6 bg-gradient-to-br from-slate-700/80 to-slate-800/80 rounded-lg flex items-center justify-center h-48 sm:h-64 md:h-80 border border-amber-500/30">
-                  <div className="text-center text-amber-200">
-                    <Eye className="h-8 w-8 md:h-12 md:w-12 mx-auto mb-2 opacity-70 text-amber-400" />
-                    <p className="text-sm font-medium">Chapter {currentSlide + 1}</p>
-                    <p className="text-xs opacity-70">✨ Image materializing...</p>
-                  </div>
-                </div>
-              )}
-              
-              {/* Text - Mobile optimized */}
-              <div className="text-slate-100 space-y-3 md:space-y-4">
-                <p className="text-sm sm:text-base md:text-lg leading-relaxed font-medium story-creation-text">
-                  {currentSegment.segment_text}
-                </p>
-                
-                {/* Choice indicator if available */}
-                {currentSegment.triggering_choice_text && (
-                  <div className="mt-3 md:mt-4 pt-3 md:pt-4 border-t border-amber-500/30">
-                    <p className="text-xs md:text-sm text-amber-300 italic">
-                      → Choice made: {currentSegment.triggering_choice_text}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      <SlideshowContent
+        currentSegment={currentSegment}
+        currentSlide={currentSlide}
+      />
 
-      {/* Navigation Controls - Mobile optimized */}
-      <div className="flex items-center justify-between p-2 md:p-4 bg-slate-800/95 border-t border-amber-500/30 backdrop-blur-sm shadow-lg">
-        <div className="flex items-center gap-1 md:gap-2">
-          <Button
-            variant="ghost"
-            onClick={handleClose}
-            className="text-white hover:bg-amber-500/20 flex items-center gap-1 md:gap-2 border border-amber-500/30 mobile-friendly-button"
-          >
-            <X className="h-3 w-3 md:h-4 md:w-4" />
-            <span className="text-xs md:text-sm">Back</span>
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={prevSlide}
-            className="text-white hover:bg-amber-500/20 flex items-center gap-1 md:gap-2 border border-amber-500/30 mobile-friendly-button"
-            disabled={segments.length <= 1}
-          >
-            <ChevronLeft className="h-3 w-3 md:h-4 md:w-4" />
-            <span className="hidden sm:inline text-xs md:text-sm">Previous</span>
-          </Button>
-        </div>
+      <SlideshowNavigation
+        segments={segments}
+        currentSlide={currentSlide}
+        onClose={handleClose}
+        onPrevSlide={prevSlide}
+        onNextSlide={nextSlide}
+        onGoToSlide={goToSlide}
+      />
 
-        {/* Slide indicators - Mobile optimized */}
-        <div className="flex gap-1 max-w-xs sm:max-w-md overflow-x-auto bg-slate-700/50 px-2 md:px-3 py-1 md:py-2 rounded-full border border-amber-500/20">
-          {segments.slice(0, 10).map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={cn(
-                "w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-200 flex-shrink-0",
-                index === currentSlide 
-                  ? "bg-amber-400 scale-125 shadow-lg shadow-amber-400/50" 
-                  : "bg-amber-200/30 hover:bg-amber-200/50"
-              )}
-            />
-          ))}
-          {segments.length > 10 && (
-            <span className="text-amber-200/50 text-xs ml-1 md:ml-2">+{segments.length - 10}</span>
-          )}
-        </div>
-
-        <Button
-          variant="ghost"
-          onClick={nextSlide}
-          className="text-white hover:bg-amber-500/20 flex items-center gap-1 md:gap-2 border border-amber-500/30 mobile-friendly-button"
-          disabled={segments.length <= 1}
-        >
-          <span className="hidden sm:inline text-xs md:text-sm">Next</span>
-          <ChevronRight className="h-3 w-3 md:h-4 md:w-4" />
-        </Button>
-      </div>
-
-      {/* Audio player - Fixed at bottom - Mobile optimized */}
       {fullStoryAudioUrl && (
-        <div className="p-2 md:p-4 bg-slate-800/95 border-t border-amber-500/30 backdrop-blur-sm shadow-lg">
-          <div className="max-w-2xl mx-auto">
-            <div className="bg-slate-700/50 border border-amber-500/20 rounded-lg p-2 md:p-3">
-              <AudioPlayer src={fullStoryAudioUrl} />
-            </div>
-          </div>
-        </div>
+        <SlideshowAudioPlayer fullStoryAudioUrl={fullStoryAudioUrl} />
       )}
     </div>
   );
