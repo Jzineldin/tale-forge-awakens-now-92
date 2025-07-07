@@ -72,9 +72,11 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
   };
 
   const handleClose = () => {
-    console.log('🎬 Slideshow close button clicked');
+    console.log('🎬 Slideshow close button clicked - closing slideshow and navigating to home');
     setIsPlaying(false);
     onClose();
+    // Navigate to home
+    window.location.href = '/';
   };
 
   if (!isOpen || segments.length === 0) return null;
@@ -94,7 +96,7 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
         backgroundRepeat: 'no-repeat'
       }}
     >
-      {/* Header with prominent exit button */}
+      {/* Header with SUPER PROMINENT exit button */}
       <div className="flex items-center justify-between p-4 bg-slate-800/95 border-b border-amber-500/30 backdrop-blur-sm shadow-lg">
         <div className="flex items-center gap-4">
           <Button
@@ -115,14 +117,20 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
           )}
         </div>
         
-        {/* Large, prominent exit button */}
+        {/* MASSIVE, IMPOSSIBLE TO MISS EXIT BUTTON */}
         <Button
           variant="outline"
           onClick={handleClose}
-          className="text-white hover:text-red-100 bg-red-600/80 hover:bg-red-600 border-2 border-red-400 hover:border-red-300 px-6 py-2 text-base font-semibold transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
+          className="text-white hover:text-red-100 bg-red-600/90 hover:bg-red-500 border-4 border-red-300 hover:border-red-200 px-8 py-4 text-xl font-bold transition-all duration-200 shadow-2xl hover:shadow-red-500/50 hover:scale-110 animate-pulse"
+          style={{
+            boxShadow: '0 0 20px rgba(239, 68, 68, 0.5)',
+            fontSize: '18px',
+            minWidth: '200px',
+            minHeight: '60px'
+          }}
         >
-          <X className="h-5 w-5 mr-2" />
-          Exit Story
+          <X className="h-6 w-6 mr-3" />
+          EXIT TO HOME
         </Button>
       </div>
 
