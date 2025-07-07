@@ -2,6 +2,7 @@
 import React from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { HeroSection } from './home/HeroSection';
+import ForgeStepsSection from './home/ForgeStepsSection';
 import Footer from './home/Footer';
 import { Zap, Image, Headphones } from 'lucide-react';
 
@@ -20,6 +21,9 @@ const HomePage: React.FC = () => {
     <div className="min-h-screen w-full relative">
       {/* Hero Section - Single focused CTA with waitlist */}
       <HeroSection />
+
+      {/* New Forge Steps Section */}
+      <ForgeStepsSection />
 
       {/* Features Section - "A Universe of Possibilities" */}
       <section className="py-16 px-4">
