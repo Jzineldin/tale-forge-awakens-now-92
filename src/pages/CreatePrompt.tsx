@@ -140,12 +140,12 @@ const CreatePrompt: React.FC = () => {
 
         {/* Story Prompt Input */}
         <div className="max-w-4xl mx-auto mb-12">
-          <Card className="bg-slate-800/70 border-slate-600 backdrop-blur-sm">
+          <Card className="bg-slate-800/90 border-amber-500/30 backdrop-blur-sm shadow-2xl">
             <CardHeader>
-              <CardTitle className="text-white text-xl font-serif">
+              <CardTitle className="text-white text-xl font-serif drop-shadow-lg">
                 Your Story Beginning
               </CardTitle>
-              <CardDescription className="text-gray-300">
+              <CardDescription className="text-amber-200/80">
                 Write your own prompt or select one from the suggestions below
               </CardDescription>
             </CardHeader>
@@ -154,7 +154,7 @@ const CreatePrompt: React.FC = () => {
                 placeholder="A mysterious letter arrives at your door on a stormy night..."
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                className="min-h-[120px] text-lg p-4 bg-slate-700/50 border-slate-500 text-white placeholder:text-gray-400 focus:border-amber-400 focus:ring-amber-400/20 backdrop-blur-sm resize-none rounded-lg"
+                className="min-h-[120px] text-lg p-4 bg-slate-700/50 border-slate-500 text-white placeholder:text-amber-300/60 focus:border-amber-400 focus:ring-amber-400/20 backdrop-blur-sm resize-none rounded-lg shadow-inner"
               />
             </CardContent>
           </Card>
@@ -169,15 +169,15 @@ const CreatePrompt: React.FC = () => {
             {genrePrompts[selectedGenre]?.map((suggestion, index) => (
               <Card
                 key={index}
-                className={`cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 ${
+                className={`cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-105 ${
                   prompt === suggestion 
-                    ? 'border-2 border-amber-400 bg-slate-800/90' 
-                    : 'border border-slate-600 hover:border-amber-400/60 bg-slate-800/70'
+                    ? 'border-2 border-amber-400 bg-slate-800/95 shadow-amber-400/20 shadow-lg' 
+                    : 'border border-amber-500/20 hover:border-amber-400/60 bg-slate-800/80 hover:bg-slate-800/90'
                 } backdrop-blur-sm`}
                 onClick={() => handlePromptSelect(suggestion)}
               >
                 <CardContent className="p-4">
-                  <p className="text-gray-300 leading-relaxed">
+                  <p className="text-slate-100 leading-relaxed drop-shadow-sm">
                     {suggestion}
                   </p>
                 </CardContent>
