@@ -7,16 +7,28 @@ const Index = () => {
   console.log('Index component: Rendering cinematic landing page');
 
   return (
-    <div className="relative min-h-screen w-full bg-transparent">
-      {/* Single continuous background with all content overlaid */}
-      <div className="relative min-h-screen w-full">
+    <div className="main-page-container-with-video-bg relative min-h-screen w-full">
+      {/* Single video background container wrapping everything */}
+      <video
+        className="absolute inset-0 w-full h-full object-cover"
+        autoPlay
+        muted
+        loop
+        playsInline
+        style={{ filter: 'contrast(1.1) saturate(1.2)' }}
+      >
+        <source src="https://cdn.midjourney.com/video/e44f0881-cc76-4255-9301-0f3bb45896de/3.mp4" type="video/mp4" />
+      </video>
+
+      {/* Hero content area */}
+      <section className="hero-content-area relative z-10 min-h-screen flex flex-col justify-center items-center px-4 py-8">
         <CinematicLanding />
-        
-        {/* Overlay the Forge Steps Section on the same background - no gap */}
-        <div className="relative z-20 -mt-32 md:-mt-16">
-          <ForgeStepsSection />
-        </div>
-      </div>
+      </section>
+
+      {/* Features section - flows naturally below hero */}
+      <section className="features-section relative z-10">
+        <ForgeStepsSection />
+      </section>
     </div>
   );
 };
