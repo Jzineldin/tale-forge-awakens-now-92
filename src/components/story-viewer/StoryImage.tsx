@@ -2,23 +2,30 @@
 import React, { useState, useEffect } from 'react';
 import { Loader2, AlertCircle, RotateCcw, ImageIcon, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface StoryImageProps {
     imageUrl?: string | null;
     imageGenerationStatus?: string;
     altText: string;
     className?: string;
+    segmentId?: string;
+    onRetry?: () => void;
 }
 
 const StoryImage: React.FC<StoryImageProps> = ({
     imageUrl,
     imageGenerationStatus,
     altText,
-    className = ""
+    className = "",
+    segmentId,
+    onRetry
 }) => {
     const [imageError, setImageError] = useState(false);
     const [retryCount, setRetryCount] = useState(0);
     const [imageKey, setImageKey] = useState(0);
+    const [isRetrying, setIsRetrying] = useState(false);
 
     console.log('[StoryImage] Debug info:', {
         imageUrl: imageUrl || 'null/undefined',
@@ -27,7 +34,8 @@ const StoryImage: React.FC<StoryImageProps> = ({
         imageUrlLength: imageUrl?.length || 0,
         isPlaceholder: imageUrl === '/placeholder.svg',
         imageError,
-        retryCount
+        retryCount,
+        segmentId
     });
 
     // Reset error state when imageUrl changes
@@ -51,11 +59,41 @@ const StoryImage: React.FC<StoryImageProps> = ({
         }
     }, [imageError, retryCount]);
 
-    const handleRetry = () => {
+    const handleRetry = async () => {
         console.log('[StoryImage] Manual/Auto retry triggered');
         setImageError(false);
         setRetryCount(prev => prev + 1);
         setImageKey(prev => prev + 1);
+        setIsRetrying(true);
+
+        // If we have a segmentId, try to regenerate the image
+        if (segmentId) {
+            try {
+                console.log('[StoryImage] Attempting to regenerate image for segment:', segmentId);
+                
+                const { data, error } = await supabase.functions.invoke('regenerate-image', {
+                    body: { segmentId }
+                });
+
+                if (error) {
+                    console.error('[StoryImage] Image regeneration failed:', error);
+                    toast.error('Failed to regenerate image. Please try again.');
+                } else {
+                    console.log('[StoryImage] Image regeneration initiated successfully');
+                    toast.success('Image regeneration started. Please wait...');
+                }
+            } catch (error) {
+                console.error('[StoryImage] Error during image regeneration:', error);
+                toast.error('An error occurred while regenerating the image.');
+            }
+        }
+
+        // Call external retry handler if provided
+        if (onRetry) {
+            onRetry();
+        }
+
+        setIsRetrying(false);
     };
 
     const handleImageError = () => {
@@ -71,7 +109,7 @@ const StoryImage: React.FC<StoryImageProps> = ({
     const isValidImageUrl = imageUrl && imageUrl !== '/placeholder.svg' && imageUrl.trim() !== '';
     const isGenerating = imageGenerationStatus === 'pending' || imageGenerationStatus === 'in_progress';
     const isCompleted = imageGenerationStatus === 'completed';
-    const isFailed = imageGenerationStatus === 'failed';
+    const isFailed = imageGenerationStatus === 'failed' || imageGenerationStatus === 'CURRENT_TASK_ERROR';
 
     console.log('[StoryImage] Display decision:', {
         isValidImageUrl,
@@ -86,13 +124,13 @@ const StoryImage: React.FC<StoryImageProps> = ({
     });
 
     // Show spinner when generating and no valid image
-    if (isGenerating && !isValidImageUrl) {
+    if (isGenerating && !isValidImageUrl && !isRetrying) {
         return (
             <div className={`relative flex items-center justify-center bg-muted/50 border-2 border-dashed border-muted-foreground/20 aspect-square w-full ${className}`}>
                 <div className="flex flex-col items-center space-y-2 text-muted-foreground">
                     <Loader2 className="h-8 w-8 animate-spin" />
                     <p className="text-sm">Generating image...</p>
-                    <p className="text-xs text-amber-400">Testing OpenAI connection...</p>
+                    <p className="text-xs text-amber-400">This may take 30-60 seconds</p>
                 </div>
             </div>
         );
@@ -104,23 +142,52 @@ const StoryImage: React.FC<StoryImageProps> = ({
             <div className={`relative flex items-center justify-center bg-destructive/10 border-2 border-destructive/20 aspect-square w-full ${className}`}>
                 <div className="flex flex-col items-center space-y-3 text-destructive p-4">
                     <AlertCircle className="h-8 w-8" />
-                    <p className="text-sm text-center">
-                        {isFailed ? 'Image generation failed' : 'Failed to load image'}
-                    </p>
-                    {isFailed && (
-                        <p className="text-xs text-center text-muted-foreground">
-                            Check console logs for OpenAI API details
+                    <div className="text-center">
+                        <p className="text-sm font-medium">
+                            {isFailed && imageGenerationStatus === 'CURRENT_TASK_ERROR' 
+                                ? 'Image generation service temporarily unavailable' 
+                                : isFailed 
+                                ? 'Image generation failed' 
+                                : 'Failed to load image'}
                         </p>
-                    )}
+                        <p className="text-xs text-muted-foreground mt-1">
+                            {imageGenerationStatus === 'CURRENT_TASK_ERROR' 
+                                ? 'The image service is experiencing issues. Please try again.' 
+                                : 'Please check your connection and try again'}
+                        </p>
+                    </div>
                     <Button 
                         onClick={handleRetry}
                         size="sm"
                         variant="outline"
                         className="text-xs"
+                        disabled={isRetrying}
                     >
-                        <RotateCcw className="h-3 w-3 mr-1" />
-                        Retry
+                        {isRetrying ? (
+                            <>
+                                <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                                Retrying...
+                            </>
+                        ) : (
+                            <>
+                                <RotateCcw className="h-3 w-3 mr-1" />
+                                Retry
+                            </>
+                        )}
                     </Button>
+                </div>
+            </div>
+        );
+    }
+
+    // Show retry state when retrying
+    if (isRetrying) {
+        return (
+            <div className={`relative flex items-center justify-center bg-muted/50 border-2 border-dashed border-muted-foreground/20 aspect-square w-full ${className}`}>
+                <div className="flex flex-col items-center space-y-2 text-muted-foreground">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                    <p className="text-sm">Retrying image generation...</p>
+                    <p className="text-xs text-amber-400">Please wait...</p>
                 </div>
             </div>
         );
