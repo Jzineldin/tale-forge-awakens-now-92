@@ -8,10 +8,15 @@ const Index = () => {
 
   return (
     <div className="relative min-h-screen w-full bg-transparent">
-      <CinematicLanding />
-      
-      {/* Add the Forge Steps Section below the main hero */}
-      <ForgeStepsSection />
+      {/* Single continuous background with all content overlaid */}
+      <div className="relative min-h-screen w-full">
+        <CinematicLanding />
+        
+        {/* Overlay the Forge Steps Section on the same background - no gap */}
+        <div className="relative z-20 -mt-32 md:-mt-16">
+          <ForgeStepsSection />
+        </div>
+      </div>
     </div>
   );
 };
