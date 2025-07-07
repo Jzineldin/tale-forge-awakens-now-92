@@ -101,21 +101,27 @@ const CreatePrompt: React.FC = () => {
 
   return (
     <div 
-      className="min-h-screen bg-slate-900"
+      className="min-h-screen"
       style={{
-        backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('/images/Flux_Dev_Lonely_astronaut_sitting_on_a_pile_of_books_in_space__0.jpg')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
+        background: `
+          linear-gradient(rgba(15, 23, 42, 0.85), rgba(30, 41, 59, 0.90)),
+          radial-gradient(circle at 20% 80%, rgba(245, 158, 11, 0.15) 0%, transparent 50%),
+          radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+          url('/images/Flux_Dev_Lonely_astronaut_sitting_on_a_pile_of_books_in_space__0.jpg')
+        `,
+        backgroundSize: 'auto, auto, auto, cover',
+        backgroundPosition: 'center, center, center, center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed'
       }}
     >
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-16 relative">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 relative">
           <Button
             variant="ghost"
             onClick={() => navigate('/create/genre')}
-            className="absolute top-8 left-8 text-white hover:text-amber-400"
+            className="!absolute top-8 left-8 !text-white !bg-slate-800/60 hover:!bg-amber-500/20 !border !border-amber-500/30 !backdrop-blur-sm"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
@@ -124,29 +130,30 @@ const CreatePrompt: React.FC = () => {
           <Button
             variant="ghost"
             onClick={() => navigate('/')}
-            className="absolute top-8 left-32 text-white hover:text-amber-400 flex items-center gap-2"
+            className="!absolute top-8 left-32 !text-white !bg-slate-800/60 hover:!bg-amber-500/20 !border !border-amber-500/30 !backdrop-blur-sm flex items-center gap-2"
           >
             <Home className="h-4 w-4" />
             Home
           </Button>
           
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 font-serif">
-            Your <span className="text-amber-400">{genreDisplayNames[selectedGenre]}</span> Adventure
+          <h1 className="text-4xl md:text-6xl font-bold !text-white mb-6 font-serif drop-shadow-2xl">
+            Your <span className="!text-amber-400 drop-shadow-lg">✨{genreDisplayNames[selectedGenre]}</span> Adventure
           </h1>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+          <p className="text-xl !text-gray-200 max-w-2xl mx-auto drop-shadow-lg">
             Describe your story idea or choose from our suggestions below
           </p>
         </div>
 
         {/* Story Prompt Input */}
         <div className="max-w-4xl mx-auto mb-12">
-          <Card className="bg-slate-800/90 border-amber-500/30 backdrop-blur-sm shadow-2xl">
+          <Card className="!bg-slate-800/70 !border-2 !border-amber-500/40 !backdrop-blur-md !shadow-2xl !shadow-amber-500/10">
             <CardHeader>
-              <CardTitle className="text-white text-xl font-serif drop-shadow-lg">
+              <CardTitle className="!text-white !text-xl font-serif !drop-shadow-lg flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-amber-400" />
                 Your Story Beginning
               </CardTitle>
-              <CardDescription className="text-amber-200/80">
-                Write your own prompt or select one from the suggestions below
+              <CardDescription className="!text-amber-200/90 !font-medium">
+                Write your own prompt or select one from the magical suggestions below
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -154,7 +161,7 @@ const CreatePrompt: React.FC = () => {
                 placeholder="A mysterious letter arrives at your door on a stormy night..."
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                className="min-h-[120px] text-lg p-4 bg-slate-700/50 border-slate-500 text-white placeholder:text-amber-300/60 focus:border-amber-400 focus:ring-amber-400/20 backdrop-blur-sm resize-none rounded-lg shadow-inner"
+                className="min-h-[120px] text-lg p-4 !bg-slate-700/60 !border-2 !border-amber-500/30 !text-white placeholder:!text-amber-300/70 focus:!border-amber-400 focus:!ring-2 focus:!ring-amber-400/30 !backdrop-blur-sm resize-none !rounded-lg !shadow-inner"
               />
             </CardContent>
           </Card>
@@ -162,22 +169,24 @@ const CreatePrompt: React.FC = () => {
 
         {/* Story Suggestions */}
         <div className="max-w-4xl mx-auto mb-12">
-          <h3 className="text-2xl font-bold text-white mb-6 text-center font-serif">
+          <h3 className="text-2xl font-bold !text-white mb-6 text-center font-serif drop-shadow-lg flex items-center justify-center gap-2">
+            <Sparkles className="h-6 w-6 text-amber-400" />
             Need Inspiration?
+            <Sparkles className="h-6 w-6 text-amber-400" />
           </h3>
           <div className="grid gap-4">
             {genrePrompts[selectedGenre]?.map((suggestion, index) => (
               <Card
                 key={index}
-                className={`cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-105 ${
+                className={`cursor-pointer transition-all duration-300 hover:!shadow-xl hover:!scale-105 ${
                   prompt === suggestion 
-                    ? 'border-2 border-amber-400 bg-slate-800/95 shadow-amber-400/20 shadow-lg' 
-                    : 'border border-amber-500/20 hover:border-amber-400/60 bg-slate-800/80 hover:bg-slate-800/90'
-                } backdrop-blur-sm`}
+                    ? '!border-2 !border-amber-400 !bg-slate-800/80 !shadow-amber-400/30 !shadow-lg !backdrop-blur-md' 
+                    : '!border-2 !border-amber-500/30 hover:!border-amber-400/70 !bg-slate-800/60 hover:!bg-slate-800/75 !backdrop-blur-md'
+                }`}
                 onClick={() => handlePromptSelect(suggestion)}
               >
                 <CardContent className="p-4">
-                  <p className="text-slate-100 leading-relaxed drop-shadow-sm">
+                  <p className="!text-slate-100 leading-relaxed !drop-shadow-sm font-medium">
                     {suggestion}
                   </p>
                 </CardContent>
@@ -191,8 +200,9 @@ const CreatePrompt: React.FC = () => {
           <Button
             onClick={handleBeginAdventure}
             disabled={!prompt.trim()}
-            className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-12 py-4 text-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="!bg-gradient-to-r !from-amber-500 !to-orange-500 hover:!from-amber-600 hover:!to-orange-600 !text-white px-12 py-4 text-xl font-medium disabled:!opacity-50 disabled:!cursor-not-allowed !shadow-lg !shadow-amber-500/30 hover:!shadow-xl hover:!shadow-amber-500/40 !transition-all !duration-300 hover:!scale-105"
           >
+            <Sparkles className="mr-2 h-5 w-5" />
             Begin My {genreDisplayNames[selectedGenre].split(' ').slice(1).join(' ')} Adventure
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>

@@ -49,25 +49,25 @@
   --radius-lg: 16px;
   --radius-xl: 24px;
   
-  /* shadcn variables - Override with amber/gold theme */
-  --background: 0 0% 100%; /* Light background */
-  --foreground: 222 84% 4.9%; /* Dark foreground */
-  --card: 0 0% 100%;
-  --card-foreground: 222 84% 4.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 222 84% 4.9%;
+  /* shadcn variables - Override with dark slate theme */
+  --background: 222.2 84% 4.9%; /* Dark slate background */
+  --foreground: 210 40% 98%; /* Light foreground */
+  --card: 222.2 84% 4.9% / 0.8; /* Dark slate card with transparency */
+  --card-foreground: 210 40% 98%; /* Light card text */
+  --popover: 222.2 84% 4.9%; /* Dark popover */
+  --popover-foreground: 210 40% 98%; /* Light popover text */
   --primary: 45 93% 47%; /* Amber/Gold primary */
-  --primary-foreground: 26 83% 14%;
-  --secondary: 210 40% 96%;
-  --secondary-foreground: 222 47% 11%;
-  --muted: 210 40% 96%;
-  --muted-foreground: 215 16% 47%;
-  --accent: 45 93% 47%; /* Amber accent, not purple */
-  --accent-foreground: 26 83% 14%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
+  --primary-foreground: 26 83% 14%; /* Dark primary text */
+  --secondary: 217.2 32.6% 17.5%; /* Dark slate secondary */
+  --secondary-foreground: 210 40% 98%; /* Light secondary text */
+  --muted: 217.2 32.6% 17.5%; /* Dark muted */
+  --muted-foreground: 215.4 16.3% 46.9%; /* Muted text */
+  --accent: 45 93% 47%; /* Amber accent */
+  --accent-foreground: 26 83% 14%; /* Dark accent text */
+  --destructive: 0 84.2% 60.2%; /* Red destructive */
+  --destructive-foreground: 210 40% 98%; /* Light destructive text */
+  --border: 217.2 32.6% 17.5%; /* Dark border */
+  --input: 217.2 32.6% 17.5%; /* Dark input */
   --ring: 45 93% 47%; /* Amber ring */
   --chart-1: 12 76% 61%;
   --chart-2: 173 58% 39%;
@@ -77,26 +77,26 @@
   --radius: 0.5rem;
 }
 
-/* Dark mode - maintain dark theme with amber accents */
+/* Dark mode - ensure proper dark theme */
 .dark {
-  --background: 222 84% 4.9%;
-  --foreground: 210 40% 98%;
-  --card: 222 84% 4.9%;
-  --card-foreground: 210 40% 98%;
-  --popover: 222 84% 4.9%;
-  --popover-foreground: 210 40% 98%;
-  --primary: 45 93% 47%; /* Keep amber primary */
-  --primary-foreground: 26 83% 14%;
-  --secondary: 217 32% 17%;
-  --secondary-foreground: 210 40% 98%;
-  --muted: 217 32% 17%;
-  --muted-foreground: 215 20% 65%;
+  --background: 222.2 84% 4.9%; /* Dark slate */
+  --foreground: 210 40% 98%; /* Light text */
+  --card: 222.2 84% 4.9% / 0.8; /* Dark card with transparency */
+  --card-foreground: 210 40% 98%; /* Light card text */
+  --popover: 222.2 84% 4.9%; /* Dark popover */
+  --popover-foreground: 210 40% 98%; /* Light popover text */
+  --primary: 45 93% 47%; /* Amber primary */
+  --primary-foreground: 26 83% 14%; /* Dark primary text */
+  --secondary: 217.2 32.6% 17.5%; /* Dark secondary */
+  --secondary-foreground: 210 40% 98%; /* Light secondary text */
+  --muted: 217.2 32.6% 17.5%; /* Dark muted */
+  --muted-foreground: 215.4 16.3% 46.9%; /* Muted text */
   --accent: 45 93% 47%; /* Amber accent */
-  --accent-foreground: 210 40% 98%;
-  --destructive: 0 62% 30%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 217 32% 17%;
-  --input: 217 32% 17%;
+  --accent-foreground: 210 40% 98%; /* Light accent text */
+  --destructive: 0 62.8% 30.6%; /* Dark red */
+  --destructive-foreground: 210 40% 98%; /* Light destructive text */
+  --border: 217.2 32.6% 17.5%; /* Dark border */
+  --input: 217.2 32.6% 17.5%; /* Dark input */
   --ring: 45 93% 47%; /* Amber ring */
   --chart-1: 220 70% 50%;
   --chart-2: 160 60% 45%;
