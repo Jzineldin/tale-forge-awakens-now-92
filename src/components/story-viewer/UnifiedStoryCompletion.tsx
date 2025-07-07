@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useGenerateFullStoryAudio } from '@/hooks/useGenerateFullStoryAudio';
 import { usePublishStory } from '@/hooks/usePublishStory';
@@ -18,6 +17,7 @@ interface UnifiedStoryCompletionProps {
     fullStoryAudioUrl?: string;
     audioGenerationStatus?: string;
     isPublic?: boolean;
+    onExit?: () => void;
 }
 
 const UnifiedStoryCompletion: React.FC<UnifiedStoryCompletionProps> = ({
@@ -25,7 +25,8 @@ const UnifiedStoryCompletion: React.FC<UnifiedStoryCompletionProps> = ({
     segments,
     fullStoryAudioUrl,
     audioGenerationStatus,
-    isPublic = false
+    isPublic = false,
+    onExit
 }) => {
     const [showSlideshow, setShowSlideshow] = useState(false);
     const [isGeneratingMissingImage, setIsGeneratingMissingImage] = useState(false);
@@ -94,6 +95,10 @@ const UnifiedStoryCompletion: React.FC<UnifiedStoryCompletionProps> = ({
         publishStoryMutation.mutate(storyId);
     };
 
+    const handleSlideshowClose = () => {
+        setShowSlideshow(false);
+    };
+
     return (
         <>
             <div className="mt-8 space-y-8">
@@ -101,6 +106,7 @@ const UnifiedStoryCompletion: React.FC<UnifiedStoryCompletionProps> = ({
                     segmentCount={segments.length}
                     totalWords={totalWords}
                     imageCount={segmentsWithImages}
+                    onExit={onExit}
                 />
 
                 <StoryContentPreview
@@ -133,7 +139,7 @@ const UnifiedStoryCompletion: React.FC<UnifiedStoryCompletionProps> = ({
                 segments={segments}
                 fullStoryAudioUrl={fullStoryAudioUrl}
                 isOpen={showSlideshow}
-                onClose={() => setShowSlideshow(false)}
+                onClose={handleSlideshowClose}
             />
         </>
     );

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { CostConfirmationDialog } from '@/components/CostConfirmationDialog';
 
@@ -91,6 +90,7 @@ const StoryDisplay: React.FC = () => {
 
   // Handle exit without creating new URLs - go to home instead
   const handleExit = () => {
+    console.log('🚪 Exiting story, navigating to home');
     // Clear any story state and go to home
     navigate('/', { replace: true });
   };
@@ -143,6 +143,7 @@ const StoryDisplay: React.FC = () => {
         fullStoryAudioUrl={storyData?.full_story_audio_url}
         audioGenerationStatus={storyData?.audio_generation_status}
         isPublic={storyData?.is_public}
+        onExit={handleExit}
       />
 
       {/* Show main content if story is not completed */}

@@ -11,6 +11,7 @@ interface StoryCompletionHandlerProps {
   fullStoryAudioUrl?: string | null;
   audioGenerationStatus?: string;
   isPublic?: boolean;
+  onExit?: () => void;
 }
 
 const StoryCompletionHandler: React.FC<StoryCompletionHandlerProps> = ({
@@ -19,7 +20,8 @@ const StoryCompletionHandler: React.FC<StoryCompletionHandlerProps> = ({
   allStorySegments,
   fullStoryAudioUrl,
   audioGenerationStatus,
-  isPublic = false
+  isPublic = false,
+  onExit
 }) => {
   if (!isStoryCompleted || !storyId) {
     return null;
@@ -34,6 +36,7 @@ const StoryCompletionHandler: React.FC<StoryCompletionHandlerProps> = ({
       fullStoryAudioUrl={fullStoryAudioUrl}
       audioGenerationStatus={audioGenerationStatus}
       isPublic={isPublic}
+      onExit={onExit}
     />
   );
 };
