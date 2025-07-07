@@ -71,6 +71,12 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
     setCurrentSlide(index);
   };
 
+  const handleClose = () => {
+    console.log('🎬 Slideshow close button clicked');
+    setIsPlaying(false);
+    onClose();
+  };
+
   if (!isOpen || segments.length === 0) return null;
 
   const currentSegment = segments[currentSlide];
@@ -80,8 +86,12 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
       className="fixed inset-0 z-50 flex flex-col bg-slate-900"
       style={{
         background: `
-          linear-gradient(rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.98))
-        `
+          linear-gradient(rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.98)),
+          url('/images/Flux_Dev_Lonely_astronaut_sitting_on_a_pile_of_books_in_space__0.jpg')
+        `,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
       }}
     >
       {/* Header with prominent exit button */}
@@ -108,7 +118,7 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
         {/* Large, prominent exit button */}
         <Button
           variant="outline"
-          onClick={onClose}
+          onClick={handleClose}
           className="text-white hover:text-red-100 bg-red-600/80 hover:bg-red-600 border-2 border-red-400 hover:border-red-300 px-6 py-2 text-base font-semibold transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
         >
           <X className="h-5 w-5 mr-2" />
