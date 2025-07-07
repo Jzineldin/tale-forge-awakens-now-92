@@ -72,11 +72,9 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
   };
 
   const handleClose = () => {
-    console.log('🎬 Slideshow close button clicked - closing slideshow and navigating to home');
+    console.log('🎬 Slideshow back button clicked - closing slideshow');
     setIsPlaying(false);
     onClose();
-    // Navigate to home
-    window.location.href = '/';
   };
 
   if (!isOpen || segments.length === 0) return null;
@@ -96,7 +94,7 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
         backgroundRepeat: 'no-repeat'
       }}
     >
-      {/* Header with SUPER PROMINENT exit button */}
+      {/* Header with play controls and chapter info */}
       <div className="flex items-center justify-between p-4 bg-slate-800/95 border-b border-amber-500/30 backdrop-blur-sm shadow-lg">
         <div className="flex items-center gap-4">
           <Button
@@ -116,22 +114,6 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
             </span>
           )}
         </div>
-        
-        {/* MASSIVE, IMPOSSIBLE TO MISS EXIT BUTTON */}
-        <Button
-          variant="outline"
-          onClick={handleClose}
-          className="text-white hover:text-red-100 bg-red-600/90 hover:bg-red-500 border-4 border-red-300 hover:border-red-200 px-8 py-4 text-xl font-bold transition-all duration-200 shadow-2xl hover:shadow-red-500/50 hover:scale-110 animate-pulse"
-          style={{
-            boxShadow: '0 0 20px rgba(239, 68, 68, 0.5)',
-            fontSize: '18px',
-            minWidth: '200px',
-            minHeight: '60px'
-          }}
-        >
-          <X className="h-6 w-6 mr-3" />
-          EXIT TO HOME
-        </Button>
       </div>
 
       {/* Main slide area */}
@@ -185,15 +167,25 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
 
       {/* Navigation Controls */}
       <div className="flex items-center justify-between p-4 bg-slate-800/95 border-t border-amber-500/30 backdrop-blur-sm shadow-lg">
-        <Button
-          variant="ghost"
-          onClick={prevSlide}
-          className="text-white hover:bg-amber-500/20 flex items-center gap-2 border border-amber-500/30"
-          disabled={segments.length <= 1}
-        >
-          <ChevronLeft className="h-4 w-4" />
-          <span className="hidden sm:inline">Previous</span>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            onClick={handleClose}
+            className="text-white hover:bg-amber-500/20 flex items-center gap-2 border border-amber-500/30"
+          >
+            <X className="h-4 w-4" />
+            <span className="hidden sm:inline">Back</span>
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={prevSlide}
+            className="text-white hover:bg-amber-500/20 flex items-center gap-2 border border-amber-500/30"
+            disabled={segments.length <= 1}
+          >
+            <ChevronLeft className="h-4 w-4" />
+            <span className="hidden sm:inline">Previous</span>
+          </Button>
+        </div>
 
         {/* Slide indicators */}
         <div className="flex gap-1 sm:gap-2 max-w-md overflow-x-auto bg-slate-700/50 px-3 py-2 rounded-full border border-amber-500/20">
