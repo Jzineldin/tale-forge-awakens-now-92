@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ChevronLeft, ChevronRight, Play, Pause, X, Maximize2, Eye, SkipForward, SkipBack } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, Pause, X, Eye } from 'lucide-react';
 import { StorySegmentRow } from '@/types/stories';
 import AudioPlayer from '@/components/AudioPlayer';
 import { cn } from '@/lib/utils';
@@ -74,32 +74,28 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
   if (!isOpen || segments.length === 0) return null;
 
   const currentSegment = segments[currentSlide];
-  const hasImages = segments.some(s => s.image_url);
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex flex-col"
+      className="fixed inset-0 z-50 flex flex-col bg-slate-900"
       style={{
         background: `
-          linear-gradient(rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)),
-          radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-          radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-          radial-gradient(circle at 40% 40%, rgba(120, 113, 108, 0.15) 0%, transparent 50%)
+          linear-gradient(rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.98))
         `
       }}
     >
-      {/* Enhanced Header with gradient overlay */}
-      <div className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-900/95 via-slate-800/95 to-slate-900/95 border-b border-amber-500/30 backdrop-blur-sm shadow-lg">
+      {/* Header with prominent exit button */}
+      <div className="flex items-center justify-between p-4 bg-slate-800/95 border-b border-amber-500/30 backdrop-blur-sm shadow-lg">
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
             size="icon"
             onClick={togglePlayback}
-            className="text-white hover:bg-amber-500/20 border border-amber-500/30 backdrop-blur-sm"
+            className="text-white hover:bg-amber-500/20 border border-amber-500/30"
           >
             {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
           </Button>
-          <span className="text-amber-200 text-sm font-medium bg-slate-800/50 px-3 py-1 rounded-full border border-amber-500/30">
+          <span className="text-amber-200 text-sm font-medium bg-slate-700/50 px-3 py-1 rounded-full border border-amber-500/30">
             Chapter {currentSlide + 1} of {segments.length}
           </span>
           {isPlaying && (
@@ -109,18 +105,18 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
           )}
         </div>
         
-        {/* Prominent Exit Button */}
+        {/* Large, prominent exit button */}
         <Button
-          variant="ghost"
-          size="icon"
+          variant="outline"
           onClick={onClose}
-          className="text-white hover:bg-red-600/80 bg-red-500/20 border-2 border-red-400/70 hover:border-red-300 transition-all duration-200 shadow-lg backdrop-blur-sm hover:scale-110"
+          className="text-white hover:text-red-100 bg-red-600/80 hover:bg-red-600 border-2 border-red-400 hover:border-red-300 px-6 py-2 text-base font-semibold transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
         >
-          <X className="h-6 w-6 font-bold" />
+          <X className="h-5 w-5 mr-2" />
+          Exit Story
         </Button>
       </div>
 
-      {/* Main slide area with enhanced styling */}
+      {/* Main slide area */}
       <div className="flex-1 flex items-center justify-center p-4 sm:p-8">
         <div className="max-w-5xl w-full">
           <Card className="bg-slate-800/90 border-amber-500/30 shadow-2xl backdrop-blur-sm border-2">
@@ -139,8 +135,8 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
                   />
                 </div>
               ) : (
-                // Placeholder for missing images with magical theme
-                <div className="mb-6 bg-gradient-to-br from-slate-700/80 to-slate-800/80 rounded-lg flex items-center justify-center h-64 sm:h-80 border border-amber-500/30 backdrop-blur-sm">
+                // Placeholder for missing images
+                <div className="mb-6 bg-gradient-to-br from-slate-700/80 to-slate-800/80 rounded-lg flex items-center justify-center h-64 sm:h-80 border border-amber-500/30">
                   <div className="text-center text-amber-200">
                     <Eye className="h-12 w-12 mx-auto mb-2 opacity-70 text-amber-400" />
                     <p className="text-sm font-medium">Chapter {currentSlide + 1}</p>
@@ -149,46 +145,40 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
                 </div>
               )}
               
-              {/* Text with gradient overlay for readability */}
-              <div className="relative">
-                <div 
-                  className="absolute inset-0 bg-gradient-to-t from-slate-800/80 via-transparent to-transparent rounded-lg pointer-events-none"
-                  style={{ zIndex: 1 }}
-                />
-                <div className="relative text-slate-100 space-y-4" style={{ zIndex: 2 }}>
-                  <p className="text-base sm:text-lg leading-relaxed font-medium text-shadow-sm drop-shadow-lg">
-                    {currentSegment.segment_text}
-                  </p>
-                  
-                  {/* Choice indicator if available */}
-                  {currentSegment.triggering_choice_text && (
-                    <div className="mt-4 pt-4 border-t border-amber-500/30">
-                      <p className="text-sm text-amber-300 italic">
-                        → Choice made: {currentSegment.triggering_choice_text}
-                      </p>
-                    </div>
-                  )}
-                </div>
+              {/* Text */}
+              <div className="text-slate-100 space-y-4">
+                <p className="text-base sm:text-lg leading-relaxed font-medium">
+                  {currentSegment.segment_text}
+                </p>
+                
+                {/* Choice indicator if available */}
+                {currentSegment.triggering_choice_text && (
+                  <div className="mt-4 pt-4 border-t border-amber-500/30">
+                    <p className="text-sm text-amber-300 italic">
+                      → Choice made: {currentSegment.triggering_choice_text}
+                    </p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
 
-      {/* Enhanced Navigation Controls */}
-      <div className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-900/95 via-slate-800/95 to-slate-900/95 border-t border-amber-500/30 backdrop-blur-sm shadow-lg">
+      {/* Navigation Controls */}
+      <div className="flex items-center justify-between p-4 bg-slate-800/95 border-t border-amber-500/30 backdrop-blur-sm shadow-lg">
         <Button
           variant="ghost"
           onClick={prevSlide}
-          className="text-white hover:bg-amber-500/20 flex items-center gap-2 border border-amber-500/30 backdrop-blur-sm opacity-80 hover:opacity-100 transition-all duration-200"
+          className="text-white hover:bg-amber-500/20 flex items-center gap-2 border border-amber-500/30"
           disabled={segments.length <= 1}
         >
           <ChevronLeft className="h-4 w-4" />
           <span className="hidden sm:inline">Previous</span>
         </Button>
 
-        {/* Enhanced slide indicators */}
-        <div className="flex gap-1 sm:gap-2 max-w-md overflow-x-auto bg-slate-800/50 px-3 py-2 rounded-full border border-amber-500/20">
+        {/* Slide indicators */}
+        <div className="flex gap-1 sm:gap-2 max-w-md overflow-x-auto bg-slate-700/50 px-3 py-2 rounded-full border border-amber-500/20">
           {segments.slice(0, 10).map((_, index) => (
             <button
               key={index}
@@ -209,7 +199,7 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
         <Button
           variant="ghost"
           onClick={nextSlide}
-          className="text-white hover:bg-amber-500/20 flex items-center gap-2 border border-amber-500/30 backdrop-blur-sm opacity-80 hover:opacity-100 transition-all duration-200"
+          className="text-white hover:bg-amber-500/20 flex items-center gap-2 border border-amber-500/30"
           disabled={segments.length <= 1}
         >
           <span className="hidden sm:inline">Next</span>
@@ -217,11 +207,11 @@ const StorySlideshow: React.FC<StorySlideshowProps> = ({
         </Button>
       </div>
 
-      {/* Enhanced Audio player - Fixed at bottom */}
+      {/* Audio player - Fixed at bottom */}
       {fullStoryAudioUrl && (
-        <div className="p-4 bg-gradient-to-r from-slate-900/95 via-slate-800/95 to-slate-900/95 border-t border-amber-500/30 backdrop-blur-sm shadow-lg">
+        <div className="p-4 bg-slate-800/95 border-t border-amber-500/30 backdrop-blur-sm shadow-lg">
           <div className="max-w-2xl mx-auto">
-            <div className="bg-slate-800/50 border border-amber-500/20 rounded-lg p-3 backdrop-blur-sm">
+            <div className="bg-slate-700/50 border border-amber-500/20 rounded-lg p-3">
               <AudioPlayer src={fullStoryAudioUrl} />
             </div>
           </div>

@@ -15,14 +15,13 @@ const StoryCreationLoadingState: React.FC<StoryCreationLoadingStateProps> = ({
     <div 
       className="flex items-center justify-center min-h-[60vh]"
       style={{
-        backgroundImage: `
-          linear-gradient(rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9)),
-          radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.15) 0%, transparent 50%),
-          radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        background: `
+          linear-gradient(rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)),
           url('/images/Flux_Dev_Lonely_astronaut_sitting_on_a_pile_of_books_in_space__0.jpg')
         `,
-        backgroundSize: 'cover, auto, auto, cover',
-        backgroundPosition: 'center'
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
       }}
     >
       <div className="text-center text-white max-w-lg backdrop-blur-sm bg-slate-900/50 p-8 rounded-2xl border border-amber-500/30 shadow-2xl">
