@@ -2,6 +2,10 @@
 import React from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { HeroSection } from './home/HeroSection';
+import ValuePropositionSection from './home/ValuePropositionSection';
+import ExampleStoriesSection from './home/ExampleStoriesSection';
+import WhyTaleForgeWorksSection from './home/WhyTaleForgeWorksSection';
+import FAQSection from './home/FAQSection';
 import Footer from './home/Footer';
 
 const HomePage: React.FC = () => {
@@ -18,18 +22,18 @@ const HomePage: React.FC = () => {
   const storySteps = [
     {
       icon: '/images/icon-world.png',
-      title: 'Design Your Setting',
-      description: 'From a futuristic city to a quiet coastal town, describe any environment and our AI will bring it to life with rich detail.'
+      title: 'Describe Your Vision',
+      description: 'Start with any idea: "A detective finds a mysterious letter" or "Kids discover a magic portal." Just a sentence or two is all you need.'
     },
     {
       icon: '/images/icon-hero.png',
-      title: 'Create Your Characters',
-      description: 'Shape your protagonist\'s personality, motivations, and relationships. The AI will remember every detail.'
+      title: 'Watch It Come Alive',
+      description: 'Our AI creates rich scenes with custom images and voice narration, building characters and settings that feel real and engaging.'
     },
     {
       icon: '/images/icon-adventure.png',
-      title: 'Live Your Story',
-      description: 'Guide your character through a dynamic narrative where your choices have real consequences, crafted by our AI Storyteller.'
+      title: 'Shape Your Story',
+      description: 'Make choices that matter. Will the detective investigate alone or call for backup? Every decision creates a unique path through your adventure.'
     }
   ];
 
@@ -38,19 +42,23 @@ const HomePage: React.FC = () => {
       {/* Hero Section - Single focused CTA with waitlist */}
       <HeroSection />
 
-      {/* Combined How Your Story Unfolds & Our Quest Section */}
+      {/* Value Proposition - Transform Any Idea */}
+      <ValuePropositionSection />
+
+      {/* Enhanced How Your Story Unfolds Section */}
       <section className="py-8 md:py-16 px-4">
         <div className="max-w-6xl mx-auto">
-          {/* Single semi-transparent backdrop for better visual cohesion */}
           <div className="backdrop-blur-sm bg-black/30 rounded-2xl p-6 md:p-8 border border-white/20">
-            {/* How Your Story Unfolds */}
             <div className="text-center mb-8 md:mb-12">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 md:mb-6 font-serif magical-text">
                 How Your Story Unfolds
               </h2>
+              <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed font-sans">
+                Three simple steps from your idea to an immersive interactive experience
+              </p>
             </div>
 
-            <div className="features-grid grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-16">
+            <div className="features-grid grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               {storySteps.map((step, index) => (
                 <div key={index} className="feature-column text-center space-y-3 md:space-y-4">
                   <div className="flex justify-center mb-3 md:mb-4">
@@ -69,22 +77,18 @@ const HomePage: React.FC = () => {
                 </div>
               ))}
             </div>
-
-            {/* Our Quest - Now integrated within the same glass box */}
-            <div className="border-t border-white/10 pt-8 md:pt-12">
-              <div className="text-center">
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 md:mb-6 font-serif magical-text">
-                  Our Quest
-                </h2>
-                <p className="text-lg md:text-xl text-gray-300 leading-relaxed font-sans max-w-4xl mx-auto">
-                  We empower creativity and education through interactive storytelling, 
-                  making every choice an opportunity for discovery and growth.
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </section>
+
+      {/* Examples Section */}
+      <ExampleStoriesSection />
+
+      {/* Why Tale Forge Works - Replaces "Our Quest" */}
+      <WhyTaleForgeWorksSection />
+
+      {/* FAQ Section */}
+      <FAQSection />
 
       {/* Footer */}
       <Footer />
