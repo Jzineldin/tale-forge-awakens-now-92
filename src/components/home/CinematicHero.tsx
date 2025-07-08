@@ -46,7 +46,7 @@ const CinematicHero: React.FC = () => {
             className="group px-6 md:px-8 py-3 md:py-4 text-base md:text-lg bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg mobile-friendly-button"
           >
             <Sparkles className="mr-2 h-4 w-4 md:h-5 md:w-5 group-hover:rotate-12 transition-transform" />
-            Create Your Adventure
+            Create your own AI powered story
           </Button>
         </div>
       </div>

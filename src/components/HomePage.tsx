@@ -1,8 +1,8 @@
+
 import React from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { HeroSection } from './home/HeroSection';
 import Footer from './home/Footer';
-import { Zap, Image, Headphones } from 'lucide-react';
 
 const HomePage: React.FC = () => {
   const { loading } = useAuth();
@@ -15,58 +15,75 @@ const HomePage: React.FC = () => {
     );
   }
 
+  const storySteps = [
+    {
+      icon: '/images/icon-world.png',
+      title: 'Design Your Setting',
+      description: 'From a futuristic city to a quiet coastal town, describe any environment and our AI will bring it to life with rich detail.'
+    },
+    {
+      icon: '/images/icon-hero.png',
+      title: 'Create Your Characters',
+      description: 'Shape your protagonist\'s personality, motivations, and relationships. The AI will remember every detail.'
+    },
+    {
+      icon: '/images/icon-adventure.png',
+      title: 'Live Your Story',
+      description: 'Guide your character through a dynamic narrative where your choices have real consequences, crafted by our AI Storyteller.'
+    }
+  ];
+
   return (
     <div className="min-h-screen w-full relative">
       {/* Hero Section - Single focused CTA with waitlist */}
       <HeroSection />
 
-      {/* Features Section - "A Universe of Possibilities" */}
-      <section className="py-16 px-4">
+      {/* How Your Story Unfolds Section - Replaces "A Universe of Possibilities" */}
+      <section className="py-8 md:py-16 px-4">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 font-serif magical-text">
-              A Universe of Possibilities
-            </h2>
-          </div>
+          {/* Semi-transparent backdrop for better readability */}
+          <div className="backdrop-blur-sm bg-black/30 rounded-2xl p-6 md:p-8 border border-white/20">
+            <div className="text-center mb-8 md:mb-12">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 md:mb-6 font-serif magical-text">
+                How Your Story Unfolds
+              </h2>
+            </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 mx-auto bg-gradient-to-r from-amber-500 to-orange-400 rounded-full flex items-center justify-center">
-                <Zap className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-white font-serif">Interactive Storytelling</h3>
-              <p className="text-gray-300 font-sans">Make choices that shape your narrative</p>
-            </div>
-            
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 mx-auto bg-gradient-to-r from-amber-500 to-orange-400 rounded-full flex items-center justify-center">
-                <Image className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-white font-serif">AI-Powered Imagery</h3>
-              <p className="text-gray-300 font-sans">See your story come to life with generated art</p>
-            </div>
-            
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 mx-auto bg-gradient-to-r from-amber-500 to-orange-400 rounded-full flex items-center justify-center">
-                <Headphones className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-white font-serif">Voice Narration</h3>
-              <p className="text-gray-300 font-sans">Listen to your adventure unfold</p>
+            <div className="features-grid grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+              {storySteps.map((step, index) => (
+                <div key={index} className="feature-column text-center space-y-3 md:space-y-4">
+                  <div className="flex justify-center mb-3 md:mb-4">
+                    <img
+                      src={step.icon}
+                      alt={`${step.title} Icon`}
+                      className="w-16 h-16 md:w-20 md:h-20 object-contain"
+                    />
+                  </div>
+                  <h3 className="text-lg md:text-xl font-bold text-white font-serif">
+                    {step.title}
+                  </h3>
+                  <p className="text-sm md:text-base text-gray-300 font-sans leading-relaxed px-2">
+                    {step.description}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* About Section - "Our Quest" - Clean without dark overlay */}
-      <section className="py-16 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-8 font-serif magical-text">
-            Our Quest
-          </h2>
-          <p className="text-xl text-gray-300 leading-relaxed font-sans">
-            We empower creativity and education through interactive storytelling, 
-            making every choice an opportunity for discovery and growth.
-          </p>
+      {/* About Section - "Our Quest" - With backdrop styling */}
+      <section className="py-8 md:py-16 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="backdrop-blur-sm bg-black/30 rounded-2xl p-6 md:p-8 border border-white/20 text-center">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 md:mb-8 font-serif magical-text">
+              Our Quest
+            </h2>
+            <p className="text-lg md:text-xl text-gray-300 leading-relaxed font-sans">
+              We empower creativity and education through interactive storytelling, 
+              making every choice an opportunity for discovery and growth.
+            </p>
+          </div>
         </div>
       </section>
 
