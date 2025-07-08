@@ -27,6 +27,7 @@ import StoryDisplay from "./pages/StoryDisplay";
 import Beta from "./pages/Beta";
 import Admin from "./pages/Admin";
 import Diagnostics from "./pages/Diagnostics";
+import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -48,6 +49,7 @@ function App() {
                       <Route path="/" element={<Index />} />
                       <Route path="/adventure" element={<Adventure />} />
                       <Route path="/learning" element={<Learning />} />
+                      <Route path="/about" element={<About />} />
                       
                       {/* Authentication Routes */}
                       <Route path="/auth" element={<Auth />} />

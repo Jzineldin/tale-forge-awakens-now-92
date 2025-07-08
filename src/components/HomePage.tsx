@@ -2,14 +2,14 @@
 import React from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { HeroSection } from './home/HeroSection';
-import ValuePropositionSection from './home/ValuePropositionSection';
-import ExampleStoriesSection from './home/ExampleStoriesSection';
-import WhyTaleForgeWorksSection from './home/WhyTaleForgeWorksSection';
-import FAQSection from './home/FAQSection';
+import { Button } from '@/components/ui/button';
+import { Info } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Footer from './home/Footer';
 
 const HomePage: React.FC = () => {
   const { loading } = useAuth();
+  const navigate = useNavigate();
 
   if (loading) {
     return (
@@ -37,15 +37,16 @@ const HomePage: React.FC = () => {
     }
   ];
 
+  const handleLearnMore = () => {
+    navigate('/about');
+  };
+
   return (
     <div className="min-h-screen w-full relative">
-      {/* Hero Section - Single focused CTA with waitlist */}
+      {/* Hero Section */}
       <HeroSection />
 
-      {/* Value Proposition - Transform Any Idea */}
-      <ValuePropositionSection />
-
-      {/* Enhanced How Your Story Unfolds Section */}
+      {/* How Your Story Unfolds Section */}
       <section className="py-8 md:py-16 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="backdrop-blur-sm bg-black/30 rounded-2xl p-6 md:p-8 border border-white/20">
@@ -77,18 +78,21 @@ const HomePage: React.FC = () => {
                 </div>
               ))}
             </div>
+
+            {/* Learn More Button */}
+            <div className="text-center mt-8 md:mt-12">
+              <Button
+                onClick={handleLearnMore}
+                variant="outline"
+                className="px-6 py-3 text-white border-white/20 bg-black/20 hover:bg-white/10 hover:border-white/30 backdrop-blur-sm"
+              >
+                <Info className="mr-2 h-4 w-4" />
+                What is Tale Forge?
+              </Button>
+            </div>
           </div>
         </div>
       </section>
-
-      {/* Examples Section */}
-      <ExampleStoriesSection />
-
-      {/* Why Tale Forge Works - Replaces "Our Quest" */}
-      <WhyTaleForgeWorksSection />
-
-      {/* FAQ Section */}
-      <FAQSection />
 
       {/* Footer */}
       <Footer />
