@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useHeaderVisibility } from '@/context/HeaderVisibilityContext';
 
@@ -12,6 +12,10 @@ const CinematicHero: React.FC = () => {
   const handleCreateAdventure = () => {
     showHeader();
     navigate('/adventure');
+  };
+
+  const handleLearnMore = () => {
+    navigate('/about');
   };
 
   return (
@@ -39,7 +43,7 @@ const CinematicHero: React.FC = () => {
           </p>
         </div>
 
-        {/* Mobile-optimized CTA */}
+        {/* Mobile-optimized CTAs */}
         <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center">
           <Button
             onClick={handleCreateAdventure}
@@ -47,6 +51,15 @@ const CinematicHero: React.FC = () => {
           >
             <Sparkles className="mr-2 h-4 w-4 md:h-5 md:w-5 group-hover:rotate-12 transition-transform" />
             Create your own AI powered story
+          </Button>
+          
+          <Button
+            onClick={handleLearnMore}
+            variant="outline"
+            className="px-6 md:px-8 py-3 md:py-4 text-base md:text-lg text-white border-white/30 bg-black/20 hover:bg-white/10 hover:border-white/40 backdrop-blur-sm transition-all duration-300 transform hover:scale-105 shadow-lg"
+          >
+            <Info className="mr-2 h-4 w-4 md:h-5 md:w-5" />
+            What is Tale Forge?
           </Button>
         </div>
       </div>
